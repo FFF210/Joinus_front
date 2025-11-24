@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
-import Sidebar from './components/layout/Sidebar';
+import AdminSidebar from './components/layout/AdminSidebar';
 import MainPage from './pages/consumer/MainPage';
 import SearchResult from './pages/consumer/SearchResult';
 import Login from './pages/auth/Login';
@@ -28,7 +28,7 @@ function AppContent() {
     <div className="app">
       {!isAdminPage && <Header />}
       <div className={isAdminPage ? 'app-body-admin' : 'app-body'}>
-        {isAdminPage && <Sidebar />}
+        {isAdminPage && <AdminSidebar />}
         <main className={isAdminPage ? 'app-content-admin' : 'app-content'}>
           <Routes>
             {/* 메인 페이지 */}

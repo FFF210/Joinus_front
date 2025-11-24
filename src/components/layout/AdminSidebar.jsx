@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import './Sidebar.css';
+import './AdminSidebar.css';
 
-export default function Sidebar() {
+export default function AdminSidebar() {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
   
   // 단일 메뉴 (드롭다운 없음)
   const singleMenuItems = [
-    { path: '/admin', label: '대시보드', icon: '🏠' },
-    { path: '/admin/notifications', label: '알림발송', icon: '🔔' },
-    { path: '/admin/cs/notice/write', label: '공지사항 작성', icon: '📝' },
+    { path: '/admin', label: '홈' },
+    { path: '/admin/notifications', label: '알림발송' },
+    { path: '/admin/cs/notice/write', label: '공지사항 작성' },
   ];
 
   // 드롭다운 메뉴
@@ -18,42 +18,36 @@ export default function Sidebar() {
     {
       key: 'proposals',
       label: '제안관리',
-      icon: '📋',
       path: '/admin/proposals',
       subItems: [] // 추후 하위 메뉴 추가 가능
     },
     {
       key: 'groupbuy',
       label: '공구 관리',
-      icon: '🛒',
       path: '/admin/groupbuy',
       subItems: []
     },
     {
       key: 'exchange',
       label: '교환 및 반품 관리',
-      icon: '🔄',
       path: '/admin/exchange',
       subItems: []
     },
     {
       key: 'members',
       label: '회원 관리',
-      icon: '👥',
       path: '/admin/members',
       subItems: []
     },
     {
       key: 'delivery',
       label: '납품 관리',
-      icon: '📦',
       path: '/admin/delivery',
       subItems: []
     },
     {
       key: 'statistics',
       label: '통계',
-      icon: '📊',
       path: '/admin/statistics',
       subItems: []
     },
@@ -86,7 +80,6 @@ export default function Sidebar() {
               to={item.path}
               className={`sidebar-item ${location.pathname === item.path ? 'active' : ''}`}
             >
-              <span className="sidebar-icon">{item.icon}</span>
               <span className="sidebar-label">{item.label}</span>
             </Link>
             <div className="menu-divider"></div>
@@ -106,7 +99,6 @@ export default function Sidebar() {
                     className={`sidebar-item sidebar-dropdown ${isMenuActive(item) ? 'active' : ''}`}
                     onClick={() => toggleMenu(item.key)}
                   >
-                    <span className="sidebar-icon">{item.icon}</span>
                     <span className="sidebar-label">{item.label}</span>
                     <span className="dropdown-arrow">{isOpen ? '▲' : '▼'}</span>
                   </button>
@@ -118,7 +110,6 @@ export default function Sidebar() {
                           to={subItem.path}
                           className={`sidebar-item sidebar-subitem ${location.pathname === subItem.path ? 'active' : ''}`}
                         >
-                          <span className="sidebar-icon">{subItem.icon}</span>
                           <span className="sidebar-label">{subItem.label}</span>
                         </Link>
                       ))}
@@ -130,7 +121,6 @@ export default function Sidebar() {
                   to={item.path}
                   className={`sidebar-item ${isMenuActive(item) ? 'active' : ''}`}
                 >
-                  <span className="sidebar-icon">{item.icon}</span>
                   <span className="sidebar-label">{item.label}</span>
                 </Link>
               )}
