@@ -1,0 +1,251 @@
+.notice-detail-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 40px 24px;
+}
+
+.notice-detail-container {
+  max-width: 1220px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+}
+
+.back-button {
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+/* 공지 카드 */
+.notice-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 40px;
+  margin-bottom: 24px;
+}
+
+/* 제목 영역 */
+.notice-title-section {
+  padding-bottom: 24px;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 32px;
+}
+
+.notice-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.notice-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.notice-date {
+  font-size: 14px;
+  color: #999;
+}
+
+/* 본문 영역 */
+.notice-body {
+  line-height: 1.8;
+  color: #333;
+}
+
+.notice-intro {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 32px;
+  white-space: pre-line;
+}
+
+.notice-section {
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 16px;
+}
+
+.section-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.section-items li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.section-items li:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #739FF2;
+  font-weight: bold;
+}
+
+.notice-footer {
+  font-size: 14px;
+  color: #666;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+  white-space: pre-line;
+}
+
+/* 정부 이미지 섹션 */
+.government-images-section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 32px;
+  margin-bottom: 24px;
+}
+
+.images-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.image-accordions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.accordion-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fafafa;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.accordion-header:hover {
+  background: #f0f0f0;
+}
+
+.accordion-icon {
+  font-size: 12px;
+  color: #999;
+}
+
+.accordion-title {
+  flex: 1;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+}
+
+.accordion-badge {
+  padding: 4px 8px;
+  background: #739FF2;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 푸터 */
+.detail-footer {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.list-button {
+  padding: 12px 32px;
+  background: #739FF2;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.list-button:hover {
+  background: #4a8ae3;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .notice-detail-container {
+    padding: 24px 16px;
+  }
+
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .notice-card {
+    padding: 24px 20px;
+  }
+
+  .notice-title {
+    font-size: 20px;
+  }
+
+  .government-images-section {
+    padding: 24px 20px;
+  }
+}
+

@@ -1,0 +1,211 @@
+.notice-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 40px 24px;
+}
+
+.notice-container {
+  max-width: 1220px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 페이지 제목 */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+/* 탭 메뉴 */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 32px;
+}
+
+.tab {
+  flex: 1;
+  padding: 16px 24px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab:hover {
+  color: #739FF2;
+}
+
+.tab.active {
+  color: #739FF2;
+  font-weight: 700;
+  border-bottom-color: #739FF2;
+}
+
+/* 탭 컨텐츠 */
+.tab-content {
+  min-height: 400px;
+}
+
+/* 공지사항 테이블 */
+.notice-table,
+.inquiry-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.notice-table thead tr,
+.inquiry-table thead tr {
+  background: #f8f8f8;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.notice-table th,
+.inquiry-table th {
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.notice-table tbody tr,
+.inquiry-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.notice-table tbody tr:hover,
+.inquiry-table tbody tr:hover {
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.notice-table td,
+.inquiry-table td {
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.title-cell {
+  text-align: left !important;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 상태 뱃지 */
+.status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.completed {
+  background: #e6f7e6;
+  color: #2d8f2d;
+}
+
+.status.pending {
+  background: #fff4e6;
+  color: #ff8c00;
+}
+
+/* FAQ 리스트 */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faq-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.faq-question {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.faq-answer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: #666;
+  padding-left: 4px;
+}
+
+.faq-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.faq-question .faq-icon {
+  background: #739FF2;
+  color: white;
+}
+
+.faq-answer .faq-icon {
+  background: #4caf50;
+  color: white;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .notice-container {
+    padding: 24px 16px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .tab {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .notice-table th,
+  .inquiry-table th,
+  .notice-table td,
+  .inquiry-table td {
+    padding: 12px 8px;
+    font-size: 12px;
+  }
+
+  .faq-item {
+    padding: 16px;
+  }
+}
+

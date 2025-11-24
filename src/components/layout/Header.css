@@ -1,0 +1,194 @@
+.header {
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* 상단 링크 바 */
+.header-top {
+  background: #f8f8f8;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.header-top-container {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.header-links {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.header-links a {
+  font-size: 12px;
+  font-weight: 400;
+  color: #666666;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header-links a:hover {
+  color: #333333;
+}
+
+/* 메인 헤더 */
+.header-main {
+  background: #ffffff;
+}
+
+.header-main-container {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* 로고 | 네비(가운데) | 검색바 */
+  align-items: center;
+}
+
+/* 로고 */
+.header-logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.header-logo .logo-image {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* 네비게이션 */
+.header-nav {
+  display: flex;
+  justify-content: center;  /* 네비 안에서 메뉴를 가운데 정렬*/
+  align-items: center;
+  gap: 32px;
+}
+
+.header-nav a {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header-nav a:hover {
+  color: #ff4444;
+}
+
+/* 검색바 */
+.header-search {
+  /* flex: auto; */
+  width: 300px;
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  gap: 12px;
+  justify-self: end; /* 검색바를 오른쪽 정렬 */
+}
+
+.header-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: #333333;
+}
+
+.header-search input::placeholder {
+  color: #999999;
+}
+
+.search-button {
+  background: none !important;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  box-shadow: none;
+}
+
+.search-button:focus {
+  outline: none;
+  box-shadow: none;
+  background: none !important;
+}
+
+.search-button:active {
+  background: none !important;
+}
+
+.search-icon {
+  font-size: 20px;
+  color: #999999;
+  /* 컬러 이모지가 보이는 환경에서도 흑백으로 보이도록 처리 */
+  filter: grayscale(1);
+  background: none !important;
+  display: inline-block;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .header-main-container {
+    gap: 24px;
+  }
+
+  .header-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-links {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .header-main-container {
+    /* flex-wrap: wrap; */
+    /* flex-wrap 대신, grid 특성 유지하면서 row 늘어나게 두기기 */
+    gap: 16px;
+  }
+
+  .header-search {
+    width: 100%;              /* 모바일에서는 전체 폭 검색바로 바꾸고 싶으면 */
+    justify-self: stretch;         /* 오른쪽 정렬 */
+    /* display: flex;
+    align-items: center; */
+  }
+
+  .header-nav {
+    display: none;  /* 모바일에서 네비 숨길 거면 유지, 아니면 이 줄 삭제 */
+  }
+}
+
+@media (max-width: 480px) {
+  .header-links a {
+    font-size: 11px;
+  }
+
+  .logo-text {
+    font-size: 20px;
+  }
+
+  .logo-icon {
+    font-size: 28px;
+  }
+}

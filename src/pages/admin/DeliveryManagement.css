@@ -1,0 +1,404 @@
+.delivery-management-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.page-header {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 8px;
+}
+
+.page-description {
+  font-size: 12px;
+  font-weight: 400;
+  color: #666;
+  line-height: 1.5;
+}
+
+.header-date {
+  font-size: 11.8px;
+  font-weight: 400;
+  color: #555;
+}
+
+/* 통계 카드 */
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #91caff;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.stat-note {
+  font-size: 11px;
+  font-weight: 400;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* 필터 섹션 */
+.filter-section {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #333;
+  background-color: #fff;
+  transition: border-color 0.2s;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: #739FF2;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-range input {
+  width: 127px;
+}
+
+.date-range span {
+  color: #000;
+  font-size: 12px;
+}
+
+.search-button {
+  padding: 8px 16px;
+  background-color: #739FF2;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  height: 30px;
+  align-self: flex-end;
+}
+
+.search-button:hover {
+  background-color: #4a8ae3;
+}
+
+/* 목록 섹션 */
+.list-section {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.list-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+}
+
+.list-count {
+  font-size: 11px;
+  font-weight: 400;
+  color: #777;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.delivery-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.delivery-table thead {
+  background-color: #fafafa;
+}
+
+.delivery-table th {
+  padding: 12px;
+  border: 1px solid #eee;
+  font-size: 12px;
+  font-weight: 500;
+  color: #000;
+  text-align: left;
+}
+
+.delivery-table td {
+  padding: 12px;
+  border: 1px solid #eee;
+  font-size: 12px;
+  font-weight: 400;
+  color: #000;
+}
+
+.delivery-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.company-name-link {
+  color: #0077cc;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.company-name-link:hover {
+  color: #005fa3;
+  text-decoration: underline;
+}
+
+/* 상태 배지 */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.status-pending {
+  background-color: #e6f4ff;
+  color: #0958d9;
+}
+
+.status-hold {
+  background-color: #ffd8bf;
+  color: #d4380d;
+}
+
+.status-approved {
+  background-color: #d9f7be;
+  color: #237804;
+}
+
+/* 액션 버튼 */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-approve,
+.btn-hold {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 400;
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-approve {
+  background-color: #739FF2;
+}
+
+.btn-approve:hover {
+  opacity: 0.8;
+}
+
+.btn-hold {
+  background-color: #d4380d;
+}
+
+.btn-hold:hover {
+  opacity: 0.8;
+}
+
+.no-action {
+  color: #999;
+  font-size: 12px;
+}
+
+.list-note {
+  font-size: 11px;
+  font-weight: 400;
+  color: #777;
+  margin-top: 16px;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+}
+
+.pagination-button {
+  padding: 8px 16px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 4px;
+}
+
+.pagination-number {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-number:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.pagination-number.active {
+  background-color: #739FF2;
+  border-color: #739FF2;
+  color: white;
+  font-weight: 500;
+}
+
+/* 반응형 */
+@media (max-width: 1200px) {
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-section {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .date-range {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-range input {
+    width: 100%;
+  }
+
+  .search-button {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .table-container {
+    overflow-x: scroll;
+  }
+}
+

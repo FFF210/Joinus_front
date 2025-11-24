@@ -1,0 +1,255 @@
+.partnership-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 40px 24px;
+}
+
+.partnership-container {
+  max-width: 1220px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.partnership-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  text-align: left;
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 12px;
+}
+
+.page-description {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 400;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 안내 섹션 */
+.info-section {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.info-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-list li {
+  font-size: 13px;
+  font-weight: 400;
+  color: #555;
+  line-height: 1.8;
+  position: relative;
+  padding-left: 12px;
+}
+
+.info-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #555;
+}
+
+/* 폼 섹션 */
+.form-section {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 40px;
+}
+
+.form-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 12px;
+}
+
+.form-description {
+  font-size: 12px;
+  font-weight: 400;
+  color: #666;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.partnership-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.required {
+  color: #d4380d;
+}
+
+.form-group input,
+.form-group textarea,
+.select-input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #333;
+  background-color: #fff;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #757575;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.select-input:focus {
+  outline: none;
+  border-color: #739FF2;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.select-input {
+  background-color: #efefef;
+  cursor: pointer;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-6.5%200-12.3%203.2-16.1%208.1-3.8%204.9-4.5%2011.4-1.9%2017.4l130%20140c3.8%204.9%2010.3%207.7%2016.1%207.7s12.3-2.8%2016.1-7.7l130-140c2.6-6%201.9-12.5-1.9-17.4z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 30px;
+}
+
+.form-note {
+  font-size: 11px;
+  font-weight: 400;
+  color: #888;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+/* 버튼 영역 */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+}
+
+.btn-reset {
+  padding: 10px 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reset:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.btn-submit {
+  padding: 10px 20px;
+  background-color: #739FF2;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+  background-color: #4a8ae3;
+}
+
+.form-footer-note {
+  font-size: 11px;
+  font-weight: 400;
+  color: #777;
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .partnership-page {
+    padding: 24px 16px;
+  }
+
+  .form-section {
+    padding: 24px 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-reset,
+  .btn-submit {
+    width: 100%;
+  }
+}
+

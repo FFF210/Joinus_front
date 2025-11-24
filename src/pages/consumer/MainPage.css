@@ -1,0 +1,87 @@
+.mainpage-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+/* Main Content */
+.main-content {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 40px 24px;  /* 좌우 여백 */
+}
+
+/* 배너 영역 */
+.banner-wrapper {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+/* 상단 배너 */
+.main-top-banner {
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.main-top-banner img {
+  width: 100%;          /* 뷰포트 전체 너비 */
+  display: block;
+  border-radius: 12px;
+}
+
+.section {
+  margin-bottom: 56px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.section-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+}
+
+.more-link {
+  color: #4285f4;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.more-link:hover {
+  text-decoration: underline;
+}
+
+/* Card Grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .main-content {
+    padding: 32px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
