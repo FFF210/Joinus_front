@@ -129,7 +129,7 @@
 }
 
 /* 성별 라디오 버튼 */
-.gender-options {
+/* .gender-options {
   display: flex;
   gap: 16px;
   align-items: center;
@@ -153,6 +153,33 @@
 
 .radio-label:hover {
   color: #222;
+} */
+
+/* 주소 입력 영역 */
+.address-input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.address-input {
+  flex: 1;
+}
+
+.address-search-button {
+  padding: 12px 20px;
+  background: #739FF2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.address-search-button:hover {
+  background: #4a8ae3;
 }
 
 /* 버튼들 */

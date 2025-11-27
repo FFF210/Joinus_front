@@ -62,19 +62,19 @@ export default function Dashboard() {
       {/* 통계 카드 */}
       <div className="stats-section">
         <div className="stat-card">
-          <div className="stat-label">오늘 매출</div>
-          <div className="stat-value">₩ 1,240,000</div>
-          <div className="stat-note">어제 대비 +12%</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">어제 매출</div>
-          <div className="stat-value">₩ 1,110,000</div>
-          <div className="stat-note">이번 주 누적: ₩ 6,520,000</div>
-        </div>
-        <div className="stat-card">
           <div className="stat-label">이번주 매출</div>
           <div className="stat-value">₩ 6,520,000</div>
-          <div className="stat-note">오늘 신규 오픈 3건</div>
+          <div className="stat-note">오늘 매출: ₩ 1,240,000 (어제 대비 +12%)</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">진행 중 공구 수</div>
+          <div className="stat-value">12건</div>
+          <div className="stat-note">마감 임박: 3건</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">주문 대기 건수</div>
+          <div className="stat-value">8건</div>
+          <div className="stat-note">처리 필요</div>
         </div>
       </div>
 
@@ -121,7 +121,7 @@ export default function Dashboard() {
               navigate('/admin/statistics');
             }}
           >
-            매출 통계로 이동 >
+            전체 공구 통계 보기
           </a>
         </div>
         <div className="table-container">
@@ -133,7 +133,6 @@ export default function Dashboard() {
                 <th>참여수 / 최소 인원수</th>
                 <th>현재 매출</th>
                 <th>마감까지</th>
-                <th>통계</th>
               </tr>
             </thead>
             <tbody>
@@ -144,18 +143,6 @@ export default function Dashboard() {
                   <td>{item.participants} / {item.minParticipants}</td>
                   <td>{item.revenue}</td>
                   <td>{item.deadline}</td>
-                  <td>
-                    <a 
-                      href={`/admin/statistics/product?groupbuy=${item.id}`}
-                      className="detail-link"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate(`/admin/statistics/product?groupbuy=${item.id}`);
-                      }}
-                    >
-                      상세보기
-                    </a>
-                  </td>
                 </tr>
               ))}
             </tbody>

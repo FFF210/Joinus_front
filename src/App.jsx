@@ -18,6 +18,8 @@ import DeliveryDetail from './pages/admin/DeliveryDetail';
 import NotificationSend from './pages/admin/NotificationSend';
 import Statistics from './pages/admin/Statistics';
 import ProductStatistics from './pages/admin/ProductStatistics';
+import InquiryDetail from './pages/cs/InquiryDetail';
+import PendingPayment from './pages/admin/PendingPayment';
 import './App.css';
 
 function AppContent() {
@@ -47,6 +49,7 @@ function AppContent() {
             {/* 고객센터 */}
             <Route path="/cs/notice" element={<Notice />} />
             <Route path="/cs/notice/:id" element={<NoticeDetail />} />
+            <Route path="/cs/inquiry/:id" element={<InquiryDetail />} />
 
             {/* 납품문의 */}
             <Route path="/partnership" element={<Partnership />} />
@@ -59,6 +62,7 @@ function AppContent() {
             <Route path="/admin/notifications" element={<NotificationSend />} />
             <Route path="/admin/statistics" element={<Statistics />} />
             <Route path="/admin/statistics/product" element={<ProductStatistics />} />
+            <Route path="/admin/pendingPayment" element={<PendingPayment />} />
           </Routes>
         </main>
       </div>

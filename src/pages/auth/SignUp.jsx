@@ -71,6 +71,14 @@ export default function SignUp() {
     }
   };
 
+  // 주소 찾기 버튼 클릭 핸들러 (나중에 API 연동)
+  const handleAddressSearch = () => {
+    // TODO: 다음 우편번호 API 연동
+    console.log('주소 찾기 클릭');
+    // 임시로 알림만 표시
+    alert('주소 찾기 기능은 백엔드 연동 시 구현됩니다.');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -235,16 +243,25 @@ export default function SignUp() {
           {/* 주소 */}
           <div className="form-group">
             <label htmlFor="address" className="form-label">주소</label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              className="form-input full-width"
-              placeholder="기본 주소"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
+            <div className="address-input-wrapper">
+              <input
+                type="text"
+                id="address"
+                name="address"
+                className="form-input address-input"
+                placeholder="기본 주소"
+                value={formData.address}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="address-search-button"
+                onClick={handleAddressSearch}
+              >
+                주소 찾기
+              </button>
+            </div>
           </div>
 
           {/* 상세주소 */}
