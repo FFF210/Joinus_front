@@ -85,7 +85,7 @@ export default function Login() {
             <a href="/find-id" className="link" onClick={(e) => { e.preventDefault(); navigate('/find-id'); }}>아이디 찾기</a>
             <span className="divider">|</span>
             <a href="/find-password" className="link" onClick={(e) => { e.preventDefault(); navigate('/find-password'); }}>비밀번호 찾기</a>
-            <a href="/signup" className="link signup-link" onClick={(e) => { e.preventDefault(); navigate('/signup'); }}>회원가입</a>
+            {/* <a href="/signup" className="link signup-link" onClick={(e) => { e.preventDefault(); navigate('/signup'); }}>회원가입</a> */}
           </div>
 
           {/* 회원가입 안내 */}
