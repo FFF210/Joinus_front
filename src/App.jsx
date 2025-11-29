@@ -27,7 +27,7 @@ import DeliveryProductList from './pages/admin/DeliveryManagement/DeliveryProduc
 import './App.css';
 
 function AppContent() {
-  const location = useLocation();
+  const location = useLocation(); /* 현재 url정보 반환 */
   const isAdminPage = location.pathname.startsWith('/admin');
 
   return (

@@ -252,7 +252,8 @@ export default function MainPage() {
   return (
     <div className="mainpage-container">
       <div className="banner-wrapper">
-        <TopBannerCarousel />
+        {/* <TopBannerCarousel /> */}
+        <img src="/main-top-banner.png" alt="Top Banner" />
       </div>
       <main className="main-content">
         {/* 마감 임박 */}

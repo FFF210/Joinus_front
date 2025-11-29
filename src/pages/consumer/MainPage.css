@@ -12,11 +12,15 @@
 
 /* 배너 영역 */
 .banner-wrapper {
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 40px 24px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
-
+.banner-wrapper img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
 /* 상단 배너 */
 .main-top-banner {
   width: 100%;
