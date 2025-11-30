@@ -53,7 +53,7 @@ admin-portal/
 
 ## 기술 스택
 
-- React 19.2
-- React Router DOM 7
-- Vite 7
+- React 18.3
+- React Router DOM 6.30
+- Vite 7.2
 - JavaScript (ES6+)
