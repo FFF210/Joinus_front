@@ -2,7 +2,7 @@
 
 Figma 디자인을 기반으로 구축한 관리자 포털 애플리케이션입니다.
 
-## 🚀 시작하기
+## 시작하기
 
 ### 설치
 ```bash
@@ -19,7 +19,7 @@ npm run dev
 npm run build
 ```
 
-## 📁 프로젝트 구조
+## 프로젝트 구조
 
 ```
 admin-portal/
@@ -46,7 +46,7 @@ admin-portal/
 └── package.json
 ```
 
-## 🎨 주요 기능
+## 주요 기능
 
 - ✅ **대시보드**: 주문 통계 및 최근 주문 현황
 - ✅ **주문 관리**: 주문 상태별 필터링 및 관리
@@ -54,9 +54,9 @@ admin-portal/
 - ✅ **공구 관리**: 공동구매 진행 상황 모니터링
 - ✅ **마이페이지**: 사용자 정보 관리
 
-## 🛠 기술 스택
+## 기술 스택
 
-- React 19.2
-- React Router DOM 7
-- Vite 7
+- React 18.3
+- React Router DOM 6.30
+- Vite 7.2
 - JavaScript (ES6+)
