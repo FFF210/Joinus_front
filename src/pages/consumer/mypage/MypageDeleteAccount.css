@@ -13,10 +13,10 @@
 
 /* 제목 */
 .deleteaccount-title {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
-  margin-bottom: 22px;
-  margin-top: 10px;
+  margin-bottom: 20px;
+  margin-top: 20px;
   width: 100%;
   max-width: 900px;
 }

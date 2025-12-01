@@ -10,9 +10,10 @@
 
 /* 제목 */
 .suggestions-title {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
+   margin-top: 20px;
 }
 
 .suggestions-desc {

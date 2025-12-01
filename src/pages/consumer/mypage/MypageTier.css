@@ -20,9 +20,10 @@
 
 /* ================================ 텍스트 ================================ */
 .mypageTier_page-title {
-  font-size:26px;
+  font-size:20px;
   font-weight:800;
-  margin-bottom:15px;
+  margin-bottom:20px;
+  margin-top:20px;
 }
 
 .mypageTier_page-desc {

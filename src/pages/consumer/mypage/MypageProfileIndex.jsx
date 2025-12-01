@@ -9,9 +9,6 @@ export default function MypageProfileIndex() {
   return (
     <>
       <div className="profileindex-title">개인정보 관리</div>
-      <div className="profileindex-desc">
-        회원님의 소중한 정보를 안전하게 관리하세요.
-      </div>
 
       <div className="profileindex-verify-box">
 

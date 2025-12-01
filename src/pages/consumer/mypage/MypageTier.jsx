@@ -5,9 +5,6 @@ export default function MypageTier() {
   return (
     <>
       <div className="mypageTier_page-title">회원 등급</div>
-      <p className="mypageTier_page-desc">
-        연간 구매 금액에 따라 등급이 결정되며, 상품 구매시 등급별로 포인트가 적립됩니다.
-      </p>
 
       {/* 현재 등급 박스 */}
       <div className="mypageTier_grade-box">

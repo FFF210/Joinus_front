@@ -7,9 +7,6 @@ export default function MypageSuggestions() {
   return (
     <>
       <div className="suggestions-title">참여중인 공구 제안</div>
-      <p className="suggestions-desc">
-        참여중인 공구 제안과 내가 작성한 제안을 확인할 수 있습니다.
-      </p>
 
       {/* ================= 탭 메뉴 ================= */}
       <div className="suggestions-tab-menu">
