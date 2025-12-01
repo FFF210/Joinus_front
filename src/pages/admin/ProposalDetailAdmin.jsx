@@ -1,7 +1,7 @@
 import { Label, Button, Input, FormGroup} from "reactstrap";
 import { Link, Outlet } from "react-router-dom";
 
-export default function ProposalDetail() {
+export default function ProposalDetailAdmin() {
 
     const total = 15;
     const joined = 10;
@@ -12,7 +12,7 @@ export default function ProposalDetail() {
             <div style={styles.pageWrapper}>
               <div style={styles.container}>
                 <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" ,gap:'10px'}}>
-                  <Link to="/group-propsal" style={{ textDecoration: 'none', color: 'black', display: "flex", alignItems: "center",gap:'10px' }}>
+                  <Link to="/admin/proposalMngList" style={{ textDecoration: 'none', color: 'black', display: "flex", alignItems: "center",gap:'10px' }}>
                     <img src="/left.png" style={{width:'30px'}}/><h3 className="mb-0 fw-bold text-start">목록으로</h3>
                   </Link>
                 </div>
@@ -29,7 +29,7 @@ export default function ProposalDetail() {
                     <div>
                         <img src="/computer.png" style={{width:'500px', height:"500px", marginBottom:'30px', borderRadius:'10px'}}/>
                     </div>
-                    <div style={{width:"500px", height:'630px', border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
+                    <div style={{width:"500px", height:'740px', border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
                         <div style={{ display:'flex', justifyContent: 'space-between', marginBottom:'10px'}}>
                             <div style={{border:'1px solid black', borderRadius:'5px', fontSize:'12px', textAlign:'center', alignContent:'center'}}>카테고리</div>
                             <div style={{backgroundColor:'#79F273', color:'black', width:'100px', height:'30px', alignContent:'center', textAlign:'center'}}>공구 등록</div>
@@ -37,7 +37,7 @@ export default function ProposalDetail() {
                         <div>
                             <Label style={{fontSize:"20px"}}>ASUS 비보북 S 16 M3607KA-SH035W (SSD 512GB)</Label>
                         </div>
-                        <div >
+                        <div style={{display:'flex'}}>
                             <Label style={{fontSize:"12px", marginRight:'10px'}}>작성자 : 홍길동</Label>
                             <Label style={{fontSize:"12px"}}>2025-11-30</Label>
                         </div>
@@ -64,14 +64,25 @@ export default function ProposalDetail() {
                             </div>
                             <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
                             <div style={{display:'flex', gap:'10px',alignItems: "center"}}>
-                                <div className="fw-bold" style={{fontSize:'14px'}}>공구 상세 URL</div>
-                                <Button style={{backgroundColor:'#739FF2', width:"70px", height:"25px", fontSize:"12px", padding:"0", border:'none'}}>바로가기</Button>
+                                <div>
+                                  <div className="fw-bold" style={{fontSize:'12px', marginTop:'0'}}>반려 사유 내용(관리자)</div>
+                                  <div style={{fontSize:'12px', marginTop:'0'}}>님 그거 불법임 ㅅㄱ</div>
+                                  <br/>
+                                  <div style={{border:'none', width:'460px', height:'auto', backgroundColor:'#d9d9d9', padding:'10px'}}>
+                                    <Input type="textarea"style={{border:'1px solid black',width:'100%',height:'60px', backgroundColor:'white',resize:'none',fontSize:'12px'}}/>
+                                    <div style={{ display:'flex', justifyContent:'flex-end', marginTop:'10px', gap:'10px' }}>
+                                      <Button style={{fontSize:'12px', backgroundColor:'#739FF2', color:'white', border:'none'}}>공구 등록</Button>
+                                      <Button style={{fontSize:'12px', backgroundColor:'#F55F5F', color:'white', border:'none'}}>반려 처리</Button>
+                                    </div>
+                                  </div>
+                              </div>
                             </div>
                             <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
-                            <div style={{fontSize:'24px'}}>0</div>
                             <div style={{display:"flex",alignItems: "center"}}>
-                                <img src="/ddabong.png" style={{width:"25px", height:'25px', marginRight:'20px'}}/>
-                                <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}>투표하기</Button>
+                                <img src="/ddabong.png" style={{width:"25px", height:'25px', marginRight:'10px'}}/>
+                                <div style={{fontSize:'24px', marginRight:'20px'}}>0</div>
+                                <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'200px'}}>투표하기</Button>
+                                <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none'}}>공구 등록</Button>
                             </div>
                         </div>
                     </div>
@@ -100,17 +111,9 @@ export default function ProposalDetail() {
                     <hr style={{alignItems:'center', margin:'10px 0 10px 0'}}/>
                 </div>
             </div>
-            <div style={styles.pageWrapper}>
-                <div style={styles.container}>
-                  <div style={{height:'100px', backgroundColor:'#d9d9d9'}}>
-                  
-                  </div>
-                </div>
-            </div>
         </>
     );
 }
-
 
 const styles = {
   pageWrapper: {
