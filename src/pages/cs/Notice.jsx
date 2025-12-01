@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import '../../styles/components/button.css';
+import '../../styles/components/table.css';
 import './Notice.css';
 
 export default function NoticePage() {
@@ -233,7 +235,7 @@ export default function NoticePage() {
             </div>
             <div className="inquiry-footer-section">
               <button
-                className="inquiry-write-button"
+                className="btn btn-primary"
                 onClick={() => navigate('/cs/inquiry/write')}
                 >
                   문의 작성

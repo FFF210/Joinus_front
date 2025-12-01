@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import '../../styles/components/button.css';
 import './admin-common.css';
 import './FaqForm.css';
 

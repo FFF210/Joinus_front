@@ -460,38 +460,8 @@
   flex-shrink: 0;
 }
 
-.btn-primary,
-.btn-secondary,
-.btn-outline {
-  padding: 12px 32px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background-color: #3b82f6;
-  color: #ffffff;
-  border: none;
-}
-
-.btn-primary:hover {
-  background-color: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-}
-
-.btn-secondary {
-  background-color: #ffffff;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-
-.btn-secondary:hover {
-  background-color: #f9fafb;
-}
+/* 버튼 스타일은 src/styles/components/button.css 사용 */
+/* 이 페이지 전용 버튼 스타일이 필요한 경우에만 여기에 추가 */
 
 .btn-outline {
   background-color: #ffffff;

@@ -5,13 +5,13 @@ export default function UserInfo() {
   return (
     <>
       <Card style={{ width:"860px" }}>
-        <CardHeader className="CardHeaderCss">
+        <CardHeader className="card-header-custom">
           <div style={{ marginTop:"5px", color:"#2D81EF", fontSize:"16px" }}>
             최지성님 환영합니다.
           </div>
         </CardHeader>
 
-        <CardBody className="CardBodyCss" style={{ display: "flex", alignItems: "center" }}>
+        <CardBody className="card-body-custom" style={{ display: "flex", alignItems: "center" }}>
           
           {/* 왼쪽 영역 : 아이디 + 회원 등급 */}
           <div style={{ flex: 1 }}>

@@ -1,74 +1,23 @@
+/* 공통 스타일은 src/styles/pages/auth/auth-common.css 사용 */
 .login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f5;
-  padding: 40px 24px;
+  /* auth-common.css의 .auth-page 사용 */
 }
 
 .login-container {
   max-width: 400px;
-  width: 100%;
-  background: white;
-  border-radius: 8px;
-  padding: 48px 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* auth-common.css의 .auth-container 사용 */
 }
 
-/* 제목 */
 .login-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #222;
-  text-align: center;
-  margin-bottom: 12px;
+  /* auth-common.css의 .auth-title 사용 */
 }
 
 .login-subtitle {
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-  margin-bottom: 32px;
+  /* auth-common.css의 .auth-subtitle 사용 */
 }
 
-/* 폼 */
 .login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #222;
-}
-
-.form-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-}
-
-.form-input::placeholder {
-  color: #999;
-}
-
-.form-input:focus {
-  border-color: #739FF2;
+  /* auth-common.css의 .auth-form 사용 */
 }
 
 /* 로그인 버튼 */
@@ -108,62 +57,7 @@
   background: #e5cd00;
 }
 
-/* 링크들 */
-.login-links {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.link {
-  font-size: 14px;
-  color: #739FF2;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.link:hover {
-  color: #4a8ae3;
-  text-decoration: underline;
-}
-
-.divider {
-  color: #ddd;
-  margin: 0 8px;
-}
-
-.signup-link {
-  margin-left: auto;
-}
-
-/* 회원가입 안내 */
-.signup-prompt {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
-  font-size: 14px;
-  color: #666;
-}
-
-.signup-link-text {
-  font-size: 14px;
-  font-weight: 600;
-  color: #739FF2;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.signup-link-text:hover {
-  color: #4a8ae3;
-  text-decoration: underline;
-}
+/* 링크들은 auth-common.css의 .auth-links, .link, .auth-prompt 사용 */
 
 /* 반응형 */
 @media (max-width: 480px) {

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import SearchFilter from './SearchFilter';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import '../../styles/components/button.css';
+import '../../styles/components/table.css';
 import './admin-common.css';
 import './FaqAndInquiryList.css'
 

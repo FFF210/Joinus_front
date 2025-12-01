@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import SearchFilter from './SearchFilter';
+import '../../styles/components/button.css';
+import '../../styles/components/table.css';
 import './admin-common.css';
 import './ProposalMngList.css';
 

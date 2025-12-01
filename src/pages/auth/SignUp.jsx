@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/pages/auth/auth-common.css';
 import './SignUp.css';
 
 export default function SignUp() {
@@ -139,7 +140,7 @@ export default function SignUp() {
           {/* 아이디 */}
           <div className="form-group">
             <label htmlFor="userId" className="form-label">아이디</label>
-            <div className="userId-input-wrapper">
+            <div className="user-id-input-wrapper">
               <input
                 type="text"
                 id="userId"
@@ -160,7 +161,7 @@ export default function SignUp() {
               </button>
             </div>
             {userIdChecked && (
-              <span className={`userId-message ${userIdAvailable ? 'success' : 'error'}`}>
+              <span className={`user-id-message ${userIdAvailable ? 'success' : 'error'}`}>
                 {userIdMessage}
               </span>
             )}

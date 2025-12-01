@@ -1,4 +1,6 @@
-/* 공통 버튼 스타일 */
+/* 공통 버튼 유틸리티 클래스 */
+
+/* 기본 버튼 */
 .btn {
   padding: 10px 16px;
   border-radius: var(--border-radius-sm);
@@ -7,6 +9,7 @@
   cursor: pointer;
   transition: all 0.2s;
   outline: none;
+  border: none;
 }
 
 .btn:disabled {
@@ -14,17 +17,17 @@
   cursor: not-allowed;
 }
 
-/* Outline 버튼 (상세보기) */
+/* Outline 버튼 (상세보기 등) */
 .btn-outline {
   background: var(--color-white);
   border: 1px solid var(--color-border) !important;
-  color: #333333;
+  color: var(--color-text);
   font-weight: 500;
 }
 
 .btn-outline:hover:not(:disabled) {
   background: var(--color-bg);
-  color: #333333;
+  color: var(--color-text);
   border-color: #cccccc !important;
 }
 
@@ -33,7 +36,7 @@
   border-color: #cccccc !important;
 }
 
-/* Primary 버튼 (공구 참여하기/공동결제, 공통 primary) */
+/* Primary 버튼 (공통 primary) */
 .btn-primary {
   background: var(--color-primary);
   border: none;
@@ -48,3 +51,39 @@
 .btn-primary:active:not(:disabled) {
   background: var(--color-primary-active);
 }
+
+/* Secondary 버튼 */
+.btn-secondary {
+  background-color: var(--color-white);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-subtle);
+  font-weight: 600;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-bg-light);
+  border-color: var(--color-text-muted);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background-color: var(--color-border-light);
+}
+
+/* 전체 너비 버튼 */
+.btn-full-width {
+  width: 100%;
+}
+
+/* 큰 버튼 */
+.btn-lg {
+  padding: 14px 24px;
+  font-size: var(--font-size-base);
+}
+
+/* 작은 버튼 */
+.btn-sm {
+  padding: 8px 12px;
+  font-size: var(--font-size-xs);
+}
+
+

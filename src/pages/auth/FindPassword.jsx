@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/pages/auth/auth-common.css';
+import '../../styles/components/button.css';
 import './FindPassword.css';
 
 export default function FindPassword() {

@@ -1,103 +1,53 @@
+/* 공통 스타일은 src/styles/pages/auth/auth-common.css 사용 */
 .signup-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f5;
-  padding: 60px 24px;
+  /* auth-common.css의 .auth-page 사용 */
 }
 
 .signup-container {
   max-width: 600px;
-  width: 100%;
-  background: white;
-  border-radius: 8px;
-  padding: 48px 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* auth-common.css의 .auth-container 사용 */
 }
 
-/* 제목 */
 .signup-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #222;
-  text-align: center;
-  margin-bottom: 12px;
+  /* auth-common.css의 .auth-title 사용 */
 }
 
 .signup-subtitle {
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-  margin-bottom: 32px;
+  /* auth-common.css의 .auth-subtitle 사용 */
 }
 
-/* 폼 */
 .signup-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  /* auth-common.css의 .auth-form 사용 */
 }
 
 /* 아이디 입력 필드와 중복 확인 버튼 */
-.userId-input-wrapper {
+.user-id-input-wrapper {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-3);
   align-items: flex-start;
   max-width: 400px;
 }
 
-.userId-input-wrapper .form-input {
+.user-id-input-wrapper .form-input {
   flex: 1;
   max-width: none;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #222;
-}
-
-.form-input {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-}
+/* form-group, form-label, form-input은 auth-common.css 사용 */
 
 .form-input.full-width {
   max-width: 100%;
 }
 
-.form-input::placeholder {
-  color: #999;
-}
-
-.form-input:focus {
-  border-color: #739FF2;
-}
-
 /* 아이디 중복 확인 버튼 */
 .check-button {
-  padding: 12px 16px;
-  background: #739FF2;
+  padding: 12px var(--spacing-4);
+  background: var(--color-primary);
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  color: white;
+  color: var(--color-white);
   cursor: pointer;
   transition: background 0.2s;
   white-space: nowrap;
@@ -106,26 +56,26 @@
 }
 
 .check-button:hover:not(:disabled) {
-  background: #4a8ae3;
+  background: var(--color-primary-hover);
 }
 
 .check-button:disabled {
-  background: #ccc;
+  background: #cccccc;
   cursor: not-allowed;
 }
 
-.userId-message {
-  font-size: 12px;
-  margin-top: 8px;
+.user-id-message {
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-3);
   display: block;
 }
 
-.userId-message.success {
-  color: #28a745;
+.user-id-message.success {
+  color: var(--color-badge-green-text);
 }
 
-.userId-message.error {
-  color: #dc3545;
+.user-id-message.error {
+  color: var(--color-badge-red-text);
 }
 
 /* 성별 라디오 버튼 */
@@ -167,11 +117,11 @@
 
 .address-search-button {
   padding: 12px 20px;
-  background: #739FF2;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-white);
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
@@ -179,7 +129,7 @@
 }
 
 .address-search-button:hover {
-  background: #4a8ae3;
+  background: var(--color-primary-hover);
 }
 
 /* 버튼들 */
@@ -193,20 +143,20 @@
 
 .submit-button {
   padding: 14px;
-  background: #739FF2;
+  background: var(--color-primary);
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
   font-weight: 600;
-  color: white;
+  color: var(--color-white);
   cursor: pointer;
   transition: background 0.2s;
-  max-width: 300px;  /* 최대 너비 제한 */
-  width: 100%;       /* 부모 너비만큼 */
+  max-width: 300px;
+  width: 100%;
 }
 
 .submit-button:hover {
-  background: #4a8ae3;
+  background: var(--color-primary-hover);
 }
 
 /* .cancel-button {
@@ -226,31 +176,7 @@
   border-color: #999;
 }
 
-/* 로그인 안내 */
-.login-prompt {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
-  font-size: 14px;
-  color: #666;
-}
-
-.login-link {
-  font-size: 14px;
-  font-weight: 600;
-  color: #739FF2;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.login-link:hover {
-  color: #4a8ae3;
-  text-decoration: underline;
-}
+/* 로그인 안내는 auth-common.css의 .auth-prompt, .auth-link 사용 */
 
 /* 반응형 */
 @media (max-width: 768px) {

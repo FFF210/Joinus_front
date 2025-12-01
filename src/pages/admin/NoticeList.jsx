@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import SearchFilter from './SearchFilter';
+import '../../styles/components/button.css';
+import '../../styles/components/table.css';
 import './admin-common.css';
 
 const PageName = () => {

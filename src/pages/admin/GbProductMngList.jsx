@@ -4,6 +4,8 @@ import Header from './Header';
 import SearchFilter from './SearchFilter';
 import NotificationModal from './NotificationModal';
 import GbProductCreate from './GbProductCreate';
+import '../../styles/components/button.css';
+import '../../styles/components/table.css';
 import './admin-common.css';
 import './GbProductMngList.css';
 

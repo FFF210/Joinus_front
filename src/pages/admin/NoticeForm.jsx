@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from './Header';
+import '../../styles/components/button.css';
 import './admin-common.css';
 import './NoticeForm.css';
 

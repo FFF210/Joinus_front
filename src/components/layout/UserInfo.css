@@ -1,12 +1,13 @@
-.CardHeaderCss{
+/* 네이밍 컨벤션 통일: kebab-case 사용 */
+.card-header-custom {
     width: 860px;
     background-color: #F2F9FC;
     border: solid 1px #2833D1;
     height: 50px;
 }
 
-.CardBodyCss {
+.card-body-custom {
     width: 860px;
-    background-color: #ffffff;
-    border: solid 1px black;
+    background-color: var(--color-white);
+    border: solid 1px var(--color-text);
 }

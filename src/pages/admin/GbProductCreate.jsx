@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ChevronDown, ChevronUp } from 'lucide-react';
+import '../../styles/components/button.css';
 import './GBProductCreate.css';
 
 const GBProductCreatePage = () => {

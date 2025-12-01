@@ -6,11 +6,11 @@
 
 /* 헤더 */
 .page-header {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 24px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -21,58 +21,58 @@
 }
 
 .page-title {
-  font-size: 20px;
+  font-size: var(--font-size-lg);
   font-weight: 700;
-  color: #000;
-  margin-bottom: 8px;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-3);
 }
 
 .page-description {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 400;
-  color: #666;
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
 .header-date {
   font-size: 11.8px;
   font-weight: 400;
-  color: #555;
+  color: var(--color-text-secondary);
 }
 
 /* 통계 카드 */
 .dashboard-page .stats-section {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
 }
 
 .dashboard-page .stat-card {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 400;
-  color: #777;
-  margin-bottom: 8px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-3);
 }
 
 .stat-value {
   font-size: 16.2px;
   font-weight: 700;
-  color: #000;
-  margin-bottom: 8px;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-3);
 }
 
 .stat-note {
   font-size: 11px;
   font-weight: 400;
-  color: #999;
+  color: var(--color-text-muted);
   line-height: 1.4;
 }
 
@@ -80,24 +80,24 @@
 .content-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
 }
 
 .content-card {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 24px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
 }
 
 .card-title {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  color: #000;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eee;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .proposal-list,
@@ -109,8 +109,8 @@
 
 .proposal-item,
 .payment-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .proposal-item:last-child,
@@ -122,42 +122,42 @@
 .payment-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .proposal-name,
 .payment-name {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #333;
+  color: var(--color-text);
 }
 
 .proposal-votes,
 .payment-count {
   font-size: 11px;
   font-weight: 400;
-  color: #999;
+  color: var(--color-text-muted);
 }
 
 /* 진행 중 공구 목록 */
 .list-section {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 24px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
 }
 
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .list-title {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 700;
-  color: #000;
+  color: var(--color-text);
 }
 
 .list-link {
@@ -183,28 +183,28 @@
 }
 
 .dashboard-table thead {
-  background-color: #fafafa;
+  background-color: var(--color-bg-lighter);
 }
 
 .dashboard-table th {
-  padding: 12px;
-  border: 1px solid #eee;
-  font-size: 12px;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-border-light);
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #000;
+  color: var(--color-text);
   text-align: left;
 }
 
 .dashboard-table td {
-  padding: 12px;
-  border: 1px solid #eee;
-  font-size: 12px;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-border-light);
+  font-size: var(--font-size-xs);
   font-weight: 400;
-  color: #000;
+  color: var(--color-text);
 }
 
 .dashboard-table tbody tr:hover {
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-light);
 }
 
 .detail-link {

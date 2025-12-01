@@ -37,7 +37,7 @@ import FaqForm from './pages/admin/FaqForm';
 import NoticeForm from './pages/admin/NoticeForm';
 import AdminInquiryDetail from './pages/admin/AdminInquiryDetail';
 // 구매(주문)/교환 반품
-import ExchangeReq from './pages/consumer/mypage/exchangeReq';
+import ExchangeReq from './pages/consumer/mypage/ExchangeReq';
 import ReturnReq from './pages/consumer/mypage/ReturnReq';
 import CnclExchRtrnHisList from './pages/consumer/mypage/CnclExchRtrnHisList';
 import ExchangeDetail from './pages/consumer/mypage/ExchangeDetail';
@@ -180,11 +180,11 @@ function AppContent() {
             <Route path="/admin/statistics" element={<Statistics />} />
             <Route path="/admin/statistics/product" element={<ProductStatistics />} />
             <Route path="/admin/pendingPayment" element={<PendingPayment />} />
-            <Route path="/admin/delivery/applications" element={<DeliveryApplicationList />} />
-            <Route path="/admin/delivery/application/:id" element={<DeliveryDetail />} />
-            <Route path="/admin/delivery/approved" element={<ApprovedDeliveryCompany />} />
-            <Route path="/admin/delivery/products/new" element={<DeliveryProductForm />} />
-            <Route path="/admin/delivery/products" element={<DeliveryProductList />} />
+            <Route path="/admin/suppliy/applications" element={<DeliveryApplicationList />} />
+            <Route path="/admin/suppliy/application/:id" element={<DeliveryDetail />} />
+            <Route path="/admin/suppliy/approved" element={<ApprovedDeliveryCompany />} />
+            <Route path="/admin/suppliy/products/new" element={<DeliveryProductForm />} />
+            <Route path="/admin/suppliy/products" element={<DeliveryProductList />} />
 
             {/* 제안/공구상품/회원관리 */}
             <Route path="/admin/proposalMngList" element={<ProposalMngList />} />

@@ -1,0 +1,161 @@
+/* 공통 테이블 스타일 */
+
+/* 테이블 컨테이너 (관리자 리스트 등) */
+.table-container {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 0 !important;
+  overflow: auto;
+  margin-bottom: var(--spacing-2);
+}
+
+/* 관리자 테이블 */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border-radius: 0 !important;
+}
+
+.admin-table thead {
+  background-color: #e5eeff;
+}
+
+.admin-table th {
+  padding: var(--spacing-4);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border-subtle);
+  white-space: nowrap;
+}
+
+.admin-table tbody tr {
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background-color 0.2s;
+}
+
+.admin-table tbody tr:hover {
+  background-color: var(--color-bg-light);
+}
+
+.admin-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.admin-table td {
+  padding: var(--spacing-4);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title-cell {
+  color: var(--color-text);
+  font-weight: 500;
+  cursor: pointer;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title-cell:hover {
+  color: var(--color-admin-accent);
+  text-decoration: underline;
+}
+
+/* 일반 테이블 (CS/소비자 페이지용) */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-white);
+}
+
+.table thead {
+  background-color: var(--color-bg-lighter);
+  border-bottom: 2px solid var(--color-border-light);
+}
+
+.table th {
+  padding: var(--spacing-4);
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.table td {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.table tbody tr:hover {
+  background-color: var(--color-bg-lighter);
+}
+
+.table tbody tr.clickable {
+  cursor: pointer;
+}
+
+/* 공지사항/문의 테이블 (cs/Notice) */
+.notice-table,
+.inquiry-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.notice-table thead tr,
+.inquiry-table thead tr {
+  background: var(--color-bg-lighter);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.notice-table th,
+.inquiry-table th {
+  padding: var(--spacing-4);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.notice-table tbody tr,
+.inquiry-table tbody tr {
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background 0.2s;
+}
+
+.notice-table tbody tr:hover,
+.inquiry-table tbody tr:hover {
+  background: var(--color-bg-lighter);
+  cursor: pointer;
+}
+
+.notice-table td,
+.inquiry-table td {
+  padding: var(--spacing-4);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* 테이블 래퍼 */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* 빈 테이블 상태 */
+.table-empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+
