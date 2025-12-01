@@ -24,6 +24,7 @@ import DeliveryApplicationList from './pages/admin/DeliveryManagement/DeliveryAp
 import ApprovedDeliveryCompany from './pages/admin/DeliveryManagement/ApprovedDeliveryCompany';
 import DeliveryProductForm from './pages/admin/DeliveryManagement/DeliveryProductForm';
 import DeliveryProductList from './pages/admin/DeliveryManagement/DeliveryProductList';
+// 제안/공구상품/회원관리
 import ProposalMngList from './pages/admin/ProposalMngList'
 import GbProductMngList from './pages/admin/GbProductMngList'
 import GbProductCreate from './pages/admin/GbProductCreate';
@@ -35,8 +36,18 @@ import MemberDetail from './pages/admin/MemberDetail';
 import FaqForm from './pages/admin/FaqForm';
 import NoticeForm from './pages/admin/NoticeForm';
 import AdminInquiryDetail from './pages/admin/AdminInquiryDetail';
+// 구매(주문)/교환 반품
+import ExchangeReq from './pages/consumer/mypage/exchangeReq';
+import ReturnReq from './pages/consumer/mypage/ReturnReq';
+import CnclExchRtrnHisList from './pages/consumer/mypage/CnclExchRtrnHisList';
+import ExchangeDetail from './pages/consumer/mypage/ExchangeDetail';
+import ReturnDetail from './pages/consumer/mypage/ReturnDetail';
+import AdminOrderList from './pages/admin/AdminOrderList';
+import AdminOrderDetail from './pages/admin/AdminOrderDetail';
+import ExchRtrnWaitingList from './pages/admin/ExchRtrnWaitingList';
+import ExchRtrnWaitingDetail from './pages/admin/ExchRtrnWaitingDetail';
+import './App.css';
 
-// import './App.css';
 
 function AppContent() {
   const location = useLocation(); /* 현재 url정보 반환 */
@@ -71,6 +82,14 @@ function AppContent() {
             {/* 납품문의 */}
             <Route path="/partnership" element={<Partnership />} />
 
+            {/* 사용자 마이페이지 */}
+            <Route path="/mypage/exchangeReq" element={<ExchangeReq/>} />
+            <Route path="/mypage/returnReq" element={<ReturnReq/>} />
+            <Route path="/mypage/cnclExchRtrnHisList" element={<CnclExchRtrnHisList/>} />
+            <Route path="/mypage/exchangeDetail:/id" element={<ExchangeDetail/>} />
+            <Route path="/mypage/returnDetail:/id" element={<ReturnDetail/>} />
+
+
             {/* 관리자 페이지 */}
             <Route path="/admin" element={<Dashboard />} />
             <Route path="/admin/noticeWrite" element={<NoticeWrite />} />
@@ -85,6 +104,7 @@ function AppContent() {
             <Route path="/admin/delivery/approved" element={<ApprovedDeliveryCompany />} />
             <Route path="/admin/delivery/products/new" element={<DeliveryProductForm />} />
             <Route path="/admin/delivery/products" element={<DeliveryProductList />} />
+
             {/* 제안/공구상품/회원관리 */}
             <Route path="/admin/proposalMngList" element={<ProposalMngList />} />
             <Route path="/admin/gbProductMngList" element={<GbProductMngList />} />
@@ -98,6 +118,12 @@ function AppContent() {
             <Route path="/admin/faqForm" element={<FaqForm />} />
             <Route path="/admin/memberList" element={<MemberList />} />
             <Route path="/admin/member/:id" element={<MemberDetail />} />
+
+            {/* 구매(주문)/교환 반품 */}
+            <Route path="/admin/adminOrderList" element={<AdminOrderList/>} />
+            <Route path="/admin/adminOrderDetail" element={<AdminOrderDetail/>} />
+            <Route path="/admin/exchRtrnWaitingList" element={<ExchRtrnWaitingList/>} />
+            <Route path="/admin/exchRtrnWaitingDetail" element={<ExchRtrnWaitingDetail/>} />
 
           </Routes>
         </main>

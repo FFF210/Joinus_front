@@ -109,7 +109,9 @@ const Sidebar = () => {
               style={{ cursor: 'pointer' }}>
                 <span className="submenu-label">공구 목록 조회</span>
               </div>
-              <div className="submenu-item">
+              <div className="submenu-item"
+              onClick={() => navigate('/admin/adminOrderList')}
+              style={{ cursor: 'pointer' }}>
                 <span className="submenu-label">공구 상품 주문/배송 관리</span>
               </div>
             </div>
@@ -118,7 +120,9 @@ const Sidebar = () => {
 
         {/* 교환 및 반품 관리 */}
         <div className="menu-item-container">
-          <div className="menu-item" >
+          <div className="menu-item" 
+          onClick={() => navigate('/admin/ExchRtrnWaitingList')}
+              style={{ cursor: 'pointer' }}>
             <div className="menu-item-content">
               <RefreshCw size={20} className="menu-icon" />
               {!isCollapsed && <span className="menu-label">교환 및 반품 관리</span>}
