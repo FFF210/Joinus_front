@@ -66,7 +66,7 @@ export default function Sidebar({children}) {
             </NavItem>
             <NavItem>
               <NavLink href="#" style={{ color: "#000", fontSize:"12px", textDecoration: "none" }}>
-                참여중인 제안
+                공동구매 요청
               </NavLink>
             </NavItem>
             <NavItem>
@@ -99,16 +99,6 @@ export default function Sidebar({children}) {
             <NavItem>
               <NavLink href="#" style={{ color: "#000", fontSize:"12px", textDecoration: "none" }}>
                 배송지 관리
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="#" style={{ color: "#000", fontSize:"12px", textDecoration: "none" }}>
-                결제 수단 관리
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="#" style={{ color: "#000", fontSize:"12px", textDecoration: "none" }}>
-                환불 계좌 관리
               </NavLink>
             </NavItem>
             <NavItem>
