@@ -6,7 +6,7 @@ import {
   ChevronDown, ChevronRight,
   ChevronsLeft, ChevronsRight, Truck
 } from 'lucide-react';
-import './AdminSidebar.css';
+import './Sidebar.css';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Sidebar = () => {
         {/* 홈 */}
         <div className="menu-item-container">
           <div className="menu-item active"
-          onClick={() => navigate('/admin')}
+          //  onClick={() => navigate('/admin/')}
             style={{ cursor: 'pointer' }} >
             <div className="menu-item-content">
               <Home size={20} className="menu-icon" />

@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './NoticeWrite.css';
 
 export default function NoticeWrite() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEdit = !!id;
+
   const [formData, setFormData] = useState({
-    category: '',
     title: '',
-    content: ''
+    content: '',
+    image: null
   });
 
   const handleChange = (e) => {
@@ -15,17 +18,27 @@ export default function NoticeWrite() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+   const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData(prev => ({
+        ...prev,
+        image: file
+      }));
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('공지사항 작성:', formData);
     // 실제 작성 로직 (API 호출 등)
     alert('공지사항이 작성되었습니다.');
-    navigate('/admin/cs/notice');
+    navigate('/admin/noticeList');
   };
 
   const handleCancel = () => {
     if (window.confirm('작성을 취소하시겠습니까?')) {
-      navigate('/admin/cs/notice');
+      navigate('/admin/noticeList');
     }
   };
 
@@ -35,7 +48,7 @@ export default function NoticeWrite() {
         <h1 className="page-title">공지사항 작성</h1>
 
         <form onSubmit={handleSubmit} className="notice-write-form">
-          <div className="form-group">
+          {/* <div className="form-group">
             <label htmlFor="category">
               카테고리 <span className="required">*</span>
             </label>
@@ -51,7 +64,7 @@ export default function NoticeWrite() {
               <option value="계획">계획</option>
               <option value="이벤트">이벤트</option>
             </select>
-          </div>
+          </div> */}
 
           <div className="form-group">
             <label htmlFor="title">
@@ -83,12 +96,29 @@ export default function NoticeWrite() {
             />
           </div>
 
+           {/* 이미지 첨부 */}
+            <div className="form-group">
+              <label className="form-label">이미지 첨부(옵션)</label>
+              <div className="image-upload-container">
+                <input
+                  type="file"
+                  id="image-upload"
+                  className="image-input"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <label htmlFor="image-upload" className="image-upload-label">
+                  {formData.image ? formData.image.name : '파일 선택'}
+                </label>
+              </div>
+            </div>
+
           <div className="form-actions">
             <button type="button" className="btn-cancel" onClick={handleCancel}>
               취소
             </button>
             <button type="submit" className="btn-submit">
-              작성 완료
+              등록
             </button>
           </div>
         </form>

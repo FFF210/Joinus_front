@@ -24,7 +24,19 @@ import DeliveryApplicationList from './pages/admin/DeliveryManagement/DeliveryAp
 import ApprovedDeliveryCompany from './pages/admin/DeliveryManagement/ApprovedDeliveryCompany';
 import DeliveryProductForm from './pages/admin/DeliveryManagement/DeliveryProductForm';
 import DeliveryProductList from './pages/admin/DeliveryManagement/DeliveryProductList';
-import './App.css';
+import ProposalMngList from './pages/admin/ProposalMngList'
+import GbProductMngList from './pages/admin/GbProductMngList'
+import GbProductCreate from './pages/admin/GbProductCreate';
+import OptionAddPage from './pages/admin/OptionAddPage';
+import NoticeList from './pages/admin/NoticeList';
+import FaqAndInquiryList from './pages/admin/FaqAndInquiryList';
+import MemberList from './pages/admin/MemberList';
+import MemberDetail from './pages/admin/MemberDetail';
+import FaqForm from './pages/admin/FaqForm';
+import NoticeForm from './pages/admin/NoticeForm';
+import AdminInquiryDetail from './pages/admin/AdminInquiryDetail';
+
+// import './App.css';
 
 function AppContent() {
   const location = useLocation(); /* 현재 url정보 반환 */
@@ -73,6 +85,20 @@ function AppContent() {
             <Route path="/admin/delivery/approved" element={<ApprovedDeliveryCompany />} />
             <Route path="/admin/delivery/products/new" element={<DeliveryProductForm />} />
             <Route path="/admin/delivery/products" element={<DeliveryProductList />} />
+            {/* 제안/공구상품/회원관리 */}
+            <Route path="/admin/proposalMngList" element={<ProposalMngList />} />
+            <Route path="/admin/gbProductMngList" element={<GbProductMngList />} />
+            <Route path="/admin/gbProductCreate" element={<GbProductCreate />} />
+            <Route path="/admin/optionAdd" element={<OptionAddPage />} />
+            <Route path="/admin/noticeList" element={<NoticeList />} />
+            <Route path="/admin/noticeForm" element={<NoticeForm />} />
+            <Route path="/admin/noticeForm/:id" element={<NoticeForm />} />
+            <Route path="/admin/faqAndInquiryList" element={<FaqAndInquiryList />} />
+            <Route path="/admin/admininquiryDetail/:id" element={<AdminInquiryDetail />} />
+            <Route path="/admin/faqForm" element={<FaqForm />} />
+            <Route path="/admin/memberList" element={<MemberList />} />
+            <Route path="/admin/member/:id" element={<MemberDetail />} />
+
           </Routes>
         </main>
       </div>
