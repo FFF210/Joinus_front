@@ -14,8 +14,8 @@ export default function Reviews(){
                         <div style={{background: '#E5EEFF', padding: '5px 0' }}><Link to="/gbProductDetail/reviews" style={{color:'black'}}>
                         <Label style={{ fontWeight: 'bold', margin: '0',width:'255px', textAlign:'center' }}>리뷰</Label></Link>
                         </div>
-                        <div style={{  padding: '5px 0' }}>
-                        <Label style={{ fontWeight: 'bold', margin: '0', width:'255px', textAlign:'center'}}>Q & A</Label>
+                        <div style={{  padding: '5px 0' }}><Link to="/gbProductDetail/qAndA" style={{color:'black'}}>
+                        <Label style={{ fontWeight: 'bold', margin: '0', width:'255px', textAlign:'center'}}>Q & A</Label></Link>
                         </div>
                         <div style={{ padding: '5px 0' }}><Link to="/gbProductDetail/policy" style={{color:'black'}}>
                         <Label style={{ fontWeight: 'bold', margin: '0',width:'255px', textAlign:'center' }}>배송/환뷸 규칙</Label></Link>

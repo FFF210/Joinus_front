@@ -82,6 +82,7 @@ import GBProductDetail from './pages/consumer/groups/GBProductDetail';
 import DetailInfo from './pages/consumer/groups/DetailInfo';
 import Reviews from './pages/consumer/groups/Reviews';
 import Policy from './pages/consumer/groups/Policy';
+import QAndA from './pages/consumer/groups/QAndA';
 //관리자
 import ProposalDetailAdmin from './pages/admin/ProposalDetailAdmin';
 
@@ -220,6 +221,7 @@ function AppContent() {
               <Route index element={<DetailInfo />} />
               <Route path="detailInfo" element={<DetailInfo />} />
               <Route path="reviews" element={<Reviews />} />
+              <Route path='qAndA' element={<QAndA/>}/>
               <Route path="policy" element={<Policy />} />
             </Route>
           </Routes>
