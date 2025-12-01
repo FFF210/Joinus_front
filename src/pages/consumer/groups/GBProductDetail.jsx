@@ -12,7 +12,7 @@ export default function GBProductDetail() {
             <div style={styles.pageWrapper}>
               <div style={styles.container}>
                 <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" ,gap:'10px'}}>
-                  <Link to="/group-propsal" style={{ textDecoration: 'none', color: 'black', display: "flex", alignItems: "center",gap:'10px' }}>
+                  <Link to="/group-purchase" style={{ textDecoration: 'none', color: 'black', display: "flex", alignItems: "center",gap:'10px' }}>
                     <img src="/left.png" style={{width:'30px'}}/><h3 className="mb-0 fw-bold text-start">목록으로</h3>
                   </Link>
                 </div>
@@ -30,7 +30,7 @@ export default function GBProductDetail() {
                             <Input type="textarea" style={{border:'1px solid black', padding:"5px", width:'480px', height:'50px', fontSize:'12px', resize: "none"}}></Input>
                         </div>
                     </div>
-                    <div style={{width:"500px", height:'630px', border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
+                    <div style={{width:"500px", height:'700px', border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
                         <div style={{ display:'flex', justifyContent: 'space-between', marginBottom:'10px'}}>
                             <div style={{border:'1px solid black', borderRadius:'5px', fontSize:'12px'}}>카테고리</div>
                             <div>2025-11-28</div>

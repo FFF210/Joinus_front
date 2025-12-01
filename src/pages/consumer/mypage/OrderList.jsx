@@ -10,7 +10,7 @@ export default function OrderList() {
         <div style={styles.pageWrapper}>
             <div style={styles.container}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0"}}>
-                    <h3 className="mb-0 fw-bold text-start">주문/배송조회</h3>
+                    <h3 className="mb-0 fw-bold text-start" style={{fontSize:'20px'}}>주문/배송조회</h3>
                 </div>
             </div>
         </div>

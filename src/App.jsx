@@ -59,7 +59,7 @@ import ShopCartList from './pages/consumer/mypage/ShopCartList';
 import Sidebar from './pages/consumer/mypage/Sidebar'
 // 제안
 import ProposalsList from "./pages/consumer/proposals/ProposalsList";
-import ProposalDetail from "./pages/consumer/proposals/ProposalDetail";
+import ProposalDetailConsumar from "./pages/consumer/proposals/ProposalDetailConsumar";
 import ProposalWrite from "./pages/consumer/proposals/ProposalWrite";
 //공구
 import GBProductList from './pages/consumer/groups/GBProductList';
@@ -67,6 +67,9 @@ import GBProductDetail from './pages/consumer/groups/GBProductDetail';
 import DetailInfo from './pages/consumer/groups/DetailInfo';
 import Reviews from './pages/consumer/groups/Reviews';
 import Policy from './pages/consumer/groups/Policy';
+//관리자
+import ProposalDetailAdmin from './pages/admin/ProposalDetailAdmin';
+
 
 
 function AppContent() {
@@ -169,6 +172,8 @@ function AppContent() {
             <Route path="/admin/faqForm" element={<FaqForm />} />
             <Route path="/admin/memberList" element={<MemberList />} />
             <Route path="/admin/member/:id" element={<MemberDetail />} />
+            {/* 자엔 디테일 관리자 화면 */}
+            <Route path="/admin/proposalDetailAdmin" element={<ProposalDetailAdmin/>}/>
 
             {/* 구매(주문)/교환 반품 */}
             <Route path="/admin/adminOrderList" element={<AdminOrderList/>} />
@@ -179,7 +184,7 @@ function AppContent() {
             {/* 와타시 */}
             {/* 제안 */}
               <Route path="/proposalsList" element={<ProposalsList />} />
-              <Route path='/proposalDetail' element={<ProposalDetail/>}/>
+              <Route path='/proposalDetailConsumar' element={<ProposalDetailConsumar/>}/>
               <Route path="/proposalsList/proposalWrite" element={<ProposalWrite />} />
 
             {/* 공구 */}
