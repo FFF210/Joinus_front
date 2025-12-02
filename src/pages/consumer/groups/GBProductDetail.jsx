@@ -30,7 +30,7 @@ export default function GBProductDetail() {
                             <Input type="textarea" style={{border:'1px solid black', padding:"5px", width:'480px', height:'50px', fontSize:'12px', resize: "none"}}></Input>
                         </div>
                     </div>
-                    <div style={{width:"500px", height:'700px', border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
+                    <div style={{width:"500px", height:'650px', border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
                         <div style={{ display:'flex', justifyContent: 'space-between', marginBottom:'10px'}}>
                             <div style={{border:'1px solid black', borderRadius:'5px', fontSize:'12px'}}>카테고리</div>
                             <div>2025-11-28</div>
@@ -42,11 +42,11 @@ export default function GBProductDetail() {
                             <Label style={{fontSize:"24px"}}>1,057,314원</Label>
                         </div>
                         <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
-                        <div>
-                            <img src="clock.png" style={{width:'25px', marginRight:'10px'}}/>
+                        <div style={{display:'flex'}}>
+                            <img src="/clock.png" style={{width:'25px', marginRight:'10px'}}/>
                             <Label style={{color:'red', fontSize:'14px'}}>2일 23: 46: 23</Label>
                         </div>
-                        <div>
+                        <div style={{display:'flex'}}>
                             <img src="/person.png" style={{width:'25px', marginRight:'5px'}}/>
                             <Label style={{fontSize:'12px'}}>참여 인원 : {joined}/{total}</Label>
                         </div>

@@ -1,9 +1,14 @@
 import { Link, useParams } from "react-router-dom";
 import { Label } from "reactstrap";
 import { useState } from "react";
+import InquiryModal from "./InquiryModal";
+
+
 export default function QAndA(){
     const { id } = useParams();
     const [openId, setOpenId] = useState(null);
+
+    const [modalOpen, setModalOpen] = useState(false);
 
     const toggle = (id) => {
         setOpenId(openId === id ? null : id);
@@ -49,7 +54,6 @@ export default function QAndA(){
                 <div style={styles.container2}>
                     {/* HEADER */}
                     <div style={{ display: 'flex', padding: '12px 0', borderBottom: '1px solid #ddd', fontWeight: 'bold', color: '#555' }}>
-                        <div style={{ width: '120px' }}>문의 유형</div>
                         <div style={{ flex: 1 }}>문의/답변</div>
                         <div style={{ width: '140px', textAlign: 'center' }}>작성자</div>
                         <div style={{ width: '120px', textAlign: 'center' }}>작성일</div>
@@ -62,7 +66,6 @@ export default function QAndA(){
                             <div
                                 onClick={() => toggle(item.id)}
                                 style={{display: 'flex', padding: '14px 0', borderBottom: '1px solid #eee', fontSize: '14px', alignItems: 'center',cursor: 'pointer'}}>
-                                <div style={{ width: '120px', color: '#555' }}>상품</div>
 
                                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <span style={{background: '#C7DBFF',padding: '4px 10px',borderRadius: '4px', fontSize: '13px',fontWeight: 'bold',color: '#1E50A0'}}>
@@ -88,7 +91,6 @@ export default function QAndA(){
                                         <div style={{ fontWeight: 'bold', color: '#1E50A0', fontSize: '24px', width: '40px' }}>Q</div>
                                         <div>
                                             <div style={{ marginBottom: '8px' }}>{item.question}</div>
-                                            <div style={{ color: '#888', fontSize: '13px' }}>신고하기 &gt;</div>
                                         </div>
                                     </div>
 
@@ -101,7 +103,6 @@ export default function QAndA(){
                                                 <div style={{ color: '#888', fontSize: '12px', marginBottom: '6px' }}>
                                                     판매자 / {item.answerDate}
                                                 </div>
-                                                <div style={{ color: '#888', fontSize: '13px' }}>신고하기 &gt;</div>
                                             </div>
                                         </div>
                                     )}
@@ -112,10 +113,21 @@ export default function QAndA(){
 
                     {/* 상품 문의하기 버튼 */}
                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-                        <button style={{ background: '#4B4B4B', color: '#fff', padding: '10px 18px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}>
+                        <button
+                            onClick={() => setModalOpen(true)}
+                            style={{
+                                background: '#4B4B4B',
+                                color: '#fff',
+                                padding: '10px 18px',
+                                borderRadius: '4px',
+                                border: 'none',
+                                cursor: 'pointer'
+                            }}>
                             상품 문의하기
                         </button>
                     </div>
+
+                    {modalOpen && <InquiryModal onClose={() => setModalOpen(false)} />}
                 </div>
             </div>
             
