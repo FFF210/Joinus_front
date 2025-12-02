@@ -14,9 +14,11 @@ export default function PayComplete(){
                         <div style={{border:'1px solid black', backgroundColor:'#A09B9B', width:'300px', margin:'20px auto'}}>
                             주문번호 : 207546412
                         </div>
+                        <Link to="">
                         <Button style={{backgroundColor:'#739FF2', color:'white', border:'none', fontSize:'12px'}}>
                             주문 상세
                         </Button>
+                        </Link>
                     </div>
                     <hr style={{border:'2px solid black', marginTop:'0'}}/>
 

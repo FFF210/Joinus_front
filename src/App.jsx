@@ -136,47 +136,11 @@ function AppContent() {
             <Route path="/mypage/returnDetail:/id" element={<ReturnDetail/>} />
             <Route path="/mypage/cancelDetail" element={<CancelDetail/>} />
             {/* 지성스 */}
-            {/* <Route path="/mypage/interestList" element={<InterestList />} /> */}
-            <Route path="/mypage/interestList" element={<InterestList />} />
-            <Route path="/mypage/shopCartList" element={<ShopCartList />} />
-            <Route path="/mypage/inquiryDetail/:id" element={<InquiryDetail />} />
-            <Route path='/mypage/inquiryHistoryList' element={<InquiryHistoryList/>}/>
-            <Route path="/mypage/orderList" element={<OrderList />} />
-            <Route path="/mypage/orderList/orderDetail/:id" element={<OrderDetail />} />
-            <Route path="/reviewManage/*" element={<ReviewManage />}>
-              <Route index element={<ReviewWrite />} />
-              <Route path="reviewWrited" element={<ReviewWrited />} />
-            </Route>
-            {/* <Route path="/mypage/*" element={<Sidebar>
-                  <Routes>
-                    <Route path="interestList" element={<InterestList />} />
-                    <Route path="shopCartList" element={<ShopCartList />} />
-                    <Route path="inquiryDetail" element={<InquiryDetail />} />
-                    <Route path='inquiryHistoryList' element={<InquiryHistoryList/>}/>
-                    <Route path="orderList" element={<OrderList />} />
-                    <Route path="orderList/orderDetail" element={<OrderDetail />} />
-                    <Route path="addressList" element={<AddressList />} />
-                    <Route path="addressAdd" element={<AddressAdd />} />
-                    <Route path="addressEdit/:id" element={<AddressEdit />} />  
-                    <Route path="alert" element={<MypageAlert />} />
-                    <Route path="deleteAccount" element={<MypageDeleteAccount />} />
-                    <Route path="main" element={<MypageMain />} />
-                    <Route path="points" element={<MypagePoints />} />
-                    <Route path="profileDetail" element={<MypageProfileDetail />} />
-                    <Route path="profileEdit" element={<MypageProfileEdit />} />
-                    <Route path="profileIndex" element={<MypageProfileIndex />} />
-                    <Route path="suggestions" element={<MypageSuggestions />} />
-                    <Route path="tier" element={<MypageTier />} />
-                    <Route path="reviewManage/*" element={<ReviewManage />}>
-                      <Route index element={<ReviewWrite />} />
-                      <Route path="reviewWrited" element={<ReviewWrited />} />
-                    </Route>
-                  </Routes>
-            </Sidebar>}/> */}
             <Route path="/mypage/*" element={<Sidebar>
                 <Routes>
                   <Route path="orderList" element={<OrderList />} />
                   <Route path="orderList/orderDetail/:id" element={<OrderDetail />} />
+                  
                   <Route path="shopCartList" element={<ShopCartList />} />
                   <Route path="interestList" element={<InterestList />} />
                   <Route path="inquiryHistoryList" element={<InquiryHistoryList />} />
