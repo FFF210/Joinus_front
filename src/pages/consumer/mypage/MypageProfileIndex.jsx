@@ -2,7 +2,6 @@ import React from "react";
 import "./MypageProfileIndex.css";
 import { useNavigate } from "react-router-dom";
 import { FaLock } from "react-icons/fa";
-
 export default function MypageProfileIndex() {
 
   const navigate = useNavigate();
