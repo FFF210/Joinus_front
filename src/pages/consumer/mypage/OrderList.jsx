@@ -17,7 +17,7 @@ export default function OrderList() {
 
         {/* 조회 조건 영역 */}
         <div style={styles.pageWrapper}>
-            <div style={{width:'100%', padding:'0'}}>
+            <div style={{width:'860px', padding:'0'}}>
 
             {/* 조회 조건 박스 */}
                 <div style={{border: "1px solid #ddd", padding: "20px", display: "flex", justifyContent: "space-between"}}>
@@ -121,7 +121,7 @@ const styles = {
     backgroundColor: "#fff",
   },
   container: {
-    width: "1020px",
+    width: "860px",
     padding: "20px 0",
   },
   periodBtn: {

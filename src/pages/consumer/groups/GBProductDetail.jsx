@@ -103,7 +103,9 @@ export default function GBProductDetail() {
                                 <img src="/heart.png" style={{width:"25px", height:'25px', marginRight:'20px'}}/>
                                 <img src="/share.png" style={{width:"25px", height:'25px', marginRight:'40px'}}/>
                                 <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}>장바구니</Button>
-                                <Button style={{backgroundColor:'#F7F7F7', width:"120px", height:"35px", fontSize:"16px", padding:"0", color:'black', border:'1px solid black'}}>참여하기</Button>
+                                <Link to='/pay'>
+                                  <Button style={{backgroundColor:'#F7F7F7', width:"120px", height:"35px", fontSize:"16px", padding:"0", color:'black', border:'1px solid black'}}>참여하기</Button>
+                                </Link>
                             </div>
                         </div>
                     </div>

@@ -71,7 +71,7 @@ import MypageProfileEdit from './pages/consumer/mypage/MypageProfileEdit';
 import MypageProfileIndex from './pages/consumer/mypage/MypageProfileIndex';
 import MypageSuggestions from './pages/consumer/mypage/MypageSuggestions';
 import MypageTier from './pages/consumer/mypage/MypageTier';
-
+import MyInquiryDetail from './pages/consumer/mypage/MyInquiryDetail';
 // 제안
 import ProposalsList from "./pages/consumer/proposals/ProposalsList";
 import ProposalDetailConsumar from "./pages/consumer/proposals/ProposalDetailConsumar";
@@ -83,8 +83,12 @@ import DetailInfo from './pages/consumer/groups/DetailInfo';
 import Reviews from './pages/consumer/groups/Reviews';
 import Policy from './pages/consumer/groups/Policy';
 import QAndA from './pages/consumer/groups/QAndA';
+import Pay from './pages/consumer/groups/Pay';
+import PayComplete from './pages/consumer/groups/PayComplete';
 //관리자
 import ProposalDetailAdmin from './pages/admin/ProposalDetailAdmin';
+
+
 
 
 
@@ -115,7 +119,7 @@ function AppContent() {
             {/* 고객센터 */}
             <Route path="/cs/notice" element={<Notice />} />
             <Route path="/cs/notice/:id" element={<NoticeDetail />} />
-            <Route path="/cs/inquiry/:id" element={<InquiryDetail />} />
+            <Route path="/cs/inquiry/:id" element={<MyInquiryDetail />} />
             <Route path="/cs/inquiryWrite" element={<div>문의 작성 페이지 (준비 중)</div>} /> {/* 임시 */}
 
             {/* 납품문의 */}
@@ -129,7 +133,7 @@ function AppContent() {
             <Route path="/mypage/returnDetail:/id" element={<ReturnDetail/>} />
             {/* 지성스 */}
             {/* <Route path="/mypage/interestList" element={<InterestList />} /> */}
-            {/* <Route path="/mypage/interestList" element={<InterestList />} />
+            <Route path="/mypage/interestList" element={<InterestList />} />
             <Route path="/mypage/shopCartList" element={<ShopCartList />} />
             <Route path="/mypage/inquiryDetail/:id" element={<InquiryDetail />} />
             <Route path='/mypage/inquiryHistoryList' element={<InquiryHistoryList/>}/>
@@ -138,11 +142,8 @@ function AppContent() {
             <Route path="/reviewManage/*" element={<ReviewManage />}>
               <Route index element={<ReviewWrite />} />
               <Route path="reviewWrited" element={<ReviewWrited />} />
-            </Route> */}
-            <Route
-              path="/mypage/*"
-              element={
-                <Sidebar>
+            </Route>
+            {/* <Route path="/mypage/*" element={<Sidebar>
                   <Routes>
                     <Route path="interestList" element={<InterestList />} />
                     <Route path="shopCartList" element={<ShopCartList />} />
@@ -163,13 +164,41 @@ function AppContent() {
                     <Route path="suggestions" element={<MypageSuggestions />} />
                     <Route path="tier" element={<MypageTier />} />
                     <Route path="reviewManage/*" element={<ReviewManage />}>
-                    <Route index element={<ReviewWrite />} />
-                    <Route path="reviewWrited" element={<ReviewWrited />} />
+                      <Route index element={<ReviewWrite />} />
+                      <Route path="reviewWrited" element={<ReviewWrited />} />
                     </Route>
                   </Routes>
-                </Sidebar>
-              }
-            />
+            </Sidebar>}/> */}
+            <Route path="/mypage/*" element={<Sidebar>
+                <Routes>
+                  <Route path="orderList" element={<OrderList />} />
+                  <Route path="orderList/orderDetail/:id" element={<OrderDetail />} />
+                  <Route path="shopCartList" element={<ShopCartList />} />
+                  <Route path="interestList" element={<InterestList />} />
+                  <Route path="inquiryHistoryList" element={<InquiryHistoryList />} />
+                  <Route path="inquiryDetail/:id" element={<InquiryDetail />} />
+
+                  <Route path="addressList" element={<AddressList />} />
+                  <Route path="addressAdd" element={<AddressAdd />} />
+                  <Route path="addressEdit/:id" element={<AddressEdit />} />
+
+                  <Route path="alert" element={<MypageAlert />} />
+                  <Route path="deleteAccount" element={<MypageDeleteAccount />} />
+                  <Route path="main" element={<MypageMain />} />
+                  <Route path="points" element={<MypagePoints />} />
+                  <Route path="profileDetail" element={<MypageProfileDetail />} />
+                  <Route path="profileEdit" element={<MypageProfileEdit />} />
+                  <Route path="profileIndex" element={<MypageProfileIndex />} />
+                  <Route path="suggestions" element={<MypageSuggestions />} />
+                  <Route path="tier" element={<MypageTier />} />
+
+                  <Route path="reviewManage/*" element={<ReviewManage />}>
+                    <Route index element={<ReviewWrite />} />
+                    <Route path="reviewWrited" element={<ReviewWrited />} />
+                  </Route>
+                </Routes>
+              </Sidebar>
+            } />
 
 
             {/* 관리자 페이지 */}
@@ -217,6 +246,8 @@ function AppContent() {
 
             {/* 공구 */}
             <Route path="/group-purchase" element={<GBProductList />} />
+            <Route path='/pay' element={<Pay/>}/>
+            <Route path="/payComplate" element={<PayComplete/>}/>
             <Route path="/gbProductDetail/*" element={<GBProductDetail />}>
               <Route index element={<DetailInfo />} />
               <Route path="detailInfo" element={<DetailInfo />} />

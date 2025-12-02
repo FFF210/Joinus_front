@@ -5,8 +5,8 @@ import { useState } from "react";
 export default function InterestList() {
   return (
     <>
-      <div className="fw-bold d-block" style={{ fontSize: "20px", margin: "20px auto" }}>관심상품</div>
-      <div>
+        <div className="fw-bold d-block" style={{ fontSize: "20px", margin: "20px auto" }}>관심상품</div>
+        <div style={{width:'860px',}}>
         <hr style={{ margin: "5px auto" }} />
         <FormGroup check style={{display: "flex",justifyContent: "space-between",alignItems: "center"}}>
           {/* 전체선택 */}

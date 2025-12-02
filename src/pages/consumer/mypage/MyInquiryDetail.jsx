@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 
-export default function InquiryDetail(){
+export default function MyInquiryDetail(){
     return(
         <>
             {/* 제목 영역 (1020px 고정) */}
