@@ -37,17 +37,17 @@ export default function InquiryHistoryList() {
                 <div className="mb-0 fw-bold text-start"style={{ fontSize: '20px', marginBottom: '14px', padding: '20px 0' }}>1:1 문의 내역</div>
 
                 <div className="box-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <div className="review-box"style={{textAlign: 'center',fontSize: "16px", flexDirection: "column",width: '280px',border: '1px solid black',padding: '14px 0'}}>
+                    <div className="review-box"style={{backgroundColor:'white',textAlign: 'center',fontSize: "16px", flexDirection: "column",width: '280px',border: '1px solid black',padding: '14px 0'}}>
                         전체 문의
                         <div>{inquiries.length}건</div>
                     </div>
 
-                    <div className="review-box"style={{ textAlign: 'center',fontSize: "16px",flexDirection: "column", width: '280px', border: '1px solid black', padding: '14px 0' }}>
+                    <div className="review-box"style={{backgroundColor:'white', textAlign: 'center',fontSize: "16px",flexDirection: "column", width: '280px', border: '1px solid black', padding: '14px 0' }}>
                         답변 완료
                         <div>{inquiries.filter(i => i.reply !== null).length}건</div>
                     </div>
 
-                    <div className="review-box"style={{ textAlign: 'center', fontSize: "16px", flexDirection: "column", width: '280px', border: '1px solid black', padding: '14px 0' }}>
+                    <div className="review-box"style={{backgroundColor:'white', textAlign: 'center', fontSize: "16px", flexDirection: "column", width: '280px', border: '1px solid black', padding: '14px 0' }}>
                         답변 대기
                         <div>{inquiries.filter(i => i.reply === null).length}건</div>
                     </div>

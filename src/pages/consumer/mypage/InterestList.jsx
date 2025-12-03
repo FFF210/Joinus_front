@@ -39,19 +39,14 @@ export default function InterestList() {
                     ASUS 비보북 S 16 M3607KA-SH035W (SSD 512GB)
                 </div>
 
-                {/* 가격 */}
-                <div style={{ fontSize: "12px", width: "100px", marginRight: "40px", textAlign: "right" }}>1,090,000원</div>
-
-                {/* 만족도 */}
-                <div style={{ fontSize: "12px", width: "50px", marginRight: "40px", textAlign: "center" }}>4.5</div>
-
-                {/* 주문 버튼 */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                {/* 주문 버튼 (오른쪽 끝으로 이동) */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginLeft: "auto",padding:'10px' }}>
                     <Button size="sm" style={{backgroundColor:'#739FF2', color:'white', border:'none'}}>장바구니</Button>
                     <Button size="sm" style={{backgroundColor:'#f7f7f7', color:'black', border:'none'}}>삭제</Button>
                 </div>
             </FormGroup>
             <hr style={{ margin: "10px auto" }} />
+            
         </div>
         <Pagination>
             <PaginationItem>

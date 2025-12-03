@@ -1,7 +1,9 @@
+import { useState } from "react";
+import { Label, FormGroup, Input, Button } from "reactstrap";
 import { Link } from "react-router-dom";
-import { Label, FormGroup,Input,Button } from "reactstrap";
 
 export default function Pay(){
+    const [addressType, setAddressType] = useState("new");
     return(
         <>
             <div style={styles.pageWrapper}>
@@ -45,27 +47,52 @@ export default function Pay(){
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
                     
                     {/* 왼쪽 배송지 박스 */}
-                    <div style={{ border: '1px solid black', overflow: 'hidden', width: '500px' }}>
-                        <div style={row}>
-                            <div style={leftCol}>배송지 선택</div>
-                            <div style={rightCol}>
-                            <FormGroup tag="fieldset" style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-                                <FormGroup check style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                                    <Input name="radio1" type="radio" />
-                                    <Label check>기존 배송지</Label>
-                                </FormGroup>
-                                <FormGroup check style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                                    <Input name="radio1" type="radio" />
-                                <Label check>신규 배송지</Label>
-                                </FormGroup>
-                            </FormGroup>
-                            <FormGroup>
-                                <Input id="exampleSelect" name="select" type="select" style={{ fontSize: '12px', width: '100px' }}>
-                                <option>집으로</option>
-                                </Input>
-                            </FormGroup>
+                    
+                        {/* 왼쪽 배송지 박스 */}
+                        <div style={{ border: '1px solid black', overflow: 'hidden', width: '500px' }}>
+                            <div style={row}>
+                                <div style={leftCol}>배송지 선택</div>
+                                <div style={rightCol}>
+                                    <FormGroup tag="fieldset" style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+                                        {/* 신규 배송지 */}
+                                        <FormGroup check style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                                            <Input
+                                                name="addressType"
+                                                type="radio"
+                                                value="new"
+                                                checked={addressType === "new"}
+                                                onChange={() => setAddressType("new")}
+                                            />
+                                            <Label check>신규 배송지</Label>
+                                        </FormGroup>
+                                        {/* 기존 배송지 */}
+                                        <FormGroup check style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                                            <Input
+                                                name="addressType"
+                                                type="radio"
+                                                value="old"
+                                                checked={addressType === "old"}
+                                                onChange={() => setAddressType("old")}
+                                            />
+                                            <Label check>기존 배송지</Label>
+                                        </FormGroup>
+                                    </FormGroup>
+
+                                    {/* ⭐ 기존 배송지일 때만 Select 표시 */}
+                                    {addressType === "old" && (
+                                        <FormGroup>
+                                            <Input
+                                                id="exampleSelect"
+                                                name="select"
+                                                type="select"
+                                                style={{ fontSize: '12px', width: '100px' }}
+                                            >
+                                                <option>집으로</option>
+                                            </Input>
+                                        </FormGroup>
+                                    )}
+                                </div>
                             </div>
-                        </div>
 
                         <div style={row}>
                             <div style={leftCol}>배송지명</div>
@@ -94,9 +121,15 @@ export default function Pay(){
                             </div>
                         </div>
                         <div style={row}>
-                            <div style={leftCol}>배달 요청사항</div>
+                            <div style={leftCol}>출입방법</div>
                             <div style={rightCol}>
-                            <Input type="textarea" style={{ border: '1px solid #A9A9A9', fontSize: '12px', width: '343px', height: '50px', resize: 'none' }} />
+                            <div type="textarea" style={{ border: '1px solid #A9A9A9', backgroundColor: '#d9d9d9' , fontSize: '12px', width: '343px', height: '20px'}}>문앞에 ㄱㄱ</div>
+                            </div>
+                        </div>
+                        <div style={row}>
+                            <div style={leftCol}>요청사항</div>
+                            <div style={rightCol}>
+                            <Input type="textarea" style={{ border: '1px solid #A9A9A9', fontSize: '12px', width: '343px', height: '50px', resize: 'none' }}/>
                             </div>
                         </div>
                         </div>

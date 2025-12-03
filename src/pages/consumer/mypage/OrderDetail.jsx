@@ -138,6 +138,10 @@ export default function OrderDetail(){
                             <div style={leftCol}>배달 요청사항</div>
                             <div style={rightCol}>문 앞에 놓아주세요</div>
                         </div>
+                        <div style={row}>
+                            <div style={leftCol}>출입 요청사항</div>
+                            <div style={rightCol}>1234</div>
+                        </div>
                     </div>
                 </div>
             </div>

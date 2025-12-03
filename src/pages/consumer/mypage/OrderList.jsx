@@ -58,7 +58,7 @@ export default function OrderList() {
 
                     {/* 조회 버튼 */}
                     <div style={{width: "120px", display: "flex",justifyContent: "center",alignItems: "center", padding:'0'}}>
-                        <Button style={{padding: "10px 10px", backgroundColor: "#E7EBF3", border: "1px solid #ccc", borderRadius: "6px", fontSize:'12px'}}>조회</Button>
+                        <Button style={{padding: "10px 10px", backgroundColor: "#E7EBF3", border: "1px solid #ccc", borderRadius: "6px", fontSize:'12px', color:'black'}}>조회</Button>
                     </div>
                 </div>
                 
@@ -313,7 +313,7 @@ const styles = {
   },
   smallBtn: {
     width: "80px",
-    fontSize: "12px",
+    fontSize: "10px",
     marginBottom: "5px",
     padding: "5px 0",
     border: "1px solid #ccc",
