@@ -1,0 +1,200 @@
+/* 관리자 납품 신청 상세 페이지 스타일 */
+
+.detail-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.back-button {
+  padding: 8px 16px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.form-header-info {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.form-info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+}
+
+.info-value {
+  font-size: 13px;
+  font-weight: 400;
+  color: #333;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.status-pending {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.status-badge.status-approved {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.status-rejected {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* 읽기 전용 입력 필드 스타일 */
+.read-only-input {
+  background-color: #f5f5f5 !important;
+  cursor: not-allowed !important;
+  color: #333 !important;
+}
+
+.read-only-input:focus {
+  border-color: #ccc !important;
+  box-shadow: none !important;
+}
+
+.link-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.link-container .read-only-input {
+  flex: 1;
+}
+
+.link-button {
+  padding: 10px 16px;
+  background-color: #739FF2;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.link-button:hover {
+  background-color: #5a8ae3;
+}
+
+/* 버튼 스타일 */
+.btn-approve {
+  padding: 10px 24px;
+  background-color: #739FF2;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-approve:hover {
+  background-color: #5a8ae3;
+}
+
+.btn-reject {
+  padding: 10px 24px;
+  background-color: white;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #dc3545;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reject:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.approved-message,
+.rejected-message {
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.approved-message {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.rejected-message {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .detail-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .back-button {
+    width: 100%;
+  }
+
+  .form-header-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .link-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .link-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+

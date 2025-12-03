@@ -74,33 +74,8 @@ export default function DeliveryApplicationList() {
     load();
   }, [filter]);
 
-  const handleApprove = (id) => {
-    if (!window.confirm('이 신청을 승인하시겠습니까?')) return;
-
-    setApplications((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: '승인' } : item
-      )
-    );
-    alert('승인 처리되었습니다. (추후 API 연동 예정)');
-  };
-
-  const handleReject = (id) => {
-    const reason = window.prompt('반려 사유를 입력하세요.');
-    if (!reason) return;
-
-    setApplications((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, status: '반려', rejectionReason: reason }
-          : item
-      )
-    );
-    alert('반려 처리되었습니다. (업체에 이메일 발송 예정)');
-  };
-
   const handleDetailClick = (id) => {
-    navigate(`/admin/delivery/application/${id}`);
+    navigate(`/admin/suppliy/application/${id}`);
   };
 
   const summary = useMemo(
@@ -163,13 +138,12 @@ export default function DeliveryApplicationList() {
                   <th>카테고리</th>
                   <th>신청일</th>
                   <th>상태</th>
-                  <th>관리</th>
                 </tr>
               </thead>
               <tbody>
                 {applications.length === 0 ? (
                   <tr>
-                    <td colSpan="9" className="no-data">
+                    <td colSpan="8" className="no-data">
                       신청 내역이 없습니다.
                     </td>
                   </tr>
@@ -203,29 +177,6 @@ export default function DeliveryApplicationList() {
                         >
                           {item.status}
                         </span>
-                      </td>
-                      <td>
-                        {item.status === '신청' && (
-                          <div className="action-buttons">
-                            <button
-                              className="btn-approve"
-                              onClick={() => handleApprove(item.id)}
-                            >
-                              승인
-                            </button>
-                            <button
-                              className="btn-reject"
-                              onClick={() => handleReject(item.id)}
-                            >
-                              반려
-                            </button>
-                          </div>
-                        )}
-                        {item.status === '반려' && (
-                          <span className="rejection-reason">
-                            {item.rejectionReason}
-                          </span>
-                        )}
                       </td>
                     </tr>
                   ))

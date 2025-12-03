@@ -21,6 +21,7 @@ import ProductStatistics from './pages/admin/ProductStatistics';
 import InquiryDetail from './pages/cs/InquiryDetail';
 import PendingPayment from './pages/admin/PendingPayment';
 import DeliveryApplicationList from './pages/admin/DeliveryManagement/DeliveryApplicationList';
+import DeliveryApplicationDetail from './pages/admin/DeliveryManagement/DeliveryApplicationDetail';
 import ApprovedDeliveryCompany from './pages/admin/DeliveryManagement/ApprovedDeliveryCompany';
 import DeliveryProductForm from './pages/admin/DeliveryManagement/DeliveryProductForm';
 import DeliveryProductList from './pages/admin/DeliveryManagement/DeliveryProductList';
@@ -179,7 +180,7 @@ function AppContent() {
             <Route path="/admin/statistics/product" element={<ProductStatistics />} />
             <Route path="/admin/pendingPayment" element={<PendingPayment />} />
             <Route path="/admin/suppliy/applications" element={<DeliveryApplicationList />} />
-            <Route path="/admin/suppliy/application/:id" element={<DeliveryDetail />} />
+            <Route path="/admin/suppliy/application/:id" element={<DeliveryApplicationDetail />} />
             <Route path="/admin/suppliy/approved" element={<ApprovedDeliveryCompany />} />
             <Route path="/admin/suppliy/products/new" element={<DeliveryProductForm />} />
             <Route path="/admin/suppliy/products" element={<DeliveryProductList />} />
