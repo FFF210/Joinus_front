@@ -54,7 +54,7 @@ export default function ProposalWrite() {
             {/* 이름 */}
             <FormGroup className="mb-3">
               <Label className="fw-bold text-start d-block">이름</Label>
-              <Input type="text" placeholder="본인의 이름을 입력하세요." />
+              <Input type="text" placeholder="상품명을 입력하세요." />
             </FormGroup>
 
             {/* 제목 */}
@@ -85,18 +85,13 @@ export default function ProposalWrite() {
 
             {/* 상품 이미지 업로드 */}
             <FormGroup className="mb-4">
-              <Label className="fw-bold text-start d-block">상품 이미지</Label>
+              <Label className="fw-bold text-start d-block">상품 이미지 *</Label>
 
               <div style={styles.bigUploadBox}>
                 <div style={styles.imageGrid}>
                   {/* 대표 이미지 */}
                   <div style={styles.imageBox}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleMainImageUpload}
-                      style={styles.fileInput}
-                    />
+                    <input type="file" accept="image/*" onChange={handleMainImageUpload} style={styles.fileInput}/>
                     {mainImage ? (
                       <img src={mainImage} alt="대표 이미지" style={styles.preview} />
                     ) : (
@@ -107,23 +102,28 @@ export default function ProposalWrite() {
                   </div>
 
                   {/* 일반 이미지 4개 */}
-                  {/* {subImages.map((img, idx) => (
-                    <div key={idx} style={styles.imageBox}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleSubImageUpload(e, idx)}
-                        style={styles.fileInput}
-                      />
-                      {img ? (
-                        <img src={img} alt={`서브 이미지 ${idx + 1}`} style={styles.preview} />
-                      ) : (
-                        <p className="text-center text-secondary small">
-                          사진 {idx + 1}<br />Click to upload
-                        </p>
-                      )}
-                    </div>
-                  ))} */}
+                  {mainImage &&
+                    subImages.map((img, idx) => (
+                      <div key={idx} style={styles.imageBox}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleSubImageUpload(e, idx)}
+                          style={styles.fileInput}
+                        />
+                        {img ? (
+                          <img
+                            src={img}
+                            alt={`서브 이미지 ${idx + 1}`}
+                            style={styles.preview}
+                          />
+                        ) : (
+                          <p className="text-center text-secondary small">
+                            사진 {idx + 1}<br />Click to upload
+                          </p>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             </FormGroup>
@@ -209,6 +209,7 @@ const styles = {
   preview: {
     width: "100%",
     height: "100%",
-    objectFit: "cover",
+    objectFit: "contain",
+    backgroundColor: "#fff",
   },
 };
