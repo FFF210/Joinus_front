@@ -1,20 +1,69 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { React, useState } from "react";
-import { Link } from "react-router-dom";
+import { React, useState,useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
+import { myAxios } from "../../../config";
+
 
 export default function ProposalWrite() {
+  
+  const [productName, setProductName] = useState('');
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
   // 대표 이미지
   const [mainImage, setMainImage] = useState(null);
   // 일반 이미지 4개
   const [subImages, setSubImages] = useState([null, null, null, null]);
 
+  const [originalSiteUrl, setOriginalSiteUrl] = useState('');
+  const [originalPrice, setOriginalPrice] = useState('');
+  const [abroadShippingCost, setAbroadShippingCost] = useState('');
+  const [minPart, setMinPart] = useState('');
+
+  const mainRef = useRef(null);
+  const subRef = useRef(null);
+  const navigate = useNavigate();
+
+  const submit = () => {
+      const formData = new FormData();
+      formData.append('productName',productName);
+      formData.append('title',title);
+      formData.append('category',category);
+      formData.append('description',description);
+      formData.append('originalSiteUrl',originalSiteUrl);
+      formData.append('originalPrice',originalPrice);
+      formData.append('abroadShippingCost',abroadShippingCost);
+      formData.append('minPart',minPart);
+      formData.append('mainImage',mainRef);
+      formData.append('subImages',subRef);
+
+      // 대표 이미지
+      if (mainFile) formData.append('mainImage', mainFile);
+
+      // 서브 이미지
+      subFiles.forEach((file) => {
+        if (file) formData.append('subImages', file); // subImages는 List<MultipartFile>로 받음
+      });
+
+      myAxios().post(`/proposalWrite`, formData)
+          .then(res=> {
+              console.log(res)
+              let proposalId = res.data;
+              navigate(`/proposalsList/proposalWrite/${proposalId}`)
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+  }
+
   // 대표 이미지 업로드
   const handleMainImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setMainFile(file); // 서버 전송용
       const url = URL.createObjectURL(file);
-      setMainImage(url);
+      setMainImage(url); // 화면 미리보기용
     }
   };
 
@@ -22,12 +71,17 @@ export default function ProposalWrite() {
   const handleSubImageUpload = (e, index) => {
     const file = e.target.files[0];
     if (file) {
+      const newFiles = [...subFiles];
+      newFiles[index] = file;
+      setSubFiles(newFiles); // 서버 전송용
+
       const url = URL.createObjectURL(file);
       const newImages = [...subImages];
       newImages[index] = url;
-      setSubImages(newImages);
+      setSubImages(newImages); // 화면 미리보기용
     }
   };
+
 
   return (
     <>
@@ -53,14 +107,14 @@ export default function ProposalWrite() {
             </FormGroup>
             {/* 이름 */}
             <FormGroup className="mb-3">
-              <Label className="fw-bold text-start d-block">이름</Label>
-              <Input type="text" placeholder="상품명을 입력하세요." />
+              <Label className="fw-bold text-start d-block" >상품명</Label>
+              <Input type="text" name="productName" onChange={(e)=> setProductName(e.target.value)} placeholder="상품명을 입력하세요." />
             </FormGroup>
 
             {/* 제목 */}
             <FormGroup className="mb-3">
               <Label className="fw-bold text-start d-block">제목 *</Label>
-              <Input type="text" placeholder="예) 프리미엄 컵 이이전 공동구매 제안" />
+              <Input type="text" name="title" onChange={(e)=> setTitle(e.target.value)} placeholder="예) 프리미엄 컵 이이전 공동구매 제안" />
             </FormGroup>
 
             {/* 카테고리 */}
@@ -80,7 +134,7 @@ export default function ProposalWrite() {
             {/* 상세 설명 */}
             <FormGroup className="mb-3">
               <Label className="fw-bold text-start d-block">상세 설명 *</Label>
-              <Input type="textarea" placeholder="상세한 내용을 입력해주세요." rows={5} style={{ resize: "none" }}/>
+              <Input type="textarea" name="description" onChange={(e)=>setDescription(e.target.value)} placeholder="상세한 내용을 입력해주세요." rows={5} style={{ resize: "none" }}/>
             </FormGroup>
 
             {/* 상품 이미지 업로드 */}
@@ -131,30 +185,30 @@ export default function ProposalWrite() {
             {/* 원 상품 링크 */}
             <FormGroup className="mb-4">
               <Label className="fw-bold text-start d-block">원 상품 링크 *</Label>
-              <Input type="text" placeholder="상품 링크를 입력해주세요." />
+              <Input type="text" name="originalSiteUrl" onChange={(e)=>setOriginalSiteUrl(e.target.value)} placeholder="상품 링크를 입력해주세요." />
             </FormGroup>
 
             {/* 원가 */}
             <FormGroup className="mb-4">
               <Label className="fw-bold text-start d-block">원가 *</Label>
-              <Input type="text" placeholder="가격을 입력해주세요." />
+              <Input type="text" name="originalPrice" onChange={(e)=> setOriginalPrice(e.target.value)} placeholder="가격을 입력해주세요." />
             </FormGroup>
 
             {/* 해외 배송비 */}
             <FormGroup className="mb-3">
               <Label className="fw-bold text-start d-block">해외 배송비 *</Label>
-              <Input type="text" placeholder="가격을 입력해주세요." />
+              <Input type="text" name="abroadShippingCost" onChange={(e)=> setAbroadShippingCost(e.target.value)} placeholder="가격을 입력해주세요." />
             </FormGroup>
 
             {/* 최소 참여 인원 */}
             <FormGroup className="mb-4">
               <Label className="fw-bold text-start d-block">최소 참여 인원 *</Label>
-              <Input type="text" placeholder="예) 20" />
+              <Input type="text" name="minPart" onChange={(e)=> setMinPart(e.target.value)} placeholder="예) 20" />
             </FormGroup>
 
             <div className="d-flex gap-2 justify-content-end">
               <Button color="secondary">취소하기</Button>
-              <Button color="primary">작성완료</Button>
+              <Button color="primary" onClick={submit}>작성완료</Button>
             </div>
           </Form>
         </div>

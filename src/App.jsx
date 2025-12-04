@@ -206,7 +206,7 @@ function AppContent() {
             {/* 와타시 */}
             {/* 제안 */}
             <Route path="/proposalsList" element={<ProposalsList />} />
-            <Route path='/proposalDetail/:id' element={<ProposalDetailConsumar />} />
+            <Route path='/proposalsList/proposalDetail/:id' element={<ProposalDetailConsumar />} />
             <Route path="/proposalsList/proposalWrite" element={<ProposalWrite />} />
 
             {/* 공구 */}
