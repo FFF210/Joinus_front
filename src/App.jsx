@@ -68,7 +68,6 @@ import MypageTier from './pages/consumer/mypage/MypageTier';
 import MyInquiryDetail from './pages/consumer/mypage/MyInquiryDetail';
 import ExchangeReq from './pages/consumer/mypage/ExchangeReq';
 import ReturnReq from './pages/consumer/mypage/ReturnReq';
-import CancelReq from './pages/consumer/mypage/cancelReq';
 import CnclExchRtrnHisList from './pages/consumer/mypage/CnclExchRtrnHisList';
 import ExchangeDetail from './pages/consumer/mypage/ExchangeDetail';
 import ReturnDetail from './pages/consumer/mypage/ReturnDetail';
@@ -106,7 +105,7 @@ function AppContent() {
             {/* 메인 페이지 */}
             <Route path="/" element={<MainPage />} />
             <Route path="/consumer/main" element={<MainPage />} />
-            
+
             {/* 검색 결과 페이지 */}
             <Route path="/searchResult" element={<SearchResult />} />
 
@@ -120,53 +119,50 @@ function AppContent() {
             <Route path="/cs/notice" element={<Notice />} />
             <Route path="/cs/notice/:id" element={<NoticeDetail />} />
             <Route path="/cs/inquiry/:id" element={<MyInquiryDetail />} />
-            <Route path="/cs/inquiryWrite" element={<InquiryWrite/>} /> {/* 임시 */}
+            <Route path="/cs/inquiryWrite" element={<InquiryWrite />} /> {/* 임시 */}
 
             {/* 납품문의 */}
             <Route path="/partnership" element={<Partnership />} />
 
-
-
-            <Route path="exchangeReq" element={<ExchangeReq/>} />
-            <Route path="returnReq" element={<ReturnReq/>} />
-            <Route path="cancelReq" element={<CancelReq/>} />
-            <Route path="exchangeDetail:/id" element={<ExchangeDetail/>} />
-            <Route path="returnDetail:/id" element={<ReturnDetail/>} />
-            <Route path="cancelDetail" element={<CancelDetail/>} />
-
-
             {/* 사용자 마이페이지 */}
             <Route path="/mypage/*" element={<Sidebar>
-                <Routes>
-                  <Route path="orderList" element={<OrderList />} />
-                  <Route path="orderList/orderDetail/:id" element={<OrderDetail />} />
-                  
-                  <Route path="shopCartList" element={<ShopCartList />} />
-                  <Route path="interestList" element={<InterestList />} />
-                  <Route path="inquiryHistoryList" element={<InquiryHistoryList />} />
-                  <Route path="inquiryDetail/:id" element={<InquiryDetail />} />
+              <Routes>
+                <Route path="orderList" element={<OrderList />} />
+                <Route path="orderList/orderDetail/:id" element={<OrderDetail />} />
 
-                  <Route path="cnclExchRtrnHisList" element={<CnclExchRtrnHisList/>} />  {/*취소교환목록*/}
-                  <Route path="addressList" element={<AddressList />} />
-                  <Route path="addressAdd" element={<AddressAdd />} />
-                  <Route path="addressEdit/:id" element={<AddressEdit />} />
+                <Route path="shopCartList" element={<ShopCartList />} />
+                <Route path="interestList" element={<InterestList />} />
+                <Route path="inquiryHistoryList" element={<InquiryHistoryList />} />
+                <Route path="inquiryDetail/:id" element={<InquiryDetail />} />
 
-                  <Route path="alert" element={<MypageAlert />} />
-                  <Route path="deleteAccount" element={<MypageDeleteAccount />} />
-                  <Route path="main" element={<MypageMain />} />
-                  <Route path="points" element={<MypagePoints />} />
-                  <Route path="profileDetail" element={<MypageProfileDetail />} />
-                  <Route path="profileEdit" element={<MypageProfileEdit />} />
-                  <Route path="profileIndex" element={<MypageProfileIndex />} />
-                  <Route path="suggestions" element={<MypageSuggestions />} />
-                  <Route path="tier" element={<MypageTier />} />
+                 {/*교환 취소 반품*/}
+                <Route path="cnclExchRtrnHisList" element={<CnclExchRtrnHisList />} /> 
+                <Route path="exchangeReq" element={<ExchangeReq />} />
+                <Route path="returnReq" element={<ReturnReq />} />
+                <Route path="exchangeDetail:/id" element={<ExchangeDetail />} />
+                <Route path="returnDetail:/id" element={<ReturnDetail />} />
+                <Route path="cancelDetail:/id" element={<CancelDetail />} />
 
-                  <Route path="reviewManage/*" element={<ReviewManage />}>
-                    <Route index element={<ReviewWrite />} />
-                    <Route path="reviewWrited" element={<ReviewWrited />} />
-                  </Route>
-                </Routes>
-              </Sidebar>
+                <Route path="addressList" element={<AddressList />} />
+                <Route path="addressAdd" element={<AddressAdd />} />
+                <Route path="addressEdit/:id" element={<AddressEdit />} />
+
+                <Route path="alert" element={<MypageAlert />} />
+                <Route path="deleteAccount" element={<MypageDeleteAccount />} />
+                <Route path="main" element={<MypageMain />} />
+                <Route path="points" element={<MypagePoints />} />
+                <Route path="profileDetail" element={<MypageProfileDetail />} />
+                <Route path="profileEdit" element={<MypageProfileEdit />} />
+                <Route path="profileIndex" element={<MypageProfileIndex />} />
+                <Route path="suggestions" element={<MypageSuggestions />} />
+                <Route path="tier" element={<MypageTier />} />
+
+                <Route path="reviewManage/*" element={<ReviewManage />}>
+                  <Route index element={<ReviewWrite />} />
+                  <Route path="reviewWrited" element={<ReviewWrited />} />
+                </Route>
+              </Routes>
+            </Sidebar>
             } />
 
 
@@ -199,30 +195,30 @@ function AppContent() {
             <Route path="/admin/memberList" element={<MemberList />} />
             <Route path="/admin/member/:id" element={<MemberDetail />} />
             {/* 자엔 디테일 관리자 화면 */}
-            <Route path="/admin/proposalDetailAdmin" element={<ProposalDetailAdmin/>}/>
+            <Route path="/admin/proposalDetailAdmin" element={<ProposalDetailAdmin />} />
 
             {/* 구매(주문)/교환 반품 */}
-            <Route path="/admin/adminOrderList" element={<AdminOrderList/>} />
-            <Route path="/admin/adminOrderDetail" element={<AdminOrderDetail/>} />
-            <Route path="/admin/exchRtrnWaitingList" element={<ExchRtrnWaitingList/>} />
-            <Route path="/admin/exchRtrnWaitingDetail" element={<ExchRtrnWaitingDetail/>} />
-            
+            <Route path="/admin/adminOrderList" element={<AdminOrderList />} />
+            <Route path="/admin/adminOrderDetail" element={<AdminOrderDetail />} />
+            <Route path="/admin/exchRtrnWaitingList" element={<ExchRtrnWaitingList />} />
+            <Route path="/admin/exchRtrnWaitingDetail" element={<ExchRtrnWaitingDetail />} />
+
             {/* 와타시 */}
             {/* 제안 */}
-              <Route path="/proposalsList" element={<ProposalsList />} />
-              <Route path='/proposalDetail/:id' element={<ProposalDetailConsumar/>}/>
-              <Route path="/proposalsList/proposalWrite" element={<ProposalWrite />} />
+            <Route path="/proposalsList" element={<ProposalsList />} />
+            <Route path='/proposalDetail/:id' element={<ProposalDetailConsumar />} />
+            <Route path="/proposalsList/proposalWrite" element={<ProposalWrite />} />
 
             {/* 공구 */}
-            
-            <Route path='/pay' element={<Pay/>}/>
-            <Route path="/payComplate" element={<PayComplete/>}/>
+
+            <Route path='/pay' element={<Pay />} />
+            <Route path="/payComplate" element={<PayComplete />} />
             <Route path="/gbProductList" element={<GBProductList />} />
             <Route path="/gbProductDetail/:id/*" element={<GBProductDetail />}>
               <Route index element={<DetailInfo />} />
               <Route path="detailInfo" element={<DetailInfo />} />
               <Route path="reviews" element={<Reviews />} />
-              <Route path='qAndA' element={<QAndA/>}/>
+              <Route path='qAndA' element={<QAndA />} />
               <Route path="policy" element={<Policy />} />
             </Route>
           </Routes>
