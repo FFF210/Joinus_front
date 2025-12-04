@@ -34,7 +34,7 @@ export default function MypageSuggestions() {
           <>
             {/* 1 */}
             <div className="suggestions-card">
-              <div className="card-img">이미지</div>
+              <div className="suggest-card-img">이미지</div>
 
               <div className="card-info">
                 <div>
@@ -53,7 +53,7 @@ export default function MypageSuggestions() {
 
             {/* 2 */}
             <div className="suggestions-card">
-              <div className="card-img">이미지</div>
+              <div className="suggest-card-img">이미지</div>
 
               <div className="card-info">
                 <div>
@@ -73,7 +73,7 @@ export default function MypageSuggestions() {
 
             {/* 3 */}
             <div className="suggestions-card">
-              <div className="card-img">이미지</div>
+              <div className="suggest-card-img">이미지</div>
 
               <div className="card-info">
                 <div>
@@ -92,7 +92,7 @@ export default function MypageSuggestions() {
 
             {/* 4 */}
             <div className="suggestions-card">
-              <div className="card-img">이미지</div>
+              <div className="suggest-card-img">이미지</div>
 
               <div className="card-info">
                 <div>
@@ -115,7 +115,7 @@ export default function MypageSuggestions() {
           <>
             {/* 1 */}
             <div className="suggestions-card">
-              <div className="card-img">이미지</div>
+              <div className="suggest-card-img">이미지</div>
 
               <div className="card-info">
                 <div>
@@ -133,7 +133,7 @@ export default function MypageSuggestions() {
 
             {/* 2 */}
             <div className="suggestions-card">
-              <div className="card-img">이미지</div>
+              <div className="suggest-card-img">이미지</div>
 
               <div className="card-info">
                 <div>
@@ -152,7 +152,7 @@ export default function MypageSuggestions() {
 
             {/* 3 */}
             <div className="suggestions-card">
-              <div className="card-img">이미지</div>
+              <div className="suggest-card-img">이미지</div>
 
               <div className="card-info">
                 <div>
@@ -171,7 +171,7 @@ export default function MypageSuggestions() {
 
             {/* 4 */}
             <div className="suggestions-card">
-              <div className="card-img">이미지</div>
+              <div className="suggest-card-img">이미지</div>
 
               <div className="card-info">
                 <div>
