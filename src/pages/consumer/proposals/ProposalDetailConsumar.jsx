@@ -1,11 +1,30 @@
 import { Label, Button, Input, FormGroup} from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link ,useParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { baseUrl, myAxios } from "../../../config";
 
 export default function ProposalDetailConsumar() {
-
+    const {id} = useParams();
+    const [proposal, setPropsal] = useState({id:id,category:'',productName:'',description:'',memberName:'',productName:'',originalPrice:'',createAt:'',originalSiteUrl:'',abroadShippingCost:'',imageUrl:'' });
     const total = 15;
     const joined = 10;
     const percentage = (joined/total) * 100;
+
+
+    const getProposal = () => {
+      myAxios().get(`/proposalDetail?id=${id}`)
+      .then(res=>{
+        console.log(res)
+        setPropsal(res.data)
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    }
+
+    useEffect(()=>{
+      getProposal();
+    }, [])
 
     return(
         <>
@@ -27,40 +46,35 @@ export default function ProposalDetailConsumar() {
               <div style={styles.container}>
                 <div style={{ display: "flex",alignContent:'space-between' , marginBottom: "20px" ,gap:'20px'}}>
                     <div>
-                        <img src="/computer.png" style={{width:'500px', height:"500px", marginBottom:'30px', borderRadius:'10px'}}/>
+                        <img src={`${baseUrl}/imageView?filename=${proposal.imageUrl}`} style={{width:'500px', height:"500px", marginBottom:'30px', borderRadius:'10px'}}/>
                     </div>
-                    <div style={{width:"500px", height:'580px', border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
+                    <div style={{width:"500px",  border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
                         <div style={{ display:'flex', justifyContent: 'space-between', marginBottom:'10px'}}>
-                            <div style={{border:'1px solid black', borderRadius:'5px', fontSize:'12px', textAlign:'center', alignContent:'center'}}>카테고리</div>
+                            <div style={{border:'1px solid black', borderRadius:'5px', fontSize:'12px', textAlign:'center', alignContent:'center'}}>{proposal.category}</div>
                             <div style={{backgroundColor:'#79F273', color:'black', width:'100px', height:'30px', alignContent:'center', textAlign:'center'}}>공구 등록</div>
                         </div>
                         <div>
-                            <Label style={{fontSize:"20px"}}>ASUS 비보북 S 16 M3607KA-SH035W (SSD 512GB)</Label>
+                            <Label style={{fontSize:"20px"}}>{proposal.productName}</Label>
                         </div>
                         <div style={{display:'flex'}}>
-                            <Label style={{fontSize:"12px", marginRight:'10px'}}>작성자 : 홍길동</Label>
-                            <Label style={{fontSize:"12px"}}>2025-11-30</Label>
+                            <Label style={{fontSize:"12px", marginRight:'10px'}}>작성자 : {proposal.memberName}</Label>
+                            <Label style={{fontSize:"12px"}}>{proposal.createAt}</Label>
                         </div>
                         <div>
-                            <Label style={{fontSize:"24px"}}>1,057,314원</Label>
+                            <Label style={{fontSize:"24px"}}>{proposal.originalPrice + proposal.abroadShippingCost}원</Label>
                         </div>
                         <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
                         <div className="fw-bold" style={{fontSize:'14px', padding:'0 10px 0 10px'}}>상품 상세 설명</div>
-                        <div style={{fontSize:'14px', padding:'0 10px 0 10px'}}>* 저장장치: SSD</div>
-                        <div style={{fontSize:'14px', padding:'0 10px 0 10px '}}>* 화면크기: 40.64cm</div>
-                        <div style={{fontSize:'14px', padding:'0 10px 0 10px'}}>* CPU브랜드: AMD</div>
-                        <div style={{fontSize:'14px', padding:'0 10px 0 10px'}}>* 출시년월: 2025.08</div>
-                        <div style={{fontSize:'14px', padding:'0 10px 0 10px'}}>* 제조사 품질보증: 1년</div>
-                        <div style={{fontSize:'14px', padding:'0 10px 0 10px'}}>* 쿠팡상품번호: 8941702848 - 26149371639</div>
+                        <div style={{fontSize:'14px', padding:'0 10px 0 10px',whiteSpace: 'pre-wrap'}}>{proposal.description}</div>
                         <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
                         <div>
                             <Label className="fw-bold" style={{fontSize:'12px', marginTop:'0'}}>원사이트
-                                 <div style={{fontSize:'10px', color:'#ACA5A5'}}>https://www.coupang.com/vp/products/8941702848?itemId=26149371639&vendorI333a0</div>
+                                 <div style={{fontSize:'10px', color:'#ACA5A5'}}>{proposal.originalSiteUrl}</div>
                             </Label>
                             <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
                             <div>
-                                <div style={{fontSize:'12px', marginTop:'0'}}>원래 가격 1,054,314원</div>
-                                <div style={{fontSize:'12px', marginTop:'0'}}>해외 배송비 50,000원</div>
+                                <div style={{fontSize:'12px', marginTop:'0'}}>원래 가격 : {proposal.originalPrice}</div>
+                                <div style={{fontSize:'12px', marginTop:'0'}}>해외 배송비 : {proposal.abroadShippingCost}</div>
                             </div>
                             <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
                             <div style={{display:'flex', gap:'10px',alignItems: "center"}}>
@@ -80,14 +94,17 @@ export default function ProposalDetailConsumar() {
               </div>
             </div>
             <div style={styles.pageWrapper}>
-                <div style={styles.container}>
-                    <div>
-                        <img src="/computer.png" style={{width:"220px", marginRight:'47px'}}/>
-                        <img src="/computer.png" style={{width:"220px", marginRight:'46px'}}/>
-                        <img src="/computer.png" style={{width:"220px", marginRight:'47px'}}/>
-                        <img src="/computer.png" style={{width:"220px"}}/>
-                    </div>
+              <div style={styles.container}>
+                <div style={{ display: "flex", gap: "47px", flexWrap: "wrap" }}>
+                  {proposal.subImageUrls && proposal.subImageUrls.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={`${baseUrl}/imageView?filename=${img}`}
+                      style={{ width: "220px" }}
+                    />
+                  ))}
                 </div>
+              </div>
             </div>
             <div style={styles.pageWrapper}>
                 <div style={styles.container}>

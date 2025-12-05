@@ -8,7 +8,7 @@ import { myAxios } from "../../../config";
 export default function ProposalWrite() {
   
   const [productName, setProductName] = useState('');
-  const [title, setTitle] = useState('');
+  // const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   // 대표 이미지
@@ -34,14 +34,13 @@ export default function ProposalWrite() {
   const submit = () => {
   const formData = new FormData();
   formData.append('productName', productName);
-  formData.append('title', title);
-  formData.append('category', category);
+  formData.append('category', category !== "선택하세요." ? category : "");
   formData.append('description', description);
   formData.append('originalSiteUrl', originalSiteUrl);
   formData.append('originalPrice', originalPrice);
   formData.append('abroadShippingCost', abroadShippingCost);
   formData.append('minPart', minPart);
-
+  formData.append('memberUsername', "testUser");
   // 대표 이미지
   if (mainFile) formData.append('mainImage', mainFile);
 
@@ -54,7 +53,8 @@ export default function ProposalWrite() {
     .then(res => {
       console.log(res);
       let proposalId = res.data;
-      navigate(`/proposalsList/proposalWrite/${proposalId}`);
+      navigate(`/proposalsList/proposalDetail/${proposalId}`);
+
     })
     .catch(err => {
       console.log(err);
@@ -117,15 +117,15 @@ export default function ProposalWrite() {
             </FormGroup>
 
             {/* 제목 */}
-            <FormGroup className="mb-3">
+            {/* <FormGroup className="mb-3">
               <Label className="fw-bold text-start d-block">제목 *</Label>
               <Input type="text" name="title" onChange={(e)=> setTitle(e.target.value)} placeholder="예) 프리미엄 컵 이이전 공동구매 제안" />
-            </FormGroup>
+            </FormGroup> */}
 
             {/* 카테고리 */}
             <FormGroup className="mb-3">
               <Label className="fw-bold text-start d-block">카테고리 *</Label>
-              <Input type="select">
+              <Input type="select" name="category" onChange={(e)=> setCategory(e.target.value)}>
                 <option>선택하세요.</option>
                 <option>뷰티</option>
                 <option>패션</option>
@@ -164,12 +164,7 @@ export default function ProposalWrite() {
                   {mainImage &&
                     subImages.map((img, idx) => (
                       <div key={idx} style={styles.imageBox}>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleSubImageUpload(e, idx)}
-                          style={styles.fileInput}
-                        />
+                        <input type="file" accept="image/*" onChange={(e) => handleSubImageUpload(e, idx)} style={styles.fileInput}/>
                         {img ? (
                           <img
                             src={img}

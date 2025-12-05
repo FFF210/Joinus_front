@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 
 export default function ProposalWrite() {
+
+  const {id} = useParams();
+  const [proposal, setPropsal] = useState({id:id,category:'',productName:'',description:'',memberName:'',productName:'',originalPrice:'',createAt:'',originalSiteUrl:'',abroadShippingCost:'',imageUrl:'' });
   // 대표 이미지
   const [mainImage, setMainImage] = useState(null);
   // 일반 이미지 4개
