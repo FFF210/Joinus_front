@@ -9,6 +9,7 @@ import SignUp from './pages/auth/SignUp';
 import FindId from './pages/auth/FindId';
 import FindPassword from './pages/auth/FindPassword';
 import OAuthTokenHandler from './pages/auth/OAuthTokenHandler';
+import Logout from './pages/auth/Logout';
 import Notice from './pages/cs/Notice';
 import NoticeDetail from './pages/cs/NoticeDetail';
 import Partnership from './pages/consumer/Partnership';
@@ -116,6 +117,7 @@ function AppContent() {
             <Route path="/findId" element={<FindId />} />
             <Route path="/findPw" element={<FindPassword />} />
             <Route path="/token" element={<OAuthTokenHandler />} />
+            <Route path="/logout" element={<Logout />} />
 
             {/* 고객센터 */}
             <Route path="/cs/notice" element={<Notice />} />
