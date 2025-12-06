@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import GroupBuyCard from '../../components/common/GroupBuyCard';
 import './SearchResult.css';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { searchProducts } from '../../services/searchApi';
+import { transformProposal, transformGbProduct } from '../../utils/searchDataTransform';
 
 export default function SearchResult() {
   /* 필터 상태 */
@@ -32,154 +34,44 @@ export default function SearchResult() {
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   
 
-  // 데이터 로딩 (백엔드 연동 시 이 부분만 수정)
+  // 데이터 로딩 (백엔드 API 연동)
   useEffect(() => {
     const fetchSearchResults = async () => {
       setIsLoading(true);
       try {
-        // 임시: 하드코딩된 데이터 (백엔드 연동 전까지)
-        const tempProposals = [
-          { 
-            id: 1, 
-            title: '향초', 
-            category: '생활용품',
-            status: '진행중',
-            description: '향긋한 향초로 공간을 채워보세요.',
-            currentParticipants: 120,
-            maxParticipants: 80,
-            deadlineTime: '12시간',
-            price: '13,900원',
-            rating: 4.6,
-            badge: 'HOT', 
-            image: '/searchResult/candle.jpg' 
-          },
-          { 
-            id: 2, 
-            title: '차량용 향수 디퓨저', 
-            category: '자동차용품',
-            status: '진행중',
-            description: '차량 내부를 상쾌하게 만들어주는 디퓨저입니다.',
-            currentParticipants: 80,
-            maxParticipants: 60,
-            deadlineTime: '25일',
-            price: '9,900원',
-            rating: 4.5,
-            image: '/searchResult/carFragranceDiffuser.png' 
-          },
-          { 
-            id: 3, 
-            title: '전기포트', 
-            category: '가전',
-            status: '진행중',
-            description: '빠르고 안전한 전기포트입니다.',
-            currentParticipants: 45,
-            maxParticipants: 80,
-            deadlineTime: '3일',
-            price: '16,900원',
-            rating: 4.7,
-            image: '/searchResult/electricPot.png' 
-          },
-          { 
-            id: 4, 
-            title: 'LED 마스크', 
-            category: '뷰티',
-            status: '진행중',
-            description: '피부 관리에 좋은 LED 마스크입니다.',
-            currentParticipants: 35,
-            maxParticipants: 50,
-            deadlineTime: '5일',
-            price: '18,900원',
-            rating: 4.4,
-            image: '/searchResult/ledMask.png' 
-          },
-        ];
-        const tempOngoing = [
-          { 
-            id: 5, 
-            title: '로봇 청소기', 
-            category: '가전',
-            status: '진행중',
-            description: '스마트 로봇 청소기로 집안을 깨끗하게 유지하세요.',
-            currentParticipants: 120,
-            maxParticipants: 200,
-            deadlineTime: '2일',
-            price: '11,900원',
-            rating: 4.8,
-            image: '/searchResult/robotVacuumCleaner.png' 
-          },
-          { 
-            id: 6, 
-            title: '가정용 cctv', 
-            category: '가전',
-            status: '진행중',
-            description: '집안 보안을 위한 가정용 CCTV입니다.',
-            currentParticipants: 85,
-            maxParticipants: 100,
-            deadlineTime: '8시간',
-            price: '14,500원',
-            rating: 4.6,
-            badge: 'HOT', 
-            image: '/searchResult/homeCctv.png' 
-          },
-          { 
-            id: 7, 
-            title: '차량용 청소기', 
-            category: '자동차용품',
-            status: '진행중',
-            description: '차량 내부 청소에 최적화된 청소기입니다.',
-            currentParticipants: 60,
-            maxParticipants: 80,
-            deadlineTime: '1일',
-            price: '22,000원',
-            rating: 4.5,
-            image: '/searchResult/carVacuumCleaner.png' 
-          },
-          { 
-            id: 8, 
-            title: 'kpokahtChocolate', 
-            category: '식품',
-            status: '진행중',
-            description: '프리미엄 초콜릿 세트입니다.',
-            currentParticipants: 95,
-            maxParticipants: 120,
-            deadlineTime: '15시간',
-            price: '8,900원',
-            rating: 4.7,
-            image: '/searchResult/kpokahtChocolate.png' 
-          },
-        ];
-
-        // 정렬 로직
-        const sortData = (data, sortType) => {
-          const sorted = [...data];
-          switch (sortType) {
-            case '인기순':
-              return sorted.sort((a, b) => b.currentParticipants - a.currentParticipants);
-            case '최신순':
-              return sorted.sort((a, b) => b.id - a.id);
-            case '마감임박순':
-              return sorted.sort((a, b) => {
-                // deadlineTime에서 숫자 추출 (시간/일)
-                const aTime = parseInt(a.deadlineTime.match(/\d+/)?.[0] || 999);
-                const bTime = parseInt(b.deadlineTime.match(/\d+/)?.[0] || 999);
-                // '시간'이면 더 임박하므로 우선순위 높음
-                const aIsHour = a.deadlineTime.includes('시간');
-                const bIsHour = b.deadlineTime.includes('시간');
-                if (aIsHour && !bIsHour) return -1;
-                if (!aIsHour && bIsHour) return 1;
-                return aTime - bTime;
-              });
-            default:
-              return sorted;
-          }
+        // 검색 파라미터 구성
+        const searchParams = {
+          keyword: searchKeyword || null,
+          categories: selectedCategory.length > 0 ? selectedCategory : null,
+          priceRanges: selectedPriceRange.length > 0 ? selectedPriceRange : null,
+          sortBy: sortBy || '인기순'
         };
 
-        const sortedProposals = sortData(tempProposals, sortBy);
-        const sortedOngoing = sortData(tempOngoing, sortBy);
-        setProposalResults(sortedProposals);
-        setOngoingResults(sortedOngoing);
+        console.log('검색 파라미터:', searchParams);
+
+        // API 호출
+        const response = await searchProducts(searchParams);
+        
+        console.log('API 응답:', response);
+        
+        // 백엔드 데이터를 프론트엔드 형식으로 변환
+        const transformedProposals = (response.proposals || []).map(transformProposal);
+        const transformedOngoing = (response.ongoing || []).map(transformGbProduct);
+
+        console.log('변환된 제안:', transformedProposals.length, '개');
+        console.log('변환된 공구:', transformedOngoing.length, '개');
+
+        setProposalResults(transformedProposals);
+        setOngoingResults(transformedOngoing);
       } catch (error) {
         console.error('검색 결과 로딩 실패:', error);
+        if (error.response) {
+          console.error('에러 응답:', error.response.status, error.response.data);
+        } else if (error.request) {
+          console.error('요청 실패 - 백엔드 서버가 실행 중인지 확인하세요');
+        } else {
+          console.error('에러 메시지:', error.message);
+        }
         setProposalResults([]);
         setOngoingResults([]);
       } finally {
@@ -187,7 +79,7 @@ export default function SearchResult() {
       }
     };
     fetchSearchResults();
-  }, [searchKeyword, selectedType, selectedCategory, selectedPriceRange, sortBy]);
+  }, [searchKeyword, selectedCategory, selectedPriceRange, sortBy]);
 
   // 동적으로 개수 계산
   const totalCount = proposalResults.length + ongoingResults.length;

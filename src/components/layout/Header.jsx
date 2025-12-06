@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import "./Header.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Header() {
   const [hoverMenu, setHoverMenu] = useState(null);
   const hideTimer = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const navigate = useNavigate();
 
   // ========== Login 여부 확인 ==========
   useEffect(() => {
@@ -72,6 +74,34 @@ export default function Header() {
     }, 300);
   };
 
+  // 검색 핸들러
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const keyword = searchKeyword.trim();
+    console.log('검색 실행:', keyword); // 디버깅용
+    if (keyword) {
+      const url = `/searchResult?keyword=${encodeURIComponent(keyword)}`;
+      console.log('이동할 URL:', url); // 디버깅용
+      navigate(url);
+    } else {
+      navigate('/searchResult');
+    }
+  };
+
+  const handleIconClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const keyword = searchKeyword.trim();
+    console.log('아이콘 클릭 - 검색 실행:', keyword); // 디버깅용
+    if (keyword) {
+      const url = `/searchResult?keyword=${encodeURIComponent(keyword)}`;
+      console.log('이동할 URL:', url); // 디버깅용
+      navigate(url);
+    } else {
+      navigate('/searchResult');
+    }
+  };
+
   return (
     <header className="header-wrapper">
       {/* ========== 상단 로그인 바 ========== */}
@@ -134,10 +164,21 @@ export default function Header() {
             </Link> 
           </nav>
 
-          <div className="search-box">
-            <i className="bi bi-search"></i>
-            <input type="text" placeholder="상품명, 카테고리를 검색하세요." />
-          </div>
+          <form className="search-box" onSubmit={handleSearch}>
+            <i 
+              className="bi bi-search" 
+              onClick={handleIconClick} 
+              style={{ cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
+            ></i>
+            <input 
+              type="text" 
+              placeholder="상품명, 카테고리를 검색하세요." 
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+            />
+          </form>
         </div>
       </div>
 
