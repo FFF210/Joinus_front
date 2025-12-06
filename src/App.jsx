@@ -79,6 +79,7 @@ import CancelDetail from './pages/consumer/mypage/CancelDetail';
 import ProposalsList from "./pages/consumer/proposals/ProposalsList";
 import ProposalDetailConsumar from "./pages/consumer/proposals/ProposalDetailConsumar";
 import ProposalWrite from "./pages/consumer/proposals/ProposalWrite";
+import ProposalModify from './pages/consumer/proposals/ProposalModify';
 //공구
 import GBProductList from './pages/consumer/groups/GBProductList';
 import GBProductDetail from './pages/consumer/groups/GBProductDetail';
@@ -331,11 +332,11 @@ function AppContent() {
               </ProtectedRoute>
             } />
 
-            {/* 와타시 */}
             {/* 제안 */}
             <Route path="/proposalsList" element={<ProposalsList />} />
-            <Route path='/proposalsList/proposalDetail/:id' element={<ProposalDetailConsumar />} />
             <Route path="/proposalsList/proposalWrite" element={<ProposalWrite />} />
+            <Route path='/proposalsList/proposalDetail/:id' element={<ProposalDetailConsumar />} />
+            <Route path="/proposalsList/proposalModify/:id" element={<ProposalModify />} />
 
             {/* 공구 */}
 

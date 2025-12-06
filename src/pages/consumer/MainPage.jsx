@@ -17,12 +17,12 @@ export default function MainPage() {
   const [proposalItems, setProposalItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 데이터 상태
-  const [deadlineSoonItems, setDeadlineSoonItems] = useState([]);
-  const [popularItems, setPopularItems] = useState([]);
-  const [ongoingItems, setOngoingItems] = useState([]);
-  const [proposalItems, setProposalItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // // 데이터 상태
+  // const [deadlineSoonItems, setDeadlineSoonItems] = useState([]);
+  // const [popularItems, setPopularItems] = useState([]);
+  // const [ongoingItems, setOngoingItems] = useState([]);
+  // const [proposalItems, setProposalItems] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
 
   // 데이터 로딩
   useEffect(() => {

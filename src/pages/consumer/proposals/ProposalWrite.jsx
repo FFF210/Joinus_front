@@ -32,34 +32,34 @@ export default function ProposalWrite() {
   const navigate = useNavigate();
 
   const submit = () => {
-  const formData = new FormData();
-  formData.append('productName', productName);
-  formData.append('category', category !== "선택하세요." ? category : "");
-  formData.append('description', description);
-  formData.append('originalSiteUrl', originalSiteUrl);
-  formData.append('originalPrice', originalPrice);
-  formData.append('abroadShippingCost', abroadShippingCost);
-  formData.append('minPart', minPart);
-  formData.append('memberUsername', "testUser");
-  // 대표 이미지
-  if (mainFile) formData.append('mainImage', mainFile);
+    const formData = new FormData();
+    formData.append('productName', productName);
+    formData.append('category', category !== "선택하세요." ? category : "");
+    formData.append('description', description);
+    formData.append('originalSiteUrl', originalSiteUrl);
+    formData.append('originalPrice', originalPrice);
+    formData.append('abroadShippingCost', abroadShippingCost);
+    formData.append('minPart', minPart);
+    formData.append('memberUsername', "testUser");
+    // 대표 이미지
+    if (mainFile) formData.append('mainImage', mainFile);
 
-  // 서브 이미지
-  subFiles.forEach((file) => {
-    if (file) formData.append('subImages', file);
-  });
-
-  myAxios().post(`/proposalWrite`, formData)
-    .then(res => {
-      console.log(res);
-      let proposalId = res.data;
-      navigate(`/proposalsList/proposalDetail/${proposalId}`);
-
-    })
-    .catch(err => {
-      console.log(err);
+    // 서브 이미지
+    subFiles.forEach((file) => {
+      if (file) formData.append('subImages', file);
     });
-};
+
+    myAxios().post(`/proposalWrite`, formData)
+      .then(res => {
+        console.log(res);
+        let proposalId = res.data;
+        navigate(`/proposalsList/proposalDetail/${proposalId}`);
+
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
 
   // 대표 이미지 업로드

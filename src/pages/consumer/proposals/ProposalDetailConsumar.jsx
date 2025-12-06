@@ -83,10 +83,17 @@ export default function ProposalDetailConsumar() {
                             </div>
                             <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
                             
-                            <div style={{display:"flex",alignItems: "center"}}>
-                                <img src="/ddabong.png" style={{width:"25px", height:'25px', marginRight:'10px'}}/>
-                                <div style={{fontSize:'24px', marginRight:'20px'}}>0</div>
-                                <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}>투표하기</Button>
+                            <div style={{display:"flex",alignItems: "center", justifyContent:'space-between'}}>
+                                <div style={{display:'flex'}}>
+                                  <img src="/ddabong.png" style={{width:"25px", height:'25px', marginRight:'10px'}}/>
+                                  <div style={{fontSize:'24px', marginRight:'20px'}}>0</div>
+                                  <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}>투표하기</Button>
+                                </div>
+                                <div>
+                                  <Link to={`/proposalsList/proposalModify/${proposal.id}`}>
+                                  <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}>수정하기</Button>
+                                  </Link>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -123,7 +123,7 @@ export default function ProposalsList() {
       </div>
 
       {/* 목록 영역 */}
-      <div style={styles.pageWrapper}>
+      {/* <div style={styles.pageWrapper}>
         <div style={styles.container}>
           {loading ? (
             <p>로딩 중...</p>
@@ -223,7 +223,59 @@ export default function ProposalsList() {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
+       <div style={styles.pageWrapper}>
+                <div style={styles.container} >
+                    <div style={{display:'grid', gap:"20px", gridTemplateColumns: "repeat(4, 1fr)"}}>
+                        {Array.from({ length: 8 }).map((_, idx) => (
+                        <Card key={idx} style={{width: '240px', boxShadow: "0 5px 20px rgba(88 88 88 / 20%)", border:'none' }} onClick={() => navigate("/proposalDetail")}>
+                            <img alt="Sample" src="https://picsum.photos/300/200"/>
+                            <CardBody >
+                                <CardTitle tag="h5" style={{display:'flex', justifyContent:'space-between'}}>
+                                    <div style={{border:'1px solid black', fontSize:'10px', padding:"5px"}}>카테고리</div>
+                                    {/* <div style={{backgroundColor:'#BBFFAC', color:'#0A8F30', fontSize:'10px' , padding:"5px"}}>진행중</div> */}
+                                </CardTitle>
+                                <CardSubtitle className="mb-2 text-muted" tag="h6">
+                                    <div style={{fontSize:'14px'}}>자캣 이름</div>
+                                </CardSubtitle>
+                                <CardSubtitle>
+                                    <div style={{fontSize:'12px'}}>더블 브레스티드 블레이저, 울, 프린스 오브 
+                                        웨일스, 장식 부착 없음, 라펠, 롱 슬리브, 안감
+                                        있음, 버튼...
+                                    </div>
+                                </CardSubtitle>
+                                    <div className="fw-bold" style={{fontSize:'24px'}}>10000원</div>
+                                {/* <CardSubtitle>
+                                    <div>
+                                    <img src="/CountingStars.png" style={{width:'12px', marginRight:'5px'}}/>
+                                    <Label style={{fontSize:'12px'}}>4.6</Label>
+                                    </div>
+                                </CardSubtitle> */}
+                                <CardSubtitle>
+                                    <div style={{justifyContent:'space-between', display:'flex'}}>
+                                        <div>
+                                            {/* <img src="/person.png" style={{width:'15px', marginRight:'5px'}}/> */}
+                                            <Label style={{fontSize:'12px'}}>제안자 홍길동</Label>
+                                        </div>
+                                        <div>
+                                            <Label style={{color:'black', fontSize:'10px'}}>2025-11-29</Label>
+                                        </div>
+                                    </div>
+                                </CardSubtitle>
+                                <CardSubtitle>
+                                    <div style={{justifyContent:'space-between', display:'flex'}}>
+                                        <div style={{display:'flex', alignContent:'center'}}>
+                                            <img src="/ddabong.png" style={{width:'20px', marginRight:'5px', fontSize:'16px'}}/>
+                                            <div>0</div>
+                                        </div>
+                                    </div>
+                                </CardSubtitle>
+                            </CardBody>
+                        </Card>
+                        ))}
+                    </div>
+                </div>
+            </div>
     </>
   );
 }
