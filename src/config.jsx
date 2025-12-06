@@ -52,7 +52,7 @@ export const apiFetch = async (url, options = {}) => {
 export const myAxios = () => {
     let instance = axios.create({
         baseURL : baseUrl,
-        timeout:5000,
+        timeout:30000,
     })
 
     // Request Interceptor: 모든 요청 전에 토큰을 헤더에 추가
