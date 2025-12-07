@@ -102,8 +102,11 @@ export default function ProposalDetailConsumar() {
             </div>
             <div style={styles.pageWrapper}>
               <div style={styles.container}>
-                <div style={{ display: "flex", gap: "47px", flexWrap: "wrap" }}>
-                  {proposal.subImageUrls && proposal.subImageUrls.map((img, idx) => (
+                <div style={{ display: "flex", gap: "45px", flexWrap: "wrap" }}>
+                  {proposal.subImageUrls &&
+                    proposal.subImageUrls
+                      .filter(img => img !== proposal.imageUrl) // 대표 이미지는 제외
+                      .map((img, idx) => (
                     <img
                       key={idx}
                       src={`${baseUrl}/imageView?filename=${img}`}

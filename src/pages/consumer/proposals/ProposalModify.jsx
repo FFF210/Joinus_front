@@ -9,12 +9,9 @@ export default function ProposalModify() {
     const proposalId = id;   // 이제 proposalId 정의됨
 
     const [productName, setProductName] = useState('');
-    // const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
-    // 대표 이미지
     const [mainImage, setMainImage] = useState(null);
-    // 일반 이미지 4개
     const [subImages, setSubImages] = useState([null, null, null, null]);
   
     const [originalSiteUrl, setOriginalSiteUrl] = useState('');
@@ -22,15 +19,13 @@ export default function ProposalModify() {
     const [abroadShippingCost, setAbroadShippingCost] = useState('');
     const [minPart, setMinPart] = useState('');
   
-    // 대표 이미지 서버 전송용 상태
     const [mainFile, setMainFile] = useState(null);
-  
-    // 일반 이미지 서버 전송용 상태 (4개)
     const [subFiles, setSubFiles] = useState([null, null, null, null]);
+
+    const navigate = useNavigate();
   
     const mainRef = useRef(null);
     const subRef = useRef(null);
-    const navigate = useNavigate();
 
 
     // 수정하면 submit하는 영역 
@@ -45,20 +40,17 @@ export default function ProposalModify() {
       formData.append('abroadShippingCost', abroadShippingCost);
       formData.append('minPart', minPart);
       formData.append('memberUsername', "1");
-      // 대표 이미지
+
       if (mainFile) formData.append('mainImage', mainFile);
-  
-      // 서브 이미지
+
       subFiles.forEach((file) => {
         if (file) formData.append('subImages', file);
       });
-  
+
       myAxios().post(`/proposalModify`, formData)
         .then(res => {
-          console.log(res);
           let proposalId = res.data;
           navigate(`/proposalsList/proposalDetail/${proposalId}`);
-  
         })
         .catch(err => {
           console.log(err);
@@ -106,15 +98,15 @@ export default function ProposalModify() {
           // 이미지 미리보기
           setMainImage(`${baseUrl}/imageView?filename=${p.imageUrl}`);
 
-          const subImgArr = p.subImageUrls || [];
-          setSubImages([
-            subImgArr[0] ? `${baseUrl}/imageView?filename=${subImgArr[0]}` : null,
-            subImgArr[1] ? `${baseUrl}/imageView?filename=${subImgArr[1]}` : null,
-            subImgArr[2] ? `${baseUrl}/imageView?filename=${subImgArr[2]}` : null,
-            subImgArr[3] ? `${baseUrl}/imageView?filename=${subImgArr[3]}` : null,
-          ]);
-        });
-}, []);
+          const subImgArr = (p.subImageUrls || []).filter(img => img !== p.imageUrl);
+            setSubImages([
+              subImgArr[0] ? `${baseUrl}/imageView?filename=${subImgArr[0]}` : null,
+              subImgArr[1] ? `${baseUrl}/imageView?filename=${subImgArr[1]}` : null,
+              subImgArr[2] ? `${baseUrl}/imageView?filename=${subImgArr[2]}` : null,
+              subImgArr[3] ? `${baseUrl}/imageView?filename=${subImgArr[3]}` : null,
+            ]);
+          });
+  }, []);
 
   return (
     <>
@@ -173,9 +165,9 @@ export default function ProposalModify() {
                   {/* 상품 이미지 업로드 */}
                   <FormGroup className="mb-4">
                     <Label className="fw-bold text-start d-block">상품 이미지 *</Label>
-      
                     <div style={styles.bigUploadBox}>
                       <div style={styles.imageGrid}>
+
                         {/* 대표 이미지 */}
                         <div style={styles.imageBox}>
                           <input type="file" accept="image/*" onChange={handleMainImageUpload} style={styles.fileInput}/>
@@ -187,25 +179,21 @@ export default function ProposalModify() {
                             </p>
                           )}
                         </div>
-      
-                        {/* 일반 이미지 4개 */}
-                        {mainImage &&
-                          subImages.map((img, idx) => (
-                            <div key={idx} style={styles.imageBox}>
-                              <input type="file" accept="image/*" onChange={(e) => handleSubImageUpload(e, idx)} style={styles.fileInput}/>
-                              {img ? (
-                                <img
-                                  src={img}
-                                  alt={`서브 이미지 ${idx + 1}`}
-                                  style={styles.preview}
-                                />
-                              ) : (
-                                <p className="text-center text-secondary small">
-                                  사진 {idx + 1}<br />Click to upload
-                                </p>
-                              )}
-                            </div>
-                          ))}
+
+                        {/* ✔ 조건문 제거 → subImages 항상 표시 */}
+                        {subImages.map((img, idx) => (
+                          <div key={idx} style={styles.imageBox}>
+                            <input type="file" accept="image/*" onChange={(e) => handleSubImageUpload(e, idx)} style={styles.fileInput}/>
+                            {img ? (
+                              <img src={img} alt={`서브 이미지 ${idx + 1}`} style={styles.preview}/>
+                            ) : (
+                              <p className="text-center text-secondary small">
+                                사진 {idx + 1}<br />Click to upload
+                              </p>
+                            )}
+                          </div>
+                        ))}
+
                       </div>
                     </div>
                   </FormGroup>

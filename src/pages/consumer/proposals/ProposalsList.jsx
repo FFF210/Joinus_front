@@ -1,27 +1,33 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Label, Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 import axios from "axios";
-import { baseUrl } from "../../../config";
+import { baseUrl,myAxios } from "../../../config";
 
 export default function ProposalsList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
   const [proposals, setProposals] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef(null);
 
   const type = searchParams.get("type") || "popular";
 
-  useEffect(() => {
-    const fetchProposals = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${baseUrl}/api/proposals`, {
-          params: { type },
-        });
+  // 📌 페이지별 제안 목록 로드
+  const fetchProposals = () => {
+    if (!hasMore) return;
+    setLoading(true);
 
-        const transformed = response.data.map((p) => ({
+    myAxios()
+      .get(`/proposalList`, {
+        params: { page, type },
+      })
+      .then((res) => {
+        const transformed = res.data.map((p) => ({
           id: p.id,
           title: p.productName,
           category: p.category,
@@ -37,17 +43,54 @@ export default function ProposalsList() {
             : "https://picsum.photos/300/200",
         }));
 
-        setProposals(transformed);
-      } catch (e) {
-        console.error("제안 목록 조회 실패:", e);
-        setProposals([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+        // 페이지 누적
+        setProposals((prev) => [...prev, ...transformed]);
 
-    fetchProposals();
+        if (transformed.length === 0) {
+          setHasMore(false);
+        }
+      })
+      .catch((e) => {
+        console.error("제안 목록 조회 실패:", e);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  // 📌 type 변경 시 초기화
+  useEffect(() => {
+    setProposals([]);
+    setPage(0);
+    setHasMore(true);
   }, [type]);
+
+  // 📌 page 변경 시 데이터 로드
+  useEffect(() => {
+    fetchProposals();
+  }, [page]);
+
+  // 📌 IntersectionObserver 사용
+  useEffect(() => {
+    if (loading) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((p) => p + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) observer.unobserve(observerRef.current);
+    };
+  }, [loading, hasMore]);
 
   return (
     <>
@@ -125,38 +168,36 @@ export default function ProposalsList() {
        <div style={styles.pageWrapper}>
                 <div style={styles.container} >
                     <div style={{display:'grid', gap:"20px", gridTemplateColumns: "repeat(4, 1fr)"}}>
-                        {Array.from({ length: 8 }).map((_, idx) => (
-                        <Card key={idx} style={{width: '240px', boxShadow: "0 5px 20px rgba(88 88 88 / 20%)", border:'none' }} onClick={() => navigate("/proposalsList/proposalDetail/${p.id}")}>
-                            <img alt="Sample" src="https://picsum.photos/300/200"/>
+                        {proposals.map((p) => (
+                        <Card key={p.id} style={{width: '240px', boxShadow: "0 5px 20px rgba(88 88 88 / 20%)", border:'none' }} onClick={() => navigate(`/proposalsList/proposalDetail/${p.id}`)}>
+                            <img src={`${baseUrl}/imageView?filename=${p.imageUrl}`}/>
                             <CardBody >
                                 <CardTitle tag="h5" style={{display:'flex', justifyContent:'space-between'}}>
-                                    <div style={{border:'1px solid black', fontSize:'10px', padding:"5px"}}>카테고리</div>
+                                    <div style={{border:'1px solid black', fontSize:'10px', padding:"5px"}}>{p.category}</div>
                                     {/* <div style={{backgroundColor:'#BBFFAC', color:'#0A8F30', fontSize:'10px' , padding:"5px"}}>진행중</div> */}
                                 </CardTitle>
                                 <CardSubtitle className="mb-2 text-muted" tag="h6">
-                                    <div style={{fontSize:'14px'}}>자캣 이름</div>
+                                    <div style={{fontSize:'14px'}}>{p.productName}</div>
                                 </CardSubtitle>
                                 <CardSubtitle>
-                                    <div style={{fontSize:'12px'}}>더블 브레스티드 블레이저, 울, 프린스 오브 
-                                        웨일스, 장식 부착 없음, 라펠, 롱 슬리브, 안감
-                                        있음, 버튼...
+                                    <div style={{fontSize:'12px'}}>{p.description}
                                     </div>
                                 </CardSubtitle>
-                                    <div className="fw-bold" style={{fontSize:'24px'}}>10000원</div>
-                                <CardSubtitle>
+                                    <div className="fw-bold" style={{fontSize:'24px'}}>{p.originalPrice}원</div>
+                                {/* <CardSubtitle>
                                     <div style={{display:'flex', justifyItems:'center'}}>
                                     <img src="/CountingStars.png" style={{width:'12px',height:'12px', marginRight:'5px'}}/>
                                     <Label style={{fontSize:'12px'}}>4.6</Label>
                                     </div>
-                                </CardSubtitle>
+                                </CardSubtitle> */}
                                 <CardSubtitle>
                                     <div style={{justifyContent:'space-between', display:'flex'}}>
                                         <div>
                                             {/* <img src="/person.png" style={{width:'15px', marginRight:'5px'}}/> */}
-                                            <Label style={{fontSize:'12px'}}>제안자 홍길동</Label>
+                                            <Label style={{fontSize:'12px'}}>제안자 : {p.memberUsername}</Label>
                                         </div>
                                         <div>
-                                            <Label style={{color:'black', fontSize:'10px'}}>2025-11-29</Label>
+                                            <Label style={{color:'black', fontSize:'10px'}}>{p.createdAt}</Label>
                                         </div>
                                     </div>
                                 </CardSubtitle>
@@ -164,7 +205,7 @@ export default function ProposalsList() {
                                     <div style={{justifyContent:'space-between', display:'flex'}}>
                                         <div style={{display:'flex', alignContent:'center'}}>
                                             <img src="/ddabong.png" style={{width:'20px', marginRight:'5px', fontSize:'16px'}}/>
-                                            <div>0</div>
+                                            <div>{p.voteCount}</div>
                                         </div>
                                     </div>
                                 </CardSubtitle>
