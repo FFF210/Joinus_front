@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { React, useState,useRef, useEffect } from "react";
 import { Link, useNavigate, useParams  } from "react-router-dom";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
-import { myAxios } from "../../../config";
+import { myAxios, baseUrl  } from "../../../config";
 
 export default function ProposalModify() {
    const { id } = useParams();  
@@ -36,6 +36,7 @@ export default function ProposalModify() {
     // 수정하면 submit하는 영역 
     const submit = () => {
       const formData = new FormData();
+      formData.append('id', proposalId);
       formData.append('productName', productName);
       formData.append('category', category !== "선택하세요." ? category : "");
       formData.append('description', description);
@@ -43,7 +44,7 @@ export default function ProposalModify() {
       formData.append('originalPrice', originalPrice);
       formData.append('abroadShippingCost', abroadShippingCost);
       formData.append('minPart', minPart);
-      formData.append('memberUsername', "testUser");
+      formData.append('memberUsername', "1");
       // 대표 이미지
       if (mainFile) formData.append('mainImage', mainFile);
   
@@ -91,7 +92,7 @@ export default function ProposalModify() {
     };
 
     useEffect(() => {
-      myAxios().get(`/proposalDetail/${proposalId}`)
+      myAxios().get(`/proposalDetail?id=${proposalId}`)
         .then(res => {
           const p = res.data;
           setProductName(p.productName);
@@ -103,17 +104,17 @@ export default function ProposalModify() {
           setMinPart(p.minPart);
 
           // 이미지 미리보기
-          setMainImage(p.mainImageUrl);
+          setMainImage(`${baseUrl}/imageView?filename=${p.imageUrl}`);
 
           const subImgArr = p.subImageUrls || [];
           setSubImages([
-            subImgArr[0] || null,
-            subImgArr[1] || null,
-            subImgArr[2] || null,
-            subImgArr[3] || null,
+            subImgArr[0] ? `${baseUrl}/imageView?filename=${subImgArr[0]}` : null,
+            subImgArr[1] ? `${baseUrl}/imageView?filename=${subImgArr[1]}` : null,
+            subImgArr[2] ? `${baseUrl}/imageView?filename=${subImgArr[2]}` : null,
+            subImgArr[3] ? `${baseUrl}/imageView?filename=${subImgArr[3]}` : null,
           ]);
         });
-    }, []);
+}, []);
 
   return (
     <>
@@ -140,7 +141,7 @@ export default function ProposalModify() {
                   {/* 이름 */}
                   <FormGroup className="mb-3">
                     <Label className="fw-bold text-start d-block" >상품명</Label>
-                    <Input type="text" name="productName" onChange={(e)=> setProductName(e.target.value)} placeholder="상품명을 입력하세요." />
+                    <Input type="text" name="productName" value={productName} onChange={(e)=> setProductName(e.target.value)} placeholder="상품명을 입력하세요." />
                   </FormGroup>
       
                   {/* 제목 */}
@@ -152,7 +153,7 @@ export default function ProposalModify() {
                   {/* 카테고리 */}
                   <FormGroup className="mb-3">
                     <Label className="fw-bold text-start d-block">카테고리 *</Label>
-                    <Input type="select" name="category" onChange={(e)=> setCategory(e.target.value)}>
+                    <Input type="select" name="category" value={category} onChange={(e)=> setCategory(e.target.value)}>
                       <option>선택하세요.</option>
                       <option>뷰티</option>
                       <option>패션</option>
@@ -166,7 +167,7 @@ export default function ProposalModify() {
                   {/* 상세 설명 */}
                   <FormGroup className="mb-3">
                     <Label className="fw-bold text-start d-block">상세 설명 *</Label>
-                    <Input type="textarea" name="description" onChange={(e)=>setDescription(e.target.value)} placeholder="상세한 내용을 입력해주세요." rows={5} style={{ resize: "none" }}/>
+                    <Input type="textarea" name="description" value={description} onChange={(e)=>setDescription(e.target.value)} placeholder="상세한 내용을 입력해주세요." rows={5} style={{ resize: "none" }}/>
                   </FormGroup>
       
                   {/* 상품 이미지 업로드 */}
@@ -212,25 +213,25 @@ export default function ProposalModify() {
                   {/* 원 상품 링크 */}
                   <FormGroup className="mb-4">
                     <Label className="fw-bold text-start d-block">원 상품 링크 *</Label>
-                    <Input type="text" name="originalSiteUrl" onChange={(e)=>setOriginalSiteUrl(e.target.value)} placeholder="상품 링크를 입력해주세요." />
+                    <Input type="text" name="originalSiteUrl" value={originalSiteUrl} onChange={(e)=>setOriginalSiteUrl(e.target.value)} placeholder="상품 링크를 입력해주세요." />
                   </FormGroup>
       
                   {/* 원가 */}
                   <FormGroup className="mb-4">
                     <Label className="fw-bold text-start d-block">원가 *</Label>
-                    <Input type="text" name="originalPrice" onChange={(e)=> setOriginalPrice(e.target.value)} placeholder="가격을 입력해주세요." />
+                    <Input type="text" name="originalPrice" value={originalPrice} onChange={(e)=> setOriginalPrice(e.target.value)} placeholder="가격을 입력해주세요." />
                   </FormGroup>
       
                   {/* 해외 배송비 */}
                   <FormGroup className="mb-3">
                     <Label className="fw-bold text-start d-block">해외 배송비 *</Label>
-                    <Input type="text" name="abroadShippingCost" onChange={(e)=> setAbroadShippingCost(e.target.value)} placeholder="가격을 입력해주세요." />
+                    <Input type="text" name="abroadShippingCost" value={abroadShippingCost} onChange={(e)=> setAbroadShippingCost(e.target.value)} placeholder="가격을 입력해주세요." />
                   </FormGroup>
       
                   {/* 최소 참여 인원 */}
                   <FormGroup className="mb-4">
                     <Label className="fw-bold text-start d-block">최소 참여 인원 *</Label>
-                    <Input type="text" name="minPart" onChange={(e)=> setMinPart(e.target.value)} placeholder="예) 20" />
+                    <Input type="text" name="minPart" value={minPart} onChange={(e)=> setMinPart(e.target.value)} placeholder="예) 20" />
                   </FormGroup>
       
                   <div className="d-flex gap-2 justify-content-end">

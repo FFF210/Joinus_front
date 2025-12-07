@@ -5,7 +5,7 @@ import { baseUrl, myAxios } from "../../../config";
 
 export default function ProposalDetailConsumar() {
     const {id} = useParams();
-    const [proposal, setPropsal] = useState({id:id,category:'',productName:'',description:'',memberName:'',productName:'',originalPrice:'',createAt:'',originalSiteUrl:'',abroadShippingCost:'',imageUrl:'' });
+    const [proposal, setPropsal] = useState({id:id,category:'',description:'',productName:'',memberName:'',originalPrice:'',createAt:'',originalSiteUrl:'',abroadShippingCost:'',imageUrl:'' });
     const total = 15;
     const joined = 10;
     const percentage = (joined/total) * 100;

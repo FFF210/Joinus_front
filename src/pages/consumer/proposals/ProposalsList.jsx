@@ -122,113 +122,11 @@ export default function ProposalsList() {
         </div>
       </div>
 
-      {/* 목록 영역 */}
-      {/* <div style={styles.pageWrapper}>
-        <div style={styles.container}>
-          {loading ? (
-            <p>로딩 중...</p>
-          ) : proposals.length === 0 ? (
-            <p>제안이 없습니다.</p>
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gap: "20px",
-                gridTemplateColumns: "repeat(4, 1fr)",
-              }}
-            >
-              {proposals.map((proposal) => (
-                <Card
-                  key={proposal.id}
-                  style={{
-                    width: "240px",
-                    boxShadow: "0 5px 20px rgba(88 88 88 / 20%)",
-                    border: "none",
-                  }}
-                  onClick={() =>
-                    navigate(`/proposalsList/proposalDetail/${proposal.id}`)
-                  }
-                >
-                  <img alt={proposal.title} src={proposal.image} />
-                  <CardBody>
-                    <CardTitle
-                      tag="h5"
-                      style={{ display: "flex", justifyContent: "space-between" }}
-                    >
-                      <div
-                        style={{
-                          border: "1px solid black",
-                          fontSize: "10px",
-                          padding: "5px",
-                        }}
-                      >
-                        {proposal.category}
-                      </div>
-                    </CardTitle>
-                    <CardSubtitle className="mb-2 text-muted" tag="h6">
-                      <div style={{ fontSize: "14px" }}>{proposal.title}</div>
-                    </CardSubtitle>
-                    <CardSubtitle>
-                      <div style={{ fontSize: "12px" }}>
-                        {proposal.description}
-                      </div>
-                    </CardSubtitle>
-                    <div className="fw-bold" style={{ fontSize: "24px" }}>
-                      {proposal.price}
-                    </div>
-                    <CardSubtitle>
-                      <div
-                        style={{
-                          justifyContent: "space-between",
-                          display: "flex",
-                        }}
-                      >
-                        <div>
-                          <Label style={{ fontSize: "12px" }}>
-                            제안자 {proposal.author}
-                          </Label>
-                        </div>
-                        <div>
-                          <Label style={{ color: "black", fontSize: "10px" }}>
-                            {proposal.date}
-                          </Label>
-                        </div>
-                      </div>
-                    </CardSubtitle>
-                    <CardSubtitle>
-                      <div
-                        style={{
-                          justifyContent: "space-between",
-                          display: "flex",
-                        }}
-                      >
-                        <div
-                          style={{ display: "flex", alignContent: "center" }}
-                        >
-                          <img
-                            src="/ddabong.png"
-                            style={{
-                              width: "20px",
-                              marginRight: "5px",
-                              fontSize: "16px",
-                            }}
-                          />
-                          <div>{proposal.votes}</div>
-                        </div>
-                      </div>
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      </div> */}
        <div style={styles.pageWrapper}>
                 <div style={styles.container} >
                     <div style={{display:'grid', gap:"20px", gridTemplateColumns: "repeat(4, 1fr)"}}>
                         {Array.from({ length: 8 }).map((_, idx) => (
-                        <Card key={idx} style={{width: '240px', boxShadow: "0 5px 20px rgba(88 88 88 / 20%)", border:'none' }} onClick={() => navigate("/proposalDetail")}>
+                        <Card key={idx} style={{width: '240px', boxShadow: "0 5px 20px rgba(88 88 88 / 20%)", border:'none' }} onClick={() => navigate("/proposalsList/proposalDetail/${p.id}")}>
                             <img alt="Sample" src="https://picsum.photos/300/200"/>
                             <CardBody >
                                 <CardTitle tag="h5" style={{display:'flex', justifyContent:'space-between'}}>
@@ -245,12 +143,12 @@ export default function ProposalsList() {
                                     </div>
                                 </CardSubtitle>
                                     <div className="fw-bold" style={{fontSize:'24px'}}>10000원</div>
-                                {/* <CardSubtitle>
-                                    <div>
-                                    <img src="/CountingStars.png" style={{width:'12px', marginRight:'5px'}}/>
+                                <CardSubtitle>
+                                    <div style={{display:'flex', justifyItems:'center'}}>
+                                    <img src="/CountingStars.png" style={{width:'12px',height:'12px', marginRight:'5px'}}/>
                                     <Label style={{fontSize:'12px'}}>4.6</Label>
                                     </div>
-                                </CardSubtitle> */}
+                                </CardSubtitle>
                                 <CardSubtitle>
                                     <div style={{justifyContent:'space-between', display:'flex'}}>
                                         <div>
