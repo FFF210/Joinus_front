@@ -1,48 +1,63 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../../config';
 import './Dashboard.css';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [dashboardData, setDashboardData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 더미 데이터
-  const topProposals = [
-    { id: 1, name: '무선 블루투스 이어폰', votes: 125 },
-    { id: 2, name: '스마트 워치', votes: 98 },
-    { id: 3, name: '에어프라이어', votes: 87 },
-  ];
+  // 숫자 포맷팅 함수
+  const formatCurrency = (amount) => {
+    if (amount === null || amount === undefined) return '₩ 0';
+    return `₩ ${amount.toLocaleString()}`;
+  };
 
-  const pendingPayments = [
-    { id: 1, name: '친환경 텀블러 500ml', count: 5 },
-    { id: 2, name: '해외 직구 커피머신', count: 3 },
-    { id: 3, name: '유기농 식물성 샴푸 세트', count: 2 },
-  ];
+  const formatChangeRate = (rate) => {
+    if (rate === null || rate === undefined) return '';
+    const sign = rate >= 0 ? '+' : '';
+    return `${sign}${rate.toFixed(1)}%`;
+  };
 
-  const ongoingGroupBuys = [
-    {
-      id: 'GG-1024',
-      name: '친환경 텀블러 500ml',
-      participants: 75,
-      minParticipants: 100,
-      revenue: '₩ 1,125,000',
-      deadline: '2일 3시간'
-    },
-    {
-      id: 'GG-1025',
-      name: '프리미엄 수건 세트',
-      participants: 40,
-      minParticipants: 80,
-      revenue: '₩ 640,000',
-      deadline: '5일'
-    },
-    {
-      id: 'GG-1026',
-      name: '해외 직구 커피머신',
-      participants: 18,
-      minParticipants: 30,
-      revenue: '₩ 1,980,000',
-      deadline: '7일'
-    },
-  ];
+  // 대시보드 데이터 로드
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await apiFetch('/api/admin/dashboard');
+        if (!response.ok) {
+          throw new Error('대시보드 데이터 조회 실패');
+        }
+        const data = await response.json();
+        setDashboardData(data);
+      } catch (error) {
+        console.error('대시보드 데이터 조회 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="dashboard-page">
+        <div className="loading">로딩 중...</div>
+      </div>
+    );
+  }
+
+  if (!dashboardData) {
+    return (
+      <div className="dashboard-page">
+        <div className="error">데이터를 불러올 수 없습니다.</div>
+      </div>
+    );
+  }
+
+  const { stats, topProposals, pendingPayments, ongoingGroupBuys } = dashboardData;
 
   return (
     <div className="dashboard-page">
@@ -64,17 +79,22 @@ export default function Dashboard() {
       <div className="stats-section">
         <div className="stat-card">
           <div className="stat-label">이번주 매출</div>
-          <div className="stat-value">₩ 6,520,000</div>
-          <div className="stat-note">오늘 매출: ₩ 1,240,000 (어제 대비 +12%)</div>
+          <div className="stat-value">{formatCurrency(stats?.weeklyRevenue || 0)}</div>
+          <div className="stat-note">
+            오늘 매출: {formatCurrency(stats?.todayRevenue || 0)} 
+            {stats?.revenueChangeRate !== null && stats?.revenueChangeRate !== undefined && (
+              ` (어제 대비 ${formatChangeRate(stats.revenueChangeRate)})`
+            )}
+          </div>
         </div>
         <div className="stat-card">
           <div className="stat-label">진행 중 공구 수</div>
-          <div className="stat-value">12건</div>
-          <div className="stat-note">마감 임박: 3건</div>
+          <div className="stat-value">{stats?.ongoingGroupBuyCount || 0}건</div>
+          <div className="stat-note">마감 임박: {stats?.deadlineSoonCount || 0}건</div>
         </div>
         <div className="stat-card">
           <div className="stat-label">주문 대기 건수</div>
-          <div className="stat-value">8건</div>
+          <div className="stat-value">{stats?.pendingOrderCount || 0}건</div>
           <div className="stat-note">처리 필요</div>
         </div>
       </div>
@@ -84,14 +104,18 @@ export default function Dashboard() {
         <div className="content-card">
           <h2 className="card-title">제안상품 탑 3</h2>
           <div className="proposal-list">
-            {topProposals.map((item) => (
-              <div key={item.id} className="proposal-item">
-                <div className="proposal-info">
-                  <div className="proposal-name">{item.name}</div>
-                  <div className="proposal-votes">투표수: {item.votes}개</div>
+            {topProposals && topProposals.length > 0 ? (
+              topProposals.map((item) => (
+                <div key={item.id} className="proposal-item">
+                  <div className="proposal-info">
+                    <div className="proposal-name">{item.name}</div>
+                    <div className="proposal-votes">투표수: {item.votes}개</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="no-data">제안상품이 없습니다.</div>
+            )}
           </div>
         </div>
 
@@ -114,14 +138,18 @@ export default function Dashboard() {
             </div>
 
             <div className="payment-list">
-              {pendingPayments.map((item) => (
-                <div key={item.id} className="payment-item">
-                  <div className="payment-info">
-                    <div className="payment-name">{item.name}</div>
-                    <div className="payment-count">결제 대기: {item.count}건</div>
+              {pendingPayments && pendingPayments.length > 0 ? (
+                pendingPayments.map((item, index) => (
+                  <div key={item.gbProductId || index} className="payment-item">
+                    <div className="payment-info">
+                      <div className="payment-name">{item.name}</div>
+                      <div className="payment-count">결제 대기: {item.count}건</div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div className="no-data">주문 대기 공구상품이 없습니다.</div>
+              )}
             </div>
           </div>
         </div>
@@ -154,15 +182,21 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {ongoingGroupBuys.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.name}</td>
-                  <td>{item.participants} / {item.minParticipants}</td>
-                  <td>{item.revenue}</td>
-                  <td>{item.deadline}</td>
+              {ongoingGroupBuys && ongoingGroupBuys.length > 0 ? (
+                ongoingGroupBuys.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.name}</td>
+                    <td>{item.participants} / {item.minParticipants}</td>
+                    <td>{formatCurrency(item.revenue)}</td>
+                    <td>{item.deadline}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="no-data">진행 중인 공구가 없습니다.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
