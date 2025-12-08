@@ -182,7 +182,7 @@
 /* 삭제 버튼: 오른쪽 하단 고정 */
 .alert-delete-bottom {
   position: absolute;
-  bottom: 16px;
+  bottom: 20px;
   right: 28px;
 }
 
