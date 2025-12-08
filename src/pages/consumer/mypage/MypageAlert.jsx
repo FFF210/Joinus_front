@@ -1,120 +1,129 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./MypageAlert.css";
-      import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import axios from "axios";
 
 export default function MypageAlert() {
+  const [alertList, setAlertList] = useState([]);
+  const [openedIds, setOpenedIds] = useState([]); // 열려있는 아코디언 ID(여러 개!)
+  const [readUiIds, setReadUiIds] = useState([]); // NEW 제거용 UI 상태
+
+  const username = "ehgns0311";
+
+  // 알림 리스트 불러오기
+  const getAlertList = () => {
+    axios
+      .get(`http://localhost:8080/mypage/alert?username=${username}`)
+      .then((res) => setAlertList(res.data))
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getAlertList();
+  }, []);
+
+  // 읽지 않은 알림 수
+  const unreadCount = alertList.filter(
+    (a) => !a.readedAt && !readUiIds.includes(a.id)
+  ).length;
+
+  // 아코디언 토글 (여러 개 동시에 열릴 수 있음)
+  const toggle = (id) => {
+    // 이미 열려있으면 → 닫기
+    if (openedIds.includes(id)) {
+      setOpenedIds(openedIds.filter((item) => item !== id));
+    } else {
+      // 열리면 NEW 제거 처리
+      if (!readUiIds.includes(id)) {
+        setReadUiIds([...readUiIds, id]);
+      }
+      // 열기
+      setOpenedIds([...openedIds, id]);
+    }
+  };
+
+  // 삭제 기능
+  const deleteAlert = (id) => {
+    if (!window.confirm("이 알림을 삭제하시겠습니까?")) return;
+
+    axios
+      .delete(`http://localhost:8080/mypage/alert/delete?id=${id}`)
+      .then(() => {
+        // 화면에서 삭제
+        setAlertList(alertList.filter((alert) => alert.id !== id));
+
+        // 열려있던 배열에서도 제거
+        setOpenedIds(openedIds.filter((item) => item !== id));
+        setReadUiIds(readUiIds.filter((item) => item !== id));
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <>
       <h1 className="alert-title-main">알림</h1>
 
       <p className="alert-count">
-        읽지 않은 알림이 <strong className="alert-blue">2개</strong> 있습니다.
+        읽지 않은 알림이{" "}
+        <strong className="alert-blue">{unreadCount}개</strong> 있습니다.
       </p>
 
-      {/* 리스트 */}
       <div className="alert-list">
-
-        {/* 카드 1 */}
-        <div className="alert-card alert-unread">
-          <div className="alert-left">
-            <div className="alert-icon">✉</div>
-            <div>
-              <div className="alert-title">
-                공구 마감 임박 안내 <span className="alert-badge-new">NEW</span>
-              </div>
-              <div className="alert-text">
-                “프리미엄 무선 이어폰” 공구 마감 3일 전입니다.
-              </div>
-              <div className="alert-date">공구 알림 · 2024.11.09 10:30</div>
-            </div>
+        {alertList.length === 0 && (
+          <div style={{ padding: "20px", color: "#777" }}>
+            알림이 없습니다.
           </div>
-          <button
-            className="alert-btn-delete"
-            onClick={() => alert("알림이 삭제되었습니다.")}
-          >
-            삭제
-          </button>
-        </div>
+        )}
 
-        {/* 카드 2 */}
-        <div className="alert-card alert-unread">
-          <div className="alert-left">
-            <div className="alert-icon">✉</div>
-            <div>
-              <div className="alert-title">
-                제안하신 상품이 공구로 전환되었습니다{" "}
-                <span className="alert-badge-new">NEW</span>
+        {alertList.map((alert) => {
+          const isOpen = openedIds.includes(alert.id);
+          const showNew = !alert.readedAt && !readUiIds.includes(alert.id);
+          const unreadBackground = showNew;
+
+          return (
+            <div
+              key={alert.id}
+              className={`alert-accordion-item ${
+                unreadBackground ? "alert-unread" : ""
+              }`}
+            >
+              {/* 헤더 */}
+              <div className="alert-accordion-header" onClick={() => toggle(alert.id)}>
+                <div className="alert-left">
+                  <div className="alert-icon">✉</div>
+                  <div>
+                    <div className="alert-title">
+                      {alert.title}
+                      {showNew && <span className="alert-badge-new">NEW</span>}
+                    </div>
+                    <div className="alert-date">{alert.createdAt}</div>
+                  </div>
+                </div>
+                <div className="alert-arrow">{isOpen ? "▲" : "▼"}</div>
               </div>
-              <div className="alert-text">
-                “스마트 워치 프로”가 공구로 전환되었습니다.
-              </div>
-              <div className="alert-date">공구 알림 · 2024.11.08 14:00</div>
-            </div>
-          </div>
-          <button
-            className="alert-btn-delete"
-            onClick={() => alert("알림이 삭제되었습니다.")}
-          >
-            삭제
-          </button>
-        </div>
 
-        {/* 카드 3 */}
-        <div className="alert-card">
-          <div className="alert-left">
-            <div className="alert-icon">✉</div>
-            <div>
-              <div className="alert-title">배송 완료 안내</div>
-              <div className="alert-text">
-                상품 배송이 완료되었습니다. 포토리뷰 작성 시 500P 지급됩니다.
-              </div>
-              <div className="alert-date">배송 알림 · 2024.10.28 14:20</div>
-            </div>
-          </div>
-          <button
-            className="alert-btn-delete"
-            onClick={() => alert("알림이 삭제되었습니다.")}
-          >
-            삭제
-          </button>
-        </div>
+              {/* 본문 */}
+              {isOpen && (
+                <div className="alert-accordion-body">
+                  <div className="alert-text">{alert.content}</div>
 
-        {/* 카드 4 */}
-        <div className="alert-card">
-          <div className="alert-left">
-            <div className="alert-icon">✉</div>
-            <div>
-              <div className="alert-title">회원 등급 상향 안내</div>
-              <div className="alert-text">축하합니다! 골드 등급으로 승급되었습니다.</div>
-              <div className="alert-date">등급 알림 · 2024.10.15 09:00</div>
+                  <button
+                    className="alert-btn-delete alert-delete-bottom"
+                    onClick={() => deleteAlert(alert.id)}
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
-          <button
-            className="alert-btn-delete"
-            onClick={() => alert("알림이 삭제되었습니다.")}
-          >
-            삭제
-          </button>
-        </div>
-
+          );
+        })}
       </div>
-
-            {/* 페이지네이션 */}
-      <Pagination className="paginationContainer">
-        <PaginationItem><PaginationLink first href="#" /></PaginationItem>
-        <PaginationItem><PaginationLink previous href="#" /></PaginationItem>
-        {[1,2,3,4,5].map(num => (
-          <PaginationItem key={num}><PaginationLink href="#">{num}</PaginationLink></PaginationItem>
-        ))}
-        <PaginationItem><PaginationLink next href="#" /></PaginationItem>
-        <PaginationItem><PaginationLink last href="#" /></PaginationItem>
-      </Pagination>
-      
 
       {/* 안내 박스 */}
       <div className="alert-info-box">
         <div className="alert-info-title">안내사항</div>
-        • 알림은 30일 보관 후 자동 삭제됩니다.<br />
+        • 알림은 30일 보관 후 자동 삭제됩니다.
+        <br />
         • 삭제된 알림은 복구할 수 없습니다.
       </div>
     </>
