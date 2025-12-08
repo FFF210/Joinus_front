@@ -21,11 +21,15 @@ export default function AddressList() {
     getAddressList();
   }, []);
 
-  const handleDelete = (name) => {
-    if (window.confirm(`${name}님의 배송지를 삭제하시겠습니까?`)) {
-      alert("삭제 기능은 아직 구현 전입니다.");
-    }
-  };
+const handleDelete = async (id) => {
+  if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+  await axios.delete(`http://localhost:8080/mypage/address/${id}`);
+
+  alert("삭제되었습니다.");
+  getAddressList(); // 목록 새로고침
+};
+
 
   return (
     <>
@@ -53,19 +57,20 @@ export default function AddressList() {
                 수정
               </button>
 
-              <button
-                className="addresslist-btn-delete"
-                onClick={() => handleDelete(addr.recipientName)}
-              >
-                삭제
-              </button>
+             <button
+  className="addresslist-btn-delete"
+  onClick={() => handleDelete(addr.id)}
+>
+  삭제
+</button>
+
             </div>
           </div>
 
           <div className="addresslist-detail">
             {addr.streetAddress} {addr.addressDetail} <br />
             {addr.phone} <br />
-            출입방법: {addr.accessInstructions}
+            출입방법 : {addr.accessInstructions}
           </div>
         </div>
       ))}

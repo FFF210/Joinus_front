@@ -23,16 +23,15 @@ export default function AddressEdit() {
   };
 
   const [form, setForm] = useState({
+    memberUsername: "ehgns0311", // 로그인 연동 전까지 하드코딩
     addressName: "",
-    name: "",
-    phone1: "010",
-    phone2: "",
-    phone3: "",
+    recipientName: "",
+    phone: "",
     postcode: "",
-    road: "",
-    detail: "",
-    enter: "",
-    isDefault: false
+    streetAddress: "",
+    addressDetail: "",
+    accessInstructions: "",
+    isDefault: false,
   });
 
   useEffect(() => {
@@ -100,34 +99,20 @@ export default function AddressEdit() {
         />
       </div>
 
-      {/* 연락처 */}
+          {/* ===== 연락처 (한 줄 입력) ===== */}
       <div className="addressedit-form-row">
         <label className="addressedit-label">
           연락처 <span className="addressedit-required">*</span>
         </label>
 
-        <div className="addressedit-phone-wrap">
-          <select name="phone1" value={form.phone1} onChange={handleChange}>
-            <option>010</option>
-            <option>011</option>
-          </select>
-
-          <input
-            type="text"
-            name="phone2"
-            maxLength={4}
-            value={form.phone2}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="phone3"
-            maxLength={4}
-            value={form.phone3}
-            onChange={handleChange}
-          />
-        </div>
+        <input
+          type="text"
+          name="phone"
+          className="addressedit-input-box"
+          placeholder="연락처를 입력하세요."
+          value={form.phone}
+          onChange={handleChange}
+        />
       </div>
 
 {/* 주소 */}
@@ -196,7 +181,7 @@ export default function AddressEdit() {
       {/* 버튼 */}
       <div className="addressedit-btn-row">
         <button className="addressedit-btn-confirm" onClick={handleSubmit}>
-          수정 완료
+          확인
         </button>
         <button className="addressedit-btn-cancel" onClick={() => navigate(-1)}>
           취소
