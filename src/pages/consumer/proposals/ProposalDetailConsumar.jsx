@@ -54,7 +54,7 @@ export default function ProposalDetailConsumar() {
                         </div>
                         <div style={{display:'flex'}}>
                             <Label style={{fontSize:"12px", marginRight:'10px'}}>작성자 : {proposal.memberName}</Label>
-                            <Label style={{fontSize:"12px"}}>{proposal.createdAt}</Label>
+                            <Label style={{fontSize:"12px"}}>{proposal.createdAt ? proposal.createdAt.substring(0, 10) : ""}</Label>
                         </div>
                         <div>
                             <Label style={{fontSize:"24px"}}>{proposal.originalPrice + proposal.abroadShippingCost}원</Label>
@@ -64,8 +64,15 @@ export default function ProposalDetailConsumar() {
                         <div style={{fontSize:'14px', padding:'0 10px 0 10px',whiteSpace: 'pre-wrap'}}>{proposal.description}</div>
                         <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
                         <div>
-                            <Label className="fw-bold" style={{fontSize:'12px', marginTop:'0'}}>원사이트
-                                 <div style={{fontSize:'10px', color:'#ACA5A5'}}>{proposal.originalSiteUrl}</div>
+                            <Label className="fw-bold" style={{fontSize:'12px', marginTop:'0', display:"flex",gap:'10px' }}>원사이트
+                                 <div style={{fontSize:'10px', color:'#ACA5A5'}}>
+                                    <Button style={{ backgroundColor: '#739FF2', width: "70px", height: "25px",
+                                      fontSize: "12px",
+                                      padding: "0",
+                                      border: 'none'
+                                      }}
+                                      onClick={() => window.open(proposal.originalSiteUrl, "_blank")}>바로가기</Button>
+                                 </div>
                             </Label>
                             <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
                             <div>
