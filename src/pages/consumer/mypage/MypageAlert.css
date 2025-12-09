@@ -186,4 +186,44 @@
   right: 28px;
 }
 
+/* ==============================
+   JOINus 공통 페이지네이션 스타일 (Alert 페이지)
+============================== */
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.paginationContainer .page-link {
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--deep-text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin: 0 3px;
+  font-size: 14px;
+  transition: 0.15s;
+}
+
+.paginationContainer .page-link:hover {
+  background: var(--light-blue);
+  color: var(--intel-blue);
+  border-color: var(--intel-blue);
+}
+
+.paginationContainer .active .page-link {
+  background: var(--intel-blue);
+  color: #fff;
+  border-color: var(--intel-blue);
+}
+
+.paginationContainer .disabled .page-link {
+  background: #f5f5f5;
+  border-color: var(--line-strong);
+  color: #bbb;
+  cursor: not-allowed;
+}
+
+
 
