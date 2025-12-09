@@ -216,7 +216,7 @@ export default function GbProductMngList() {
                 className={`tab ${activeTab === 'PENDING_ORDER' ? 'active' : ''}`}
                 onClick={() => setActiveTab('PENDING_ORDER')}
               >
-                발주대기
+                구매대기
               </button>
               <button
                 className={`tab ${activeTab === 'COMPLETED' ? 'active' : ''}`}

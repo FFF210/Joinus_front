@@ -1,84 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { myAxios } from '../../config';
 import Header from './Header';
 import SearchFilter from './SearchFilter';
-import '../../styles/components/button.css';
-import '../../styles/components/table.css';
 import './admin-common.css';
 import './ProposalMngList.css';
 
 const ProposalMngList = () => {
-  const [activeTab, setActiveTab] = useState('검토대기');
-  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
-  const proposals = [
-    {
-      id: 123,
-      votes: 56,
-      title: '이 헤드셋 어때요???',
-      author: 'gildongH123',
-      date: '2025-11-12',
-      status: '검토중'
-    },
-    {
-      id: 432,
-      votes: 40,
-      title: '영국에만 발매된 마우스패드인데 너무 예뻐...',
-      author: 'gildongH123',
-      date: '2025-11-12',
-      status: '검토중'
-    },
-    {
-      id: 90,
-      votes: 27,
-      title: '이 옷 타오바오에서 2배로 싸게 팔...',
-      author: 'morahae123',
-      date: '2025-11-12',
-      status: '검토중'
-    },
-    {
-      id: 42,
-      votes: 23,
-      title: 'amzon에서 본 적축식 키보드인데...',
-      author: 'morahae123',
-      date: '2025-11-12',
-      status: '반려'
-    },
-    {
-      id: 210,
-      votes: 23,
-      title: '인형 공구해요~',
-      author: 'gildongH123',
-      date: '2025-11-12',
-      status: '검토중'
+  // 탭 상태: 백엔드와 통신할 값 (PENDING, REJECTED, ALL)
+  const [activeTab, setActiveTab] = useState('PENDING');
+  // 검색 필터: SearchFilter 컴포넌트에서 받은 값을 저장
+  const [searchFilters, setSearchFilters] = useState({});
+  const [currentPage, setCurrentPage] = useState(0); // Spring Pageable은 0부터 시작
+
+  // 백엔드에서 받아온 페이징 데이터를 저장할 상태
+  const [proposalPage, setProposalPage] = useState({
+    content: [], // 실제 제안 목록 (ProposalDto)
+    totalPages: 0,
+    totalElements: 0,
+    number: 0,
+  });
+
+  // 제안 데이터 가져오기
+  const fetchProposals = useCallback(async (page, tab, filters) => {
+    try {
+      // 백엔드 요청 파라미터를 동적으로 구성
+      const params = {
+        page: page,
+        size: 10, // 페이지 사이즈 고정 (백엔드 @PageableDefault와 일치해야 함)
+        status: tab === 'ALL' ? null : tab, //  '전체' 탭일 때는 status 파라미터를 null로 보냄
+        searchType: filters.searchType,
+        searchKeyword: filters.searchKeyword,
+      };
+
+      const response = await myAxios().get('/admin/proposalList', { params });
+      setProposalPage(response.data);
+      setCurrentPage(page);
+
+    } catch (error) {
+      console.error("제안 목록 조회 실패:", error);
+      // alert("제안 목록을 불러오는 데 실패했습니다."); // 디버깅 시 주석 해제
     }
-  ];
+  }, []);
 
-const filteredProposals = activeTab === '전체' 
-  ? proposals 
-  : proposals.filter(p => 
-      activeTab === '검토대기' ? p.status === '검토중' : p.status === '반려'
-    );
+  // currentPage, activeTab, searchFilters가 변경될 때마다 재요청
+  useEffect(() => {
+    fetchProposals(currentPage, activeTab, searchFilters);
+  }, [currentPage, activeTab, searchFilters, fetchProposals]);
 
-  //  const getFilteredProposals = () => {
-  //   if (activeTab === '전체') {
-  //     return proposals;
-  //   } else if (activeTab === '검토대기') {
-  //     return proposals.filter(p => p.status === '검토중');
-  //   } else if (activeTab === '반려') {
-  //     return proposals.filter(p => p.status === '반려');
-  //   }
-  //   return proposals;
-  // };
+  // 탭 변경
+  const handleTabChange = (tabValue) => {
+    // 탭이 변경되면 activeTab만 바꾸고, useEffect가 감지하여 fetchProposals 호출
+    setActiveTab(tabValue);
+    setCurrentPage(0); // 항상 0페이지로 돌아가서 재검색
+  };
 
-  // const filteredProposals = getFilteredProposals();
-
+  // 검색
   const handleSearch = (filters) => {
-    console.log('검색:', filters);
+    setSearchFilters(filters); // 검색 필터 상태 저장
+    setCurrentPage(0); // 검색 시 0페이지로 돌아가서 재요청
+  };
+
+  //  페이지 변경
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 0 && pageNumber < proposalPage.totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
 
   const handleReset = () => {
     console.log('필터 초기화');
   };
+
 
   return (
     <div className="admin-layout">
@@ -90,30 +85,28 @@ const filteredProposals = activeTab === '전체'
           {/* 검색 필터 */}
           <SearchFilter
             variant="simple"
-            onSearch={(filters) => {
-              console.log(filters);
-              // { searchType: "게시글 제목", searchKeyword: "비타민" }
-            }}
+            onSearch={handleSearch}
+            onReset={handleReset}
           />
 
           {/* 탭 */}
           <div className="tabs-container">
             <div className="tabs">
               <button
-                className={`tab ${activeTab === '검토대기' ? 'active' : ''}`}
-                onClick={() => setActiveTab('검토대기')}
+                className={`tab ${activeTab === 'PENDING' ? 'active' : ''}`}
+                onClick={() => handleTabChange('PENDING')}
               >
                 검토 대기
               </button>
               <button
-                className={`tab ${activeTab === '반려' ? 'active' : ''}`}
-                onClick={() => setActiveTab('반려')}
+                className={`tab ${activeTab === 'REJECTED' ? 'active' : ''}`}
+                onClick={() => handleTabChange('REJECTED')}
               >
                 반려
               </button>
               <button
-                className={`tab ${activeTab === '전체' ? 'active' : ''}`}
-                onClick={() => setActiveTab('전체')}
+                className={`tab ${activeTab === 'ALL' ? 'active' : ''}`}
+                onClick={() => handleTabChange('ALL')}
               >
                 전체
               </button>
@@ -134,13 +127,13 @@ const filteredProposals = activeTab === '전체'
                 </tr>
               </thead>
               <tbody>
-                {filteredProposals.map((proposal) => (
+                {proposalPage.content.map((proposal) => (
                   <tr key={proposal.id}>
                     <td>{proposal.id}</td>
-                    <td>{proposal.votes}</td>
-                    <td className="title-cell">{proposal.title}</td>
-                    <td>{proposal.author}</td>
-                    <td>{proposal.date}</td>
+                    <td>{proposal.voteCount}</td>
+                    <td className="title-cell">{proposal.productName}</td>
+                    <td>{proposal.memberUsername}</td>
+                    <td>{proposal.createdAt ? proposal.createdAt.substring(0, 10) : 'N/A'}</td>
                     <td>
                       <span className={`status-badge ${proposal.status === '반려' ? 'rejected' : 'pending'}`}>
                         {proposal.status}
@@ -153,7 +146,7 @@ const filteredProposals = activeTab === '전체'
           </div>
 
           {/* 데이터가 없을 때 */}
-          {filteredProposals.length === 0 && (
+          {proposalPage.content.length === 0 && (
             <div className="empty-state">
               <p>해당하는 제안이 없습니다.</p>
             </div>
@@ -161,7 +154,15 @@ const filteredProposals = activeTab === '전체'
 
           {/* 페이지네이션 */}
           <div className="pagination">
-            <button className="page-btn">1</button>
+            {Array.from({ length: proposalPage.totalPages }, (_, i) => (
+              <button
+                key={i}
+                className={`page-btn ${i === currentPage ? 'active' : ''}`}
+                onClick={() => handlePageChange(i)}
+              >
+                {i + 1}
+              </button>
+            ))}
           </div>
         </div>
       </div>
