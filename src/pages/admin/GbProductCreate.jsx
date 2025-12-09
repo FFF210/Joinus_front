@@ -6,6 +6,10 @@ import '../../styles/components/button.css';
 import './GBProductCreate.css';
 
 const GBProductCreatePage = () => {
+  //수정모드 체크
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [productId, setProductId] = useState(null);
+
   const [formData, setFormData] = useState({
     status: 'DRAFT',
     startDate: '',
@@ -39,6 +43,408 @@ const GBProductCreatePage = () => {
   const [expandedGroup, setExpandedGroup] = useState(null);
   const [showOptionModal, setShowOptionModal] = useState(false);
 
+  // 날짜 변환 함수 (timestamp형식으로 변환해줌)
+  const formatDateToTimestamp = (dateString) => {
+    if (!dateString) return null;
+    return `${dateString} 00:00:00`;
+  };
+
+  const formatDateFromTimestamp = (timestamp) => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    return date.toISOString().split('T')[0];  // "2025-12-25"
+  };
+
+  //제안 숫자 추출 함수
+  const extractNumberOnly = (input) => {
+    if (!input) return '';
+
+    // 숫자만 있으면 그대로
+    if (/^\d+$/.test(input)) {
+      return input;
+    }
+
+    // URL에서 숫자 추출
+    const parts = input.split('/');
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (/^\d+$/.test(parts[i])) {
+        return parts[i];
+      }
+    }
+
+    return '';
+  };
+
+  
+  const updateField = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // 참여 인원 조정
+  const adjustParticipants = (delta) => {
+    updateField('participants', Math.max(1, formData.participants + delta));
+  };
+
+  // 옵션 그룹 추가
+  const handleAddOptionGroup = (optionGroup) => {
+    setOptionGroups(prev => [...prev, optionGroup]);
+    setShowOptionModal(false);
+  };
+
+  // 옵션 그룹 삭제
+  const handleDeleteOptionGroup = (id) => {
+    setOptionGroups(prev => prev.filter(group => group.id !== id));
+  };
+
+  //  옵션 그룹 토글
+  const toggleOptionGroup = (id) => {
+    setExpandedGroup(prev => prev === id ? null : id);
+  };
+
+  // 이미지 로드
+  const loadImageFile = async (fileId, setterFunction) => {
+    try {
+      const response = await myAxios().get(`/admin/file/${fileId}`, {
+        responseType: 'blob'
+      });
+
+      const file = new File([response.data], `image-${fileId}.jpg`, {
+        type: response.data.type || 'image/jpeg'
+      });
+
+      setterFunction(file);
+    } catch (error) {
+      console.error('이미지 로드 실패:', error);
+    }
+  };
+
+  // 이미지 파일 로드 (여러 개)
+  const loadMultipleImages = async (fileIds, setterFunction) => {
+    try {
+      const promises = fileIds.map(id =>
+        myAxios().get(`/admin/file/${id}`, { responseType: 'blob' })
+      );
+
+      const responses = await Promise.all(promises);
+
+      const files = responses.map((response, index) =>
+        new File([response.data], `image-${fileIds[index]}.jpg`, {
+          type: response.data.type || 'image/jpeg'
+        })
+      );
+
+      setterFunction(files);
+    } catch (error) {
+      console.error('이미지 로드 실패:', error);
+    }
+  };
+
+
+  //  데이터 로드 (수정 모드)
+  const loadProductData = async (id) => {
+    try {
+      const response = await myAxios().get(`/admin/gbProduct/${id}`);
+      const data = response.data;
+
+      setFormData({
+        status: data.status || 'DRAFT',
+        startDate: formatDateFromTimestamp(data.startDate),
+        endDate: formatDateFromTimestamp(data.endDate),
+        category: data.categoryId?.toString() || '',
+        productName: data.name || '',
+        country: data.country || '',
+        siteUrl: data.originalSiteUrl || '',
+        description: data.description || '',
+        originalPrice: data.originalPrice || '',
+        shippingCost: data.abroadShippingCost || '',
+        exchangeRate: data.exchangeRate || 0,
+        participants: data.participants || 0,
+        feeRate: 10,
+        domesticShipping: data.shippingAmount || '3000',
+        groupBuyPrice: data.price || '',
+        supplierName: data.supplierName || '',
+        proposalNumber: data.proposalId || '',
+        minParticipants: data.minParticipants || '',
+        productMemo: data.note || '',
+        shippingMethod: data.shippingMethod || 'DEFAULT'
+      });
+
+      // 썸네일 로드
+      if (data.thumbnailFileId) {
+        await loadImageFile(data.thumbnailFileId, setMainImage);
+      }
+
+      // 추가 이미지 로드
+      const imageIds = [
+        data.image1FileId,
+        data.image2FileId,
+        data.image3FileId,
+        data.image4FileId
+      ].filter(id => id);
+
+      if (imageIds.length > 0) {
+        await loadMultipleImages(imageIds, setAdditionalImages);
+      }
+
+      // 상세 이미지 로드
+      const detailIds = [
+        data.detail1FileId,
+        data.detail2FileId,
+        data.detail3FileId,
+        data.detail4FileId
+      ].filter(id => id);
+
+      if (detailIds.length > 0) {
+        await loadMultipleImages(detailIds, setDetailImages);
+      }
+
+      // 옵션 로드
+      if (data.options && data.options.length > 0) {
+      const groupMap = new Map();
+      
+      data.options.forEach(option => {
+        if (!groupMap.has(option.groupName)) {
+          groupMap.set(option.groupName, {
+            id: Date.now() + Math.random(),
+            groupName: option.groupName,
+            options: []
+          });
+        }
+        
+        groupMap.get(option.groupName).options.push({
+          name: option.name,
+          price: option.price
+        });
+      });
+      
+      setOptionGroups(Array.from(groupMap.values()));
+    }
+
+    } catch (error) {
+      console.error('데이터 로드 실패:', error);
+      alert('데이터를 불러오는데 실패했습니다.');
+    }
+  };
+
+
+  // 환율 불러오기
+  const fetchExchangeRate = async () => {
+    try {
+      setIsLoadingRate(true);
+      const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+      const data = await response.json();
+      const usdToKrw = data.rates.KRW;
+      updateField('exchangeRate', Math.round(usdToKrw));
+    } catch (error) {
+      console.error('환율 불러오기 실패:', error);
+      updateField('exchangeRate', 1350);
+    } finally {
+      setIsLoadingRate(false);
+    }
+  };
+
+
+  // ===== 저장 (미게시) =====
+  const handleSave = async () => {
+    try {
+      const productFormData = new FormData();
+
+      productFormData.append('name', formData.productName);
+      productFormData.append('categoryId', formData.category);
+      productFormData.append('startDate', formatDateToTimestamp(formData.startDate));
+      productFormData.append('endDate', formatDateToTimestamp(formData.endDate));
+      productFormData.append('originalSiteUrl', formData.siteUrl);
+      productFormData.append('description', formData.description);
+      productFormData.append('originalPrice', formData.originalPrice);
+      productFormData.append('abroadShippingCost', formData.shippingCost);
+      productFormData.append('exchangeRate', formData.exchangeRate);
+      productFormData.append('minParticipants', formData.minParticipants);
+      productFormData.append('price', formData.groupBuyPrice);
+      productFormData.append('supplierName', formData.supplierName);
+      productFormData.append('shippingMethod', formData.shippingMethod);
+      productFormData.append('note', formData.productMemo);
+
+      if (formData.proposalNumber) {
+      const proposalId = extractNumberOnly(formData.proposalNumber);
+      if (proposalId) {
+        productFormData.append('proposalId', proposalId);
+      }
+    }
+
+      productFormData.append('status', isEditMode ? formData.status : 'DRAFT');
+
+      if (mainImage) {
+        productFormData.append('thumbnail', mainImage);
+      }
+
+      if (additionalImages && additionalImages.length > 0) {
+        additionalImages.forEach(img => {
+          productFormData.append('images', img);
+        });
+      }
+
+      if (detailImages && detailImages.length > 0) {
+        detailImages.forEach(img => {
+          productFormData.append('details', img);
+        });
+      }
+
+      let resultProductId;
+
+      if (isEditMode) {
+        await myAxios().put(`/admin/gbProduct/${productId}`, productFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        resultProductId = productId;
+        alert('수정되었습니다!');
+      } else {
+        const response = await myAxios().post('/admin/gbProductCreate', productFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        resultProductId = response.data;
+        alert('미게시 상태로 저장되었습니다!');
+      }
+
+      // 옵션 처리
+      if (optionGroups && optionGroups.length > 0) {
+        for (const group of optionGroups) {
+          for (const option of group.options) {
+            await myAxios().post(`/admin/gbProducts/${resultProductId}/options`, [{
+              groupName: group.groupName,
+              name: option.name,
+              price: option.price
+            }]);
+          }
+        }
+      }
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.location.reload();
+      }
+
+      window.close();
+
+    } catch (error) {
+      console.error('저장 오류:', error);
+      alert(`저장 실패: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
+  // ===== 게시 =====
+  const handleSubmit = async () => {
+    if (!mainImage && !isEditMode) {
+      alert('대표 이미지를 업로드해주세요.');
+      return;
+    }
+
+    try {
+      const productFormData = new FormData();
+
+      productFormData.append('name', formData.productName);
+      productFormData.append('categoryId', formData.category);
+      productFormData.append('startDate', formatDateToTimestamp(formData.startDate));
+      productFormData.append('endDate', formatDateToTimestamp(formData.endDate));
+      productFormData.append('originalSiteUrl', formData.siteUrl);
+      productFormData.append('description', formData.description);
+      productFormData.append('originalPrice', formData.originalPrice);
+      productFormData.append('abroadShippingCost', formData.shippingCost);
+      productFormData.append('exchangeRate', formData.exchangeRate);
+      productFormData.append('minParticipants', formData.minParticipants);
+      productFormData.append('price', formData.groupBuyPrice);
+      productFormData.append('supplierName', formData.supplierName);
+      productFormData.append('shippingMethod', formData.shippingMethod);
+      productFormData.append('note', formData.productMemo);
+
+      if (formData.proposalNumber) {
+      const proposalId = extractNumberOnly(formData.proposalNumber);
+      if (proposalId) {  // 숫자가 있을 때만
+        productFormData.append('proposalId', proposalId);
+      }
+    }
+
+      productFormData.append('status', formData.status);
+
+      if (mainImage) {
+        productFormData.append('thumbnail', mainImage);
+      }
+
+      if (additionalImages && additionalImages.length > 0) {
+        additionalImages.forEach(img => {
+          productFormData.append('images', img);
+        });
+      }
+
+      if (detailImages && detailImages.length > 0) {
+        detailImages.forEach(img => {
+          productFormData.append('details', img);
+        });
+      }
+
+      let resultProductId;
+
+      if (isEditMode) {
+        await myAxios().put(`/admin/gbProduct/${productId}`, productFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        resultProductId = productId;
+      } else {
+        const response = await myAxios().post('/admin/gbProductCreate', productFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        resultProductId = response.data;
+      }
+
+      // 옵션 처리
+      if (optionGroups && optionGroups.length > 0) {
+        for (const group of optionGroups) {
+          for (const option of group.options) {
+            await myAxios().post(`/admin/gbProducts/${resultProductId}/options`, [{
+              groupName: group.groupName,
+              name: option.name,
+              price: option.price
+            }]);
+          }
+        }
+      }
+
+      alert(`공구가 ${isEditMode ? '수정' : '등록'}되었습니다!`);
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: isEditMode ? 'GB_PRODUCT_UPDATED' : 'GB_PRODUCT_CREATED',
+          productId: resultProductId
+        }, '*');
+        window.opener.location.reload();
+      }
+
+      window.close();
+
+    } catch (error) {
+      console.error('처리 오류:', error);
+      alert(`처리 실패: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
+  // ========================================
+  //  useEffect들
+  // ========================================
+  
+  //초기화
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    if (id) {
+      // 수정 모드
+      setIsEditMode(true);
+      setProductId(id);
+      loadProductData(id);
+    } else {
+      // 생성 모드
+      setIsEditMode(false);
+    }
+  }, []);
+
   // 가격 자동 계산
   useEffect(() => {
     const price = parseFloat(formData.originalPrice) || 0;
@@ -67,47 +473,6 @@ const GBProductCreatePage = () => {
     fetchExchangeRate();
   }, []);
 
-  // 환율 불러오기
-  const fetchExchangeRate = async () => {
-    try {
-      setIsLoadingRate(true);
-      const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-      const data = await response.json();
-      const usdToKrw = data.rates.KRW;
-      updateField('exchangeRate', Math.round(usdToKrw));
-    } catch (error) {
-      console.error('환율 불러오기 실패:', error);
-      updateField('exchangeRate', 1350);
-    } finally {
-      setIsLoadingRate(false);
-    }
-  };
-
-  const updateField = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  // 참여 인원 조정
-  const adjustParticipants = (delta) => {
-    updateField('participants', Math.max(1, formData.participants + delta));
-  };
-
-  // 옵션 그룹 추가
-  const handleAddOptionGroup = (optionGroup) => {
-    setOptionGroups(prev => [...prev, optionGroup]);
-    setShowOptionModal(false);
-  };
-
-  // 옵션 그룹 삭제
-  const handleDeleteOptionGroup = (id) => {
-    setOptionGroups(prev => prev.filter(group => group.id !== id));
-  };
-
-  //  옵션 그룹 토글
-  const toggleOptionGroup = (id) => {
-    setExpandedGroup(prev => prev === id ? null : id);
-  };
-
   // 창 닫기 전 경고
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -120,215 +485,6 @@ const GBProductCreatePage = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  // 상태 변환 함수 (백에서 해줘서 필요없지만...)
-  // const convertStatus = (status) => {
-  //   const statusMap = {
-  //     '미게시': 'DRAFT',
-  //     '진행중': 'ONGOING',
-  //     '구매대기': 'PENDING_ORDER',
-  //     '완료': 'COMPLETED'
-  //   };
-  //   return statusMap[status] || 'DRAFT';
-  // };
-
-  // 날짜 변환 함수
-  const formatDateToTimestamp = (dateString) => {
-    if (!dateString) return null;
-    return `${dateString} 00:00:00`;
-  };
-
-  //제안 숫자 추출 함수
-  const extractNumberOnly = (input) => {
-    if (!input) return '';
-
-    // 숫자만 있으면 그대로
-    if (/^\d+$/.test(input)) {
-      return input;
-    }
-
-    // URL에서 숫자 추출
-    const parts = input.split('/');
-    for (let i = parts.length - 1; i >= 0; i--) {
-      if (/^\d+$/.test(parts[i])) {
-        return parts[i];
-      }
-    }
-
-    return '';
-  };
-
-
-  // ===== 저장 (미게시) =====
-  const handleSave = async () => {
-    try {
-      const productFormData = new FormData();
-
-      // 기본 정보
-      productFormData.append('name', formData.productName);
-      productFormData.append('categoryId', formData.category);
-      productFormData.append('startDate', formatDateToTimestamp(formData.startDate));
-      productFormData.append('endDate', formatDateToTimestamp(formData.endDate));
-      productFormData.append('originalSiteUrl', formData.siteUrl);
-      productFormData.append('description', formData.description);
-      productFormData.append('originalPrice', formData.originalPrice);
-      productFormData.append('abroadShippingCost', formData.shippingCost);
-      productFormData.append('exchangeRate', formData.exchangeRate);
-      productFormData.append('minParticipants', formData.minParticipants);
-      productFormData.append('price', formData.groupBuyPrice);
-      productFormData.append('supplierName', formData.supplierName);
-      productFormData.append('shippingMethod', formData.shippingMethod);
-
-      productFormData.append('note', formData.productMemo);
-
-      // proposalId (있을 때만)
-      if (formData.proposalNumber) {
-        productFormData.append('proposalId', formData.proposalNumber);
-      }
-
-      productFormData.append('status', formData.status);
-
-      // 파일들
-      if (mainImage) {
-        productFormData.append('thumbnail', mainImage);
-      }
-      if (additionalImages && additionalImages.length > 0) {
-        additionalImages.forEach(img => {
-          productFormData.append('images', img);
-        });
-      }
-      if (detailImages && detailImages.length > 0) {
-      detailImages.forEach(img => {
-        productFormData.append('details', img);
-      });
-    }
-
-      const response = await myAxios().post('/admin/gbProductCreate', productFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      const productId = response.data;
-
-      // 옵션 그룹별로 등록
-      if (optionGroups && optionGroups.length > 0) {
-        for (const group of optionGroups) {
-          for (const option of group.options) {
-            const optionData = {
-              groupName: group.groupName,
-              name: option.name,
-              price: option.price
-            };
-
-            await myAxios().post(`/admin/gbProducts/${productId}/options`, [optionData]);
-          }
-        }
-      }
-
-      alert('미게시 상태로 저장되었습니다!');
-
-      if (window.opener && !window.opener.closed) {
-        window.opener.location.reload();
-      }
-
-      window.close();
-
-    } catch (error) {
-      console.error('저장 오류:', error);
-      alert(`저장 실패: ${error.response?.data?.message || error.message}`);
-    }
-  };
-
-  // ===== 게시 =====
-  const handleSubmit = async () => {
-    try {
-      const productFormData = new FormData();
-
-      // 기본 정보
-      productFormData.append('name', formData.productName);
-      productFormData.append('categoryId', formData.category);
-      productFormData.append('startDate', formatDateToTimestamp(formData.startDate));
-      productFormData.append('endDate', formatDateToTimestamp(formData.endDate));
-      productFormData.append('originalSiteUrl', formData.siteUrl);
-      productFormData.append('description', formData.description);
-      productFormData.append('originalPrice', formData.originalPrice);
-      productFormData.append('abroadShippingCost', formData.shippingCost);
-      productFormData.append('exchangeRate', formData.exchangeRate);
-      productFormData.append('minParticipants', formData.minParticipants);
-      productFormData.append('price', formData.groupBuyPrice);
-      productFormData.append('supplierName', formData.supplierName);
-      productFormData.append('shippingMethod', formData.shippingMethod);
-      productFormData.append('note', formData.productMemo);
-      if (formData.proposalNumber) {
-        productFormData.append('proposalId', formData.proposalNumber);
-      }
-      productFormData.append('status', formData.status);
-
-      // 썸네일 (필수)
-      if (mainImage) {
-        productFormData.append('thumbnail', mainImage);
-      } else {
-        alert('대표 이미지를 업로드해주세요.');
-        return;
-      }
-
-      // 미리보기
-      if (additionalImages && additionalImages.length > 0) {
-        additionalImages.forEach(img => {
-          productFormData.append('images', img);
-        });
-      }
-
-      //상품 상세설명 이미지
-      if (detailImages && detailImages.length > 0) {
-      detailImages.forEach(img => {
-        productFormData.append('details', img);
-      });
-    }
-
-      const productResponse = await myAxios().post('/admin/gbProductCreate', productFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      const productId = productResponse.data;
-      console.log('✅ 상품 등록 완료:', productId);
-
-      // 옵션 그룹별로 등록
-      if (optionGroups && optionGroups.length > 0) {
-        for (const group of optionGroups) {
-          for (const option of group.options) {
-            const optionData = {
-              groupName: group.groupName,
-              name: option.name,
-              price: option.price
-            };
-
-            await myAxios().post(`/admin/gbProducts/${productId}/options`, [optionData]);
-          }
-        }
-
-        console.log('✅ 옵션 등록 완료');
-      }
-
-      alert(`공구가 등록되었습니다! (ID: ${productId})`);
-
-      if (window.opener && !window.opener.closed) {
-        window.opener.postMessage({
-          type: 'GB_PRODUCT_CREATED',
-          productId: productId
-        }, '*');
-        window.opener.location.reload();
-      }
-
-      window.close();
-
-    } catch (error) {
-      console.error('등록 오류:', error);
-      alert(`등록 실패: ${error.response?.data?.message || error.message}`);
-    }
-  };
 
   //URL 파라미터로 proposalId 받을 때 대비
   useEffect(() => {
@@ -340,13 +496,27 @@ const GBProductCreatePage = () => {
     }
   }, []);
 
+
   return (
     <div className="gb-product-create-page">
       <div className="create-container">
 
+        {isEditMode && productId && (
+          <div className="edit-banner">
+            <div className="edit-banner-icon">📝</div>
+            <div className="edit-banner-info">
+              <h3>공구 수정</h3>
+              <div className="edit-banner-details">
+                <span>공구 ID: {productId}</span>
+                <span>공구명: {formData.productName}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 헤더 */}
         <div className="modal-header-large">
-          <h2>공구 등록</h2>
+          <h2>{isEditMode ? '공구 수정' : '공구 등록'}</h2>
         </div>
 
         {/* 내용 */}
@@ -864,9 +1034,13 @@ const GBProductCreatePage = () => {
         {/* 푸터 */}
         <div className="modal-footer-large">
           <button className="btn-secondary" onClick={() => window.close()}>취소</button>
-          <button className="btn-outline" onClick={handleSave}>저장</button>
+          <button className="btn-outline" onClick={handleSave}>
+            {isEditMode ? '수정 저장' : '저장'}
+          </button>
           <button className="btn-outline">미리보기</button>
-          <button className="btn-primary" onClick={handleSubmit}>게시</button>
+          <button className="btn-primary" onClick={handleSubmit}>
+            {isEditMode ? '수정 완료' : '게시'}
+          </button>
         </div>
       </div>
 
