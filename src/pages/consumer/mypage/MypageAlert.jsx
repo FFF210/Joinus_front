@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./MypageAlert.css";
 import axios from "axios";
+import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
 
 export default function MypageAlert() {
   const [alertList, setAlertList] = useState([]);
   const [openedIds, setOpenedIds] = useState([]); // 열려있는 아코디언 ID(여러 개!)
   const [readUiIds, setReadUiIds] = useState([]); // NEW 제거용 UI 상태
+
+  const [currentPage, setCurrentPage] = useState(1); 
+  const itemsPerPage = 10; // 페이지당 10개
 
   const username = "ehgns0311";
 
@@ -20,6 +24,17 @@ export default function MypageAlert() {
   useEffect(() => {
     getAlertList();
   }, []);
+
+   // 페이징 계산
+  const totalPages = Math.ceil(alertList.length / itemsPerPage);
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentItems = alertList.slice(indexOfFirst, indexOfLast);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   // 읽지 않은 알림 수
   const unreadCount = alertList.filter(
@@ -67,57 +82,85 @@ export default function MypageAlert() {
         <strong className="alert-blue">{unreadCount}개</strong> 있습니다.
       </p>
 
-      <div className="alert-list">
-        {alertList.length === 0 && (
-          <div style={{ padding: "20px", color: "#777" }}>
-            알림이 없습니다.
-          </div>
-        )}
+    <div className="alert-list">
+  {currentItems.length === 0 ? (
+    <div style={{ padding: "20px", color: "#777" }}>
+      알림이 없습니다.
+    </div>
+  ) : (
+    currentItems.map((alert) => {
+      const isOpen = openedIds.includes(alert.id);
+      const showNew = !alert.readedAt && !readUiIds.includes(alert.id);
+      const unreadBackground = showNew;
 
-        {alertList.map((alert) => {
-          const isOpen = openedIds.includes(alert.id);
-          const showNew = !alert.readedAt && !readUiIds.includes(alert.id);
-          const unreadBackground = showNew;
-
-          return (
-            <div
-              key={alert.id}
-              className={`alert-accordion-item ${
-                unreadBackground ? "alert-unread" : ""
-              }`}
-            >
-              {/* 헤더 */}
-              <div className="alert-accordion-header" onClick={() => toggle(alert.id)}>
-                <div className="alert-left">
-                  <div className="alert-icon">✉</div>
-                  <div>
-                    <div className="alert-title">
-                      {alert.title}
-                      {showNew && <span className="alert-badge-new">NEW</span>}
-                    </div>
-                    <div className="alert-date">{alert.createdAt}</div>
-                  </div>
+      return (
+        <div
+          key={alert.id}
+          className={`alert-accordion-item ${
+            unreadBackground ? "alert-unread" : ""
+          }`}
+        >
+          <div
+            className="alert-accordion-header"
+            onClick={() => toggle(alert.id)}
+          >
+            <div className="alert-left">
+              <div className="alert-icon">✉</div>
+              <div>
+                <div className="alert-title">
+                  {alert.title}
+                  {showNew && <span className="alert-badge-new">NEW</span>}
                 </div>
-                <div className="alert-arrow">{isOpen ? "▲" : "▼"}</div>
+                <div className="alert-date">{alert.createdAt}</div>
               </div>
-
-              {/* 본문 */}
-              {isOpen && (
-                <div className="alert-accordion-body">
-                  <div className="alert-text">{alert.content}</div>
-
-                  <button
-                    className="alert-btn-delete alert-delete-bottom"
-                    onClick={() => deleteAlert(alert.id)}
-                  >
-                    삭제
-                  </button>
-                </div>
-              )}
             </div>
-          );
-        })}
-      </div>
+            <div className="alert-arrow">{isOpen ? "▲" : "▼"}</div>
+          </div>
+
+          {isOpen && (
+            <div className="alert-accordion-body">
+              <div className="alert-text">{alert.content}</div>
+
+              <button
+                className="alert-btn-delete alert-delete-bottom"
+                onClick={() => deleteAlert(alert.id)}
+              >
+                삭제
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    })
+  )}
+</div>
+
+       {/* 페이지네이션 UI 추가 */}
+      <Pagination className="paginationContainer">
+        <PaginationItem disabled={currentPage === 1}>
+          <PaginationLink first onClick={() => handlePageChange(1)} />
+        </PaginationItem>
+
+        <PaginationItem disabled={currentPage === 1}>
+          <PaginationLink previous onClick={() => handlePageChange(currentPage - 1)} />
+        </PaginationItem>
+
+        {[...Array(totalPages)].map((_, i) => (
+          <PaginationItem key={i} active={currentPage === i + 1}>
+            <PaginationLink onClick={() => handlePageChange(i + 1)}>
+              {i + 1}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+
+        <PaginationItem disabled={currentPage === totalPages}>
+          <PaginationLink next onClick={() => handlePageChange(currentPage + 1)} />
+        </PaginationItem>
+
+        <PaginationItem disabled={currentPage === totalPages}>
+          <PaginationLink last onClick={() => handlePageChange(totalPages)} />
+        </PaginationItem>
+      </Pagination>
 
       {/* 안내 박스 */}
       <div className="alert-info-box">
