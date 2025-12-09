@@ -1,57 +1,59 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { myAxios } from "../../../config";   // ⭐ axios 사용하는 게 정답
 import "./AddressEdit.css";
 
 export default function AddressEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // 더미 데이터
-  const dummy = {
-    1: {
-      name: "박민수",
-      addressName: "집",
-      phone1: "010",
-      phone2: "5241",
-      phone3: "8372",
-      postcode: "06351",
-      road: "서울특별시 강남구 논현로 145길 18",
-      detail: "힐스테이트 논현 103동 701호",
-      enter: "공동현관 비밀번호 1234",
-      isDefault: true
-    }
-  };
-
   const [form, setForm] = useState({
+    id: null,
+    memberUsername: "ehgns0311",
     addressName: "",
-    name: "",
-    phone1: "010",
-    phone2: "",
-    phone3: "",
+    recipientName: "",
+    phone: "",
     postcode: "",
-    road: "",
-    detail: "",
-    enter: "",
-    isDefault: false
+    streetAddress: "",
+    addressDetail: "",
+    accessInstructions: "",
+    isDefault: false,
   });
 
+  // =======================
+  // 📌 기존 배송지 불러오기
+  // =======================
   useEffect(() => {
-    if (dummy[id]) {
-      setForm(dummy[id]);
-    }
+    myAxios()
+      .get(`/mypage/address/${id}`)
+      .then((res) => {
+        setForm(res.data);
+      })
+      .catch((err) => console.error(err));
   }, [id]);
 
+  // =======================
+  // 📌 input handler
+  // =======================
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
+  // =======================
+  // 📌 수정 요청
+  // =======================
   const handleSubmit = () => {
-    alert("배송지가 수정되었습니다!");
-    navigate("/mypage/addressList");
+    myAxios()
+      .put(`/mypage/address/${id}`, form)
+      .then(() => {
+        alert("배송지가 수정되었습니다!");
+        navigate("/mypage/addressList");
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -94,8 +96,8 @@ export default function AddressEdit() {
         <input
           type="text"
           className="addressedit-input-box"
-          name="name"
-          value={form.name}
+          name="recipientName"
+          value={form.recipientName}
           onChange={handleChange}
         />
       </div>
@@ -106,89 +108,58 @@ export default function AddressEdit() {
           연락처 <span className="addressedit-required">*</span>
         </label>
 
-        <div className="addressedit-phone-wrap">
-          <select name="phone1" value={form.phone1} onChange={handleChange}>
-            <option>010</option>
-            <option>011</option>
-          </select>
-
-          <input
-            type="text"
-            name="phone2"
-            maxLength={4}
-            value={form.phone2}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="phone3"
-            maxLength={4}
-            value={form.phone3}
-            onChange={handleChange}
-          />
-        </div>
+        <input
+          type="text"
+          name="phone"
+          className="addressedit-input-box"
+          value={form.phone}
+          onChange={handleChange}
+        />
       </div>
 
-{/* 주소 */}
-<div className="addressedit-form-row">
-  <label className="addressedit-label">
-    주소 <span className="addressedit-required">*</span>
-  </label>
+      {/* 주소 */}
+      <div className="addressedit-form-row">
+        <label className="addressedit-label">주소</label>
 
-  {/* 우편번호 + 검색 */}
-  <div className="addressedit-address-row">
-    <input
-      type="text"
-      className="addressedit-postcode-input"
-      name="postcode"
-      placeholder="우편번호"
-      value={form.postcode}
-      onChange={handleChange}
-    />
+        <div className="addressedit-address-row">
+          <input
+            type="text"
+            className="addressedit-postcode-input"
+            name="postcode"
+            value={form.postcode}
+            onChange={handleChange}
+          />
 
-    <button className="addressedit-postcode-btn">
-      검색
-    </button>
+          <button className="addressedit-postcode-btn">검색</button>
 
-    {/* 도로명 주소 */}
-    <input
-      type="text"
-      className="addressedit-road-input"
-      name="road"
-      placeholder="도로명 주소를 입력하세요."
-      value={form.road}
-      onChange={handleChange}
-    />
+          <input
+            type="text"
+            className="addressedit-road-input"
+            name="streetAddress"
+            value={form.streetAddress}
+            onChange={handleChange}
+          />
 
-    {/* 도로명 검색 버튼 (Add와 동일!) */}
-    <button className="addressedit-postcode-btn">
-      검색
-    </button>
-  </div>
+          <button className="addressedit-postcode-btn">검색</button>
+        </div>
 
-  {/* 상세주소 */}
-  <textarea
-    className="addressedit-textarea-box"
-    name="detail"
-    placeholder="상세주소를 입력하세요."
-    value={form.detail}
-    onChange={handleChange}
-  ></textarea>
-</div>
-
+        <textarea
+          className="addressedit-textarea-box"
+          name="addressDetail"
+          value={form.addressDetail}
+          onChange={handleChange}
+        ></textarea>
+      </div>
 
       {/* 출입방법 */}
       <div className="addressedit-form-row">
-        <label className="addressedit-label">
-          공동현관 출입방법 <span className="addressedit-required">*</span>
-        </label>
+        <label className="addressedit-label">공동현관 출입방법</label>
 
         <input
           type="text"
           className="addressedit-input-box"
-          name="enter"
-          value={form.enter}
+          name="accessInstructions"
+          value={form.accessInstructions}
           onChange={handleChange}
         />
       </div>
@@ -196,7 +167,7 @@ export default function AddressEdit() {
       {/* 버튼 */}
       <div className="addressedit-btn-row">
         <button className="addressedit-btn-confirm" onClick={handleSubmit}>
-          수정 완료
+          확인
         </button>
         <button className="addressedit-btn-cancel" onClick={() => navigate(-1)}>
           취소

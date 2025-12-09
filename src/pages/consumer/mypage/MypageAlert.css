@@ -134,3 +134,56 @@
   font-weight: 800;
   margin-bottom: 8px;
 }
+
+/* 아코디언 전체 박스 */
+.alert-accordion-item {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: white;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+/* 헤더 */
+.alert-accordion-header {
+  padding: 20px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* 화살표 */
+.alert-arrow {
+  font-size: 14px;
+  color: var(--text-sub);
+}
+
+/* 내용 */
+.alert-accordion-body {
+  padding: 16px 28px 24px 28px;
+  background: #fafafa;
+  border-top: 1px solid var(--line);
+}
+
+/* 열리지 않은 NEW 알림 배경 */
+.alert-unread {
+  background: #F4F7FF;
+}
+
+/* 아코디언 본문 */
+.alert-accordion-body {
+  padding: 20px 28px 40px 28px;
+  background: #fafafa;
+  border-top: 1px solid var(--line);
+  position: relative;
+}
+
+/* 삭제 버튼: 오른쪽 하단 고정 */
+.alert-delete-bottom {
+  position: absolute;
+  bottom: 20px;
+  right: 28px;
+}
+
+

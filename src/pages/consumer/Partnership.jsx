@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { baseUrl } from '../../config';
 import './Partnership.css';
 
 export default function Partnership() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     companyName: '',
     businessNumber: '',
@@ -13,8 +16,6 @@ export default function Partnership() {
     productDescription: '',
     supplyPrice: '',
     minQuantity: '',
-    deliveryPeriod: '',
-    currentStock: '',
     proposalLink: '',
     additionalNotes: ''
   });
@@ -36,18 +37,47 @@ export default function Partnership() {
       productDescription: '',
       supplyPrice: '',
       minQuantity: '',
-      deliveryPeriod: '',
-      currentStock: '',
       proposalLink: '',
       additionalNotes: ''
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('납품 제안 제출:', formData);
-    // 실제 제출 로직 (API 호출 등)
-    alert('납품 제안이 접수되었습니다. 검토 후 개별 연락드리겠습니다.');
+    
+    setIsSubmitting(true);
+    try {
+      const response = await axios.post(
+        `${baseUrl}/api/consumer/supply/inquiry`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.data === true) {
+        alert('납품 제안이 접수되었습니다. 검토 후 개별 연락드리겠습니다.');
+        handleReset();
+      } else {
+        alert('납품 제안 제출에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('납품 제안 제출 실패:', error);
+      if (error.response) {
+        // 서버에서 에러 응답이 온 경우
+        alert('납품 제안 제출에 실패했습니다. 입력한 정보를 확인해주세요.');
+      } else if (error.request) {
+        // 요청은 보냈지만 응답을 받지 못한 경우
+        alert('서버에 연결할 수 없습니다. 네트워크를 확인해주세요.');
+      } else {
+        // 요청 설정 중 에러가 발생한 경우
+        alert('납품 제안 제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -230,32 +260,6 @@ export default function Partnership() {
               </div>
             </div>
 
-            {/* 다섯 번째 행 */}
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="deliveryPeriod">예상 납기</label>
-                <input
-                  type="text"
-                  id="deliveryPeriod"
-                  name="deliveryPeriod"
-                  value={formData.deliveryPeriod}
-                  onChange={handleChange}
-                  placeholder="예) 주문 확정 후 7일 이내 출고 가능"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="currentStock">현재 보유 재고</label>
-                <input
-                  type="text"
-                  id="currentStock"
-                  name="currentStock"
-                  value={formData.currentStock}
-                  onChange={handleChange}
-                  placeholder="예) 현재 창고 재고 300개 보유"
-                />
-              </div>
-            </div>
-
             {/* 제안 상세 페이지 링크 */}
             <div className="form-group full-width">
               <label htmlFor="proposalLink">제안 상세 페이지 링크</label>
@@ -287,11 +291,20 @@ export default function Partnership() {
 
             {/* 버튼 영역 */}
             <div className="form-actions">
-              <button type="button" className="btn-reset" onClick={handleReset}>
+              <button 
+                type="button" 
+                className="btn-reset" 
+                onClick={handleReset}
+                disabled={isSubmitting}
+              >
                 초기화
               </button>
-              <button type="submit" className="btn-submit">
-                납품 제안 보내기
+              <button 
+                type="submit" 
+                className="btn-submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? '제출 중...' : '납품 제안 보내기'}
               </button>
             </div>
 
