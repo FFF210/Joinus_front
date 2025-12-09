@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from './Sidebar';
 import Header from './Header';
 import SearchFilter from './SearchFilter';
 import '../../styles/components/button.css';
@@ -83,7 +82,6 @@ const filteredProposals = activeTab === '전체'
 
   return (
     <div className="admin-layout">
-      <Sidebar />
 
       <div className="main-content">
         <Header title="제안 관리" />

@@ -1,4 +1,3 @@
-/* GBProductCreate.css */
 
 .gb-product-create-page {
   min-height: 100vh;
@@ -472,6 +471,430 @@
 .btn-outline:hover {
   background-color: #f9fafb;
 }
+
+/* ============================================
+   옵션 그룹 스타일 
+   ============================================ */
+
+/* 옵션 테이블 컨테이너 */
+.options-table {
+  margin-bottom: 16px;
+}
+
+/* 옵션 그룹 컨테이너 */
+.option-group-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: white;
+  transition: all 0.2s;
+}
+
+.option-group-container:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 옵션 그룹 헤더 */
+.option-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  background: #f9fafb;
+  transition: background 0.2s;
+}
+
+.option-group-header:hover {
+  background: #f3f4f6;
+}
+
+/* 옵션 그룹 요약 */
+.option-group-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.option-group-summary strong {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* 옵션 개수 표시 */
+.option-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: #dbeafe;
+  color: #1e40af;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 12px;
+}
+
+/* 옵션 액션 (펼치기/접기 아이콘) */
+.option-actions {
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  transition: transform 0.2s;
+}
+
+.option-group-header:hover .option-actions {
+  color: #374151;
+}
+
+/* 옵션 그룹 상세 */
+.option-group-details {
+  padding: 16px 20px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* 옵션 상세 행 */
+.option-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
+
+.option-detail-row:hover {
+  background: #f3f4f6;
+}
+
+.option-detail-row:last-of-type {
+  margin-bottom: 16px;
+}
+
+/* 옵션명 */
+.option-detail-name {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* 옵션 가격 */
+.option-detail-price {
+  font-size: 14px;
+  color: #059669;
+  font-weight: 600;
+}
+
+/* 그룹 삭제 버튼 */
+.delete-group-btn {
+  width: 100%;
+  padding: 10px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-group-btn:hover {
+  background: #fecaca;
+  border-color: #fca5a5;
+}
+
+/* 옵션 추가 버튼 */
+.add-btn {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+/* 옵션이 없을 때 */
+.options-table:empty + .add-btn {
+  margin-top: 0;
+}
+
+
+/* ============================================
+   이미지 미리보기 스타일 
+   ============================================ */
+
+/* 대표 이미지 미리보기 */
+.image-preview {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* ✅ 비율 유지하면서 채우기 */
+}
+
+/* 이미지 삭제 버튼 */
+.remove-image-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.remove-image-btn:hover {
+  background: rgba(220, 38, 38, 0.9);
+  transform: scale(1.1);
+}
+
+/* 업로드 박스 */
+.upload-box {
+  width: 200px;
+  height: 200px;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-box:hover {
+  border-color: #9ca3af;
+  background: #f3f4f6;
+}
+
+.upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.upload-content {
+  text-align: center;
+  color: #6b7280;
+}
+
+.upload-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.upload-content small {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* 제안 링크 버튼 */
+.proposal-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  color: #1e40af;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+
+.proposal-link-btn:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ============================================
+   추가 이미지 그리드 
+   ============================================ */
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* 이미지 슬롯 */
+.image-slot {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.image-slot:hover {
+  border-color: #9ca3af;
+  background: #f3f4f6;
+}
+
+/* 미리보기 슬롯 */
+.image-slot.preview {
+  border: 2px solid #e5e7eb;
+  border-style: solid;
+  cursor: default;
+}
+
+.image-slot.preview:hover {
+  border-color: #d1d5db;
+}
+
+.image-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* 비율 유지하면서 채우기 */
+}
+
+.image-slot .upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.image-slot .upload-content {
+  text-align: center;
+  color: #9ca3af;
+}
+
+/* 이미지 슬롯의 삭제 버튼 */
+.image-slot .remove-image-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.image-slot .remove-image-btn:hover {
+  background: rgba(220, 38, 38, 0.9);
+  transform: scale(1.1);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .image-preview,
+  .upload-box {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .image-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .image-slot {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;  /* 1:1 비율 유지 */
+    position: relative;
+  }
+
+  .image-slot img,
+  .image-slot .upload-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .option-group-header {
+    padding: 12px 16px;
+  }
+
+  .option-group-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .option-detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .option-detail-price {
+    align-self: flex-end;
+  }
+}
+
+
 
 /* 반응형 */
 @media (max-width: 768px) {

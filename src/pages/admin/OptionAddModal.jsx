@@ -1,87 +1,150 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 import './OptionAddModal.css';
 
 const OptionAddModal = ({ onClose, onAdd }) => {
   const [groupName, setGroupName] = useState('');
-  const [optionName, setOptionName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
+  const [options, setOptions] = useState([
+    { id: 1, name: '', price: '' }
+  ]);
 
-  const handleAdd = () => {
-    if (!groupName || !optionName || !price) {
-      alert('필수 항목을 입력해주세요.');
+  // 옵션 추가
+  const handleAddOption = () => {
+    setOptions([
+      ...options,
+      { id: Date.now(), name: '', price: '' }
+    ]);
+  };
+
+  // 옵션 삭제
+  const handleRemoveOption = (id) => {
+    if (options.length === 1) {
+      alert('최소 1개의 옵션이 필요합니다.');
+      return;
+    }
+    setOptions(options.filter(opt => opt.id !== id));
+  };
+
+  // 옵션 값 변경
+  const handleOptionChange = (id, field, value) => {
+    setOptions(options.map(opt => 
+      opt.id === id ? { ...opt, [field]: value } : opt
+    ));
+  };
+
+  // 확인 버튼
+  const handleConfirm = () => {
+    // 유효성 검사
+    if (!groupName.trim()) {
+      alert('옵션 그룹명을 입력해주세요.');
       return;
     }
 
-    onAdd({
-      groupName,
-      optionName,
-      price: parseInt(price),
-      description
-    });
+    // 모든 옵션이 입력되었는지 확인
+    for (let opt of options) {
+      if (!opt.name.trim()) {
+        alert('모든 옵션명을 입력해주세요.');
+        return;
+      }
+      if (!opt.price || opt.price === '') {
+        alert('모든 가격을 입력해주세요.');
+        return;
+      }
+    }
+
+    // 그룹 데이터 생성
+    const optionGroup = {
+      id: Date.now(),
+      groupName: groupName,
+      options: options.map(opt => ({
+        name: opt.name,
+        price: parseInt(opt.price) || 0
+      }))
+    };
+
+    onAdd(optionGroup);
+    onClose();
   };
 
   return (
-    <div className="modal-overlay-small" onClick={onClose}>
-      <div className="option-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="option-header">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        
+        {/* 헤더 */}
+        <div className="modal-header">
           <h3>옵션 추가</h3>
-          <button className="close-btn-small" onClick={onClose}>
+          <button className="close-btn" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
 
-        <div className="option-body">
-          <div className="option-field">
-            <label>옵션 그룹명</label>
+        {/* 바디 */}
+        <div className="modal-body">
+          
+          {/* 옵션 그룹명 */}
+          <div className="form-field">
+            <label>옵션 그룹명 *</label>
             <input 
               type="text" 
-              placeholder="예) 사이즈, 용량 등"
+              placeholder="예) 사이즈, 용량, 색상 등"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
             />
           </div>
 
-          <div className="option-field">
-            <label>옵션명</label>
-            <input 
-              type="text" 
-              placeholder="예) S"
-              value={optionName}
-              onChange={(e) => setOptionName(e.target.value)}
-            />
+          {/* 옵션 목록 */}
+          <div className="options-list">
+            <label>옵션 목록 *</label>
+            
+            {options.map((option, index) => (
+              <div key={option.id} className="option-row">
+                <div className="option-inputs">
+                  <input 
+                    type="text"
+                    placeholder="옵션명 (예: S)"
+                    value={option.name}
+                    onChange={(e) => handleOptionChange(option.id, 'name', e.target.value)}
+                    className="option-name-input"
+                  />
+                  <input 
+                    type="number"
+                    placeholder="추가 가격 (예: 0)"
+                    value={option.price}
+                    onChange={(e) => handleOptionChange(option.id, 'price', e.target.value)}
+                    className="option-price-input"
+                  />
+                  <button 
+                    className="delete-btn"
+                    onClick={() => handleRemoveOption(option.id)}
+                    disabled={options.length === 1}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {/* 옵션 추가 버튼 */}
+            <button 
+              className="add-option-btn"
+              onClick={handleAddOption}
+            >
+              <Plus size={16} /> 옵션 추가
+            </button>
           </div>
 
-          <div className="option-field">
-            <label>가격</label>
-            <input 
-              type="number" 
-              placeholder="예) 0"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </div>
-
-          <div className="option-field">
-            <label>옵션설명</label>
-            <textarea 
-              rows={3}
-              placeholder="(추가 버튼 누르면 옵션이 가격 input 2개가 함께 뜨면서 추가)"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
         </div>
 
-        <div className="option-footer">
-          <button 
-            className="btn-add-option"
-            onClick={handleAdd}
-          >
-            추가
+        {/* 푸터 */}
+        <div className="modal-footer">
+          <button className="btn-secondary" onClick={onClose}>
+            취소
+          </button>
+          <button className="btn-primary" onClick={handleConfirm}>
+            확인
           </button>
         </div>
+
       </div>
     </div>
   );

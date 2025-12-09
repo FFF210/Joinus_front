@@ -1,105 +1,145 @@
-
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 import './OptionAddModal.css';
 
-const OptionAddPage = () => {
+const OptionAddModal = ({ onClose, onAdd }) => {
   const [groupName, setGroupName] = useState('');
-  const [optionName, setOptionName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
+  const [options, setOptions] = useState([
+    { optionName: '', price: '' }
+  ]);
 
-  const handleClose = () => {
-    window.close();
+  // 옵션 행 추가
+  const addOption = () => {
+    setOptions([...options, { optionName: '', price: '' }]);
   };
 
-  const handleAdd = () => {
-    if (!groupName || !optionName || !price) {
-      alert('필수 항목을 입력해주세요.');
+  // 옵션 행 삭제
+  const removeOption = (index) => {
+    if (options.length > 1) {
+      setOptions(options.filter((_, i) => i !== index));
+    }
+  };
+
+  // 옵션 값 변경
+  const updateOption = (index, field, value) => {
+    const newOptions = [...options];
+    newOptions[index][field] = value;
+    setOptions(newOptions);
+  };
+
+  // 확인 버튼
+  const handleConfirm = () => {
+    if (!groupName.trim()) {
+      alert('옵션 그룹명을 입력해주세요.');
       return;
     }
 
-    const optionData = {
-      groupName,
-      optionName,
-      price: parseInt(price),
-      description
-    };
-
-    // 부모 창(공구 등록 창)으로 데이터 전달
-    if (window.opener && !window.opener.closed) {
-      window.opener.postMessage({ 
-        type: 'OPTION_ADDED', 
-        data: optionData 
-      }, '*');
+    const hasEmptyOption = options.some(opt => !opt.optionName.trim());
+    if (hasEmptyOption) {
+      alert('모든 옵션명을 입력해주세요.');
+      return;
     }
 
-    window.close();
+    // 그룹 전체를 전달
+    onAdd({
+      groupName,
+      options: options.map(opt => ({
+        optionName: opt.optionName,
+        price: parseInt(opt.price) || 0
+      }))
+    });
   };
 
   return (
-    <div className="option-add-page">
-      <div className="option-container">
-        <div className="option-header">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-small" onClick={(e) => e.stopPropagation()}>
+        
+        {/* 헤더 */}
+        <div className="modal-header">
           <h3>옵션 추가</h3>
-          <button className="close-btn-small" onClick={handleClose}>
+          <button className="close-btn" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
 
-        <div className="option-body">
-          <div className="option-field">
-            <label>옵션 그룹명</label>
+        {/* 바디 */}
+        <div className="modal-body">
+          
+          {/* 옵션 그룹명 */}
+          <div className="form-field">
+            <label>옵션 그룹명 *</label>
             <input 
-              type="text" 
-              placeholder="예) 사이즈, 용량 등"
+              type="text"
+              placeholder="예: 사이즈, 색상"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
             />
           </div>
 
-          <div className="option-field">
-            <label>옵션명</label>
-            <input 
-              type="text" 
-              placeholder="예) S"
-              value={optionName}
-              onChange={(e) => setOptionName(e.target.value)}
-            />
+          {/* 옵션 리스트 */}
+          <div className="options-section">
+            <div className="section-header-with-btn">
+              <label>옵션 목록 *</label>
+              <button 
+                className="add-option-btn"
+                onClick={addOption}
+                type="button"
+              >
+                <Plus size={16} />
+                옵션 추가
+              </button>
+            </div>
+
+            <div className="option-rows">
+              {options.map((option, index) => (
+                <div key={index} className="option-input-row">
+                  <div className="row-number">{index + 1}</div>
+                  
+                  <div className="option-inputs">
+                    <input 
+                      type="text"
+                      placeholder="옵션명 (예: S)"
+                      value={option.optionName}
+                      onChange={(e) => updateOption(index, 'optionName', e.target.value)}
+                    />
+                    <input 
+                      type="number"
+                      placeholder="추가 가격"
+                      value={option.price}
+                      onChange={(e) => updateOption(index, 'price', e.target.value)}
+                    />
+                    <span className="price-unit">원</span>
+                  </div>
+
+                  {options.length > 1 && (
+                    <button 
+                      className="delete-row-btn"
+                      onClick={() => removeOption(index)}
+                      type="button"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="option-field">
-            <label>가격</label>
-            <input 
-              type="number" 
-              placeholder="예) 0"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </div>
-
-          <div className="option-field">
-            <label>옵션설명</label>
-            <textarea 
-              rows={3}
-              placeholder="(추가 버튼 누르면 옵션이 가격 input 2개가 함께 뜨면서 추가)"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
         </div>
 
-        <div className="option-footer">
-          <button 
-            className="btn-add-option"
-            onClick={handleAdd}
-          >
-            추가
+        {/* 푸터 */}
+        <div className="modal-footer">
+          <button className="btn-secondary" onClick={onClose}>
+            취소
+          </button>
+          <button className="btn-primary" onClick={handleConfirm}>
+            확인
           </button>
         </div>
+
       </div>
     </div>
   );
 };
 
-export default OptionAddPage;
+export default OptionAddModal;

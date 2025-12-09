@@ -7,13 +7,13 @@
   width: 100%;
 }
 
-.main-content {
+/* .main-content {
   display: flex;
   flex-direction: column;
   margin-left: 293px;
   margin-top: 70px;
   transition: margin-left 0.3s ease;
-}
+} */
 
 /* 사이드바 접혔을 때 */
 .admin-layout:has(.sidebar.collapsed) .main-content {

@@ -1,46 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { myAxios } from '../../config';
 import Header from './Header';
 import SearchFilter from './SearchFilter';
 import '../../styles/components/button.css';
 import '../../styles/components/table.css';
 import './admin-common.css';
 
-const PageName = () => {
+const NoticeList = () => {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
 
-  // 더미 데이터
-  const notices = [
-    {
-      id: 1,
-      title: '2024년 12월 정기 시스템 점검 안내',
-      date: '2024-12-01'
-    },
-    {
-      id: 2,
-      title: '배송 지연 안내 (명절 기간)',
-      date: '2024-11-28'
-    },
-    {
-      id: 3,
-      title: '공동구매 최저가 정책 변경 안내',
-      date: '2024-11-25'
-    },
-    {
-      id: 4,
-      title: '회원 등급 혜택 업데이트',
-      date: '2024-11-20'
-    },
-    {
-      id: 5,
-      title: '개인정보 처리방침 변경 안내',
-      date: '2024-11-15'
+  const [noticePage, setNoticePage] = useState({
+    content: [], // 실제 공지사항 목록
+    totalPages: 0, // 전체 페이지 수
+    totalElements: 0, // 전체 요소 수
+    number: 0, // 현재 페이지 번호 (0부터 시작)
+  });
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // 공지사항 데이터 가져오는 함수 (검색 및 페이징 파라미터 사용)
+  const fetchNotices = useCallback(async (page, filters = {}) => {
+    try {
+      // 1. 요청 파라미터 설정
+      // Spring Boot의 Pageable에 맞게 page는 0부터 시작, size는 10으로 고정
+      const params = {
+        page: page,
+        size: 10,
+        // TODO: filters를 활용하여 title, content 검색어 추가 (예: title: filters.keyword)
+      };
+
+      // 2. API 호출
+      const response = await myAxios().get('/admin/noticeList', { params });
+
+      // 3. 상태 업데이트
+      setNoticePage(response.data);
+      setCurrentPage(page);
+
+    } catch (error) {
+      console.error("공지사항 목록 조회 실패:", error);
+      alert("공지사항 목록을 불러오는 데 실패했습니다.");
     }
-  ];
+  }, []);
 
+  //  컴포넌트 마운트 시 및 페이지 번호 변경 시 데이터 로드
+  useEffect(() => {
+    fetchNotices(currentPage);
+  }, [currentPage, fetchNotices]);
+
+  // 검색 함수
   const handleSearch = (filters) => {
     console.log('검색:', filters);
+    // 검색 시 1페이지부터 다시 로드
+    fetchNotices(0, filters);
+  };
+
+  // 페이지 변경
+  const handlePageChange = (pageNumber) => {
+    // 백엔드는 0부터 시작하므로 pageNumber를 그대로 사용
+    if (pageNumber >= 0 && pageNumber < noticePage.totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
 
   const handleReset = () => {
@@ -82,22 +101,23 @@ const PageName = () => {
                 </tr>
               </thead>
               <tbody>
-                {notices.length === 0 ? (
+                {noticePage.content.length === 0 ? (
                   <tr>
                     <td colSpan="4" className="empty-state">
                       <p>등록된 공지사항이 없습니다.</p>
                     </td>
                   </tr>
                 ) : (
-                  notices.map((notice) => (
+                  // ⭐️ notice.createdAt을 사용하여 게시 날짜 표시
+                  noticePage.content.map((notice, index) => (
                     <tr key={notice.id}>
-                      <td>{notice.id}</td>
+                      {/* ⭐️ DB 순서가 아닌 화면에 보이는 순번 (전체 요소 수 기반) */}
+                      <td>{noticePage.totalElements - (noticePage.number * noticePage.size) - index}</td>
                       <td className="title-cell">{notice.title}</td>
-                      <td>{notice.date}</td>
+                      <td>{notice.createdAt ? notice.createdAt.substring(0, 10) : 'N/A'}</td> {/* 날짜 포맷 */}
                       <td>
                         <button
-                          className="btn-secondary"
-                          style={{ marginRight: '8px', padding: '6px 16px' }}
+                          // ... 수정 버튼
                           onClick={() => handleEdit(notice.id)}
                         >
                           수정
@@ -120,7 +140,8 @@ const PageName = () => {
           {/* 등록 버튼 */}
           <div style={{
             display: 'flex',
-            justifyContent: 'flex-end'}}>
+            justifyContent: 'flex-end'
+          }}>
             <button
               className="btn-primary"
               onClick={() => navigate('/admin/noticeForm')}
@@ -131,17 +152,20 @@ const PageName = () => {
 
           {/* 페이지네이션 */}
           <div className="pagination">
-            <button className="page-btn active">1</button>
-            <button className="page-btn">2</button>
-            <button className="page-btn">3</button>
+            {Array.from({ length: noticePage.totalPages }, (_, i) => (
+              <button
+                key={i}
+                className={`page-btn ${i === currentPage ? 'active' : ''}`}
+                onClick={() => handlePageChange(i)}
+              >
+                {i + 1}
+              </button>
+            ))}
           </div>
-
-
-
         </div>
       </div>
     </div>
   );
 };
 
-export default PageName;
+export default NoticeList;
