@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { apiFetch } from '../../config';
+import { apiFetch, myAxios } from '../../config';
 
 /**
  * 소셜 로그인(OAuth2) 성공 후 토큰을 처리하는 컴포넌트
@@ -43,11 +43,12 @@ export default function OAuthTokenHandler() {
         // 사용자 정보 가져오기
         let userInfo = null;
         try {
-          const response = await apiFetch('/user');
-          if (response.ok) {
-            userInfo = await response.json();
-            localStorage.setItem('userInfo', JSON.stringify(userInfo));
-          }
+        // apiFetch 대신 myAxios 사용 (POST 메서드)
+        const response = await myAxios().post('/user');
+        if (response.status === 200) {
+          userInfo = response.data;
+          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        }
         } catch (error) {
           console.warn('사용자 정보 가져오기 실패:', error);
           // 사용자 정보는 나중에 가져올 수 있으므로 에러 무시
