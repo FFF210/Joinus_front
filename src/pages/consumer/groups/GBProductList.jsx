@@ -14,7 +14,7 @@ export default function GBProductList() {
   // 카테고리 및 정렬 클릭 적용
   const [selectCategory, setSelectCategory] = useState(["전체"]);//초기값
   const [selectedSort, setSelectedSort] = useState("최신순");
-  const [selectStatus, setSelectStatus] = useState(["진행중"]);
+  const [selectStatus, setSelectStatus] = useState(["전체"]);
 
   const allCategories = ["전체", "뷰티", "패션", "전자기기", "홈&리빙", "식품", "스포츠"];
   const sortOptions = ["최신순", "투표순"];
@@ -59,10 +59,14 @@ export default function GBProductList() {
 
   // 필터링 적용
   const filteredProducts = products.filter((p) => {
-    if (selectCategory.includes("전체")) return true;
-    return selectCategory.includes(p.category);
+    // 카테고리 필터
+    const categoryCheck = selectCategory.includes("전체") || selectCategory.includes(p.category);
+
+    // 진행상태 필터
+    const statusCheck = selectStatus.includes("전체") || selectStatus.includes(p.status);
+
+    return categoryCheck && statusCheck;
   });
-  
 
   // URL에서 type 파라미터 추출
   // type 파라미터가 없으면 ongoing로 설정
