@@ -148,6 +148,7 @@ export default function ProposalsList() {
                     maxParticipants={p.maxParticipants}
                     productId={p.id}
                     isProposal={true}
+                    voteCount={p.voteCount}
                   />
                 ))}
               </div>
