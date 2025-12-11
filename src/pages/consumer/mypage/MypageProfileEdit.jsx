@@ -1,30 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MypageProfileEdit.css";
+import axios from "axios";
 
 export default function MypageProfileEdit() {
   const navigate = useNavigate();
 
+  // 로그인 정보에서 username 가져오기
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const username = userInfo?.username;
+
   const [form, setForm] = useState({
-    username: "ehgns0311",
-    password: "",
-    name: "박도훈",
-    nickname: "도훈이",
-    phone: "010-5241-8372",
-    email: "ehgns0311@example.com",
-    birth: "1998-06-12",
-    gender: "M",
-    recommenderUsername: "dekdjf0312",
+    username: "",
+    name: "",
+    nickname: "",
+    phone: "",
+    email: "",
+    birthDate: "",
+    gender: "",
+    recommenderUsername: ""
   });
 
+  // ✔ 기존 정보 불러오기
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/mypage/profile?username=${username}`)
+      .then((res) => {
+        const d = res.data;
+        setForm({
+          username: d.username,
+          name: d.name,
+          nickname: d.nickname,
+          phone: d.phone,
+          email: d.email,
+          birthDate: d.birthDate,
+          gender: d.gender,
+          recommenderUsername: d.recommenderUsername,
+        });
+      })
+      .catch((err) => console.error(err));
+  }, [username]);
+
+  // input 변경 핸들러
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✔ SAVE → PUT 요청 보내기
   const handleSave = () => {
-    alert("개인정보가 수정되었습니다!");
-    navigate("/mypage/profileDetail");
+    axios
+      .put("http://localhost:8080/mypage/profile/update", form)
+      .then((res) => {
+        alert("개인정보가 수정되었습니다!");
+        navigate("/mypage/profileDetail");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("수정 중 오류가 발생했습니다.");
+      });
   };
 
   return (
@@ -39,19 +73,6 @@ export default function MypageProfileEdit() {
         <div className="profileedit-form-group">
           <label>아이디</label>
           <input type="text" value={form.username} readOnly />
-        </div>
-
-
-        {/* 비밀번호 */}
-        <div className="profileedit-form-group">
-          <label>비밀번호 변경</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="새 비밀번호 입력"
-            value={form.password}
-            onChange={handleChange}
-          />
         </div>
 
         {/* 이름 */}
@@ -103,8 +124,8 @@ export default function MypageProfileEdit() {
           <label>생년월일</label>
           <input
             type="date"
-            name="birth"
-            value={form.birth}
+            name="birthDate"      
+            value={form.birthDate}
             onChange={handleChange}
           />
         </div>
@@ -124,6 +145,7 @@ export default function MypageProfileEdit() {
           <input type="text" value={form.recommenderUsername} readOnly />
         </div>
 
+        {/* 버튼 */}
         <div className="profileedit-btn-wrap">
           <button className="profileedit-btn-save" onClick={handleSave}>
             수정 완료
