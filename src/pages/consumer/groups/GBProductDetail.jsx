@@ -9,6 +9,9 @@ export default function GBProductDetail() {
     
     const [timeLeft, setTimeLeft] = useState("");
 
+    const [wishCount, setWishCount] = useState(0);
+    const [isHeart, setIsHeart] = useState(false);
+
     useEffect(()=>{
       if (!detail.product.endDate) return;
 
@@ -82,6 +85,17 @@ export default function GBProductDetail() {
     });
 }
 
+    const handleWishList = () => {
+      myAxios().get("/product/productHeart", {params:{gbProductId: id, username: "kakao_4436272679"}})
+        .then(res=>{
+          const wishlisted = res.data;
+          setIsHeart(wishlisted)
+          setWishCount(prev => wishlisted ? prev + 1 : prev -1);
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+    }
 
     return(
         <>
@@ -177,7 +191,14 @@ export default function GBProductDetail() {
                             </div>
                             <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
                             <div style={{display:"flex",alignItems: "center", marginTop:'20px'}}>
-                                <img src="/heart.png" style={{width:"25px", height:'25px', marginRight:'20px'}}/>
+                                <img src={isHeart ? "/heart.png" : "/wHeart.png"} style={{width:"25px", height:'25px', marginRight:'10px'}}/>
+                                  <div style={{fontSize:'24px', marginRight:'20px'}}>{wishCount}</div>
+                                  <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}
+                                    onClick={handleWishList}
+                                  >
+                                    {isHeart ? "취소하기" : "투표하기"}
+                                  </Button>
+
                                 <img src="/share.png" style={{width:"25px", height:'25px', marginRight:'40px'}}/>
                                 <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}
                                   onClick={() => submit()}

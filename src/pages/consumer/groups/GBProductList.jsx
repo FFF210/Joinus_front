@@ -148,7 +148,7 @@ export default function GBProductList() {
                   onClick={() => navigate(`/gbProductDetail/${item.id}`)}
                 >
                   <img src={item.image} />
-                  <CardBody>
+                  <CardBody style={{padding:'0'}}>
                     <CardTitle
                       tag="h5"
                       style={{ display: "flex", justifyContent: "space-between" }}
@@ -180,9 +180,9 @@ export default function GBProductList() {
                     >
                       {item.title}
                     </CardSubtitle>
-                    <CardSubtitle>
+                    {/* <CardSubtitle>
                       <div style={{ fontSize: "12px" }}>{item.description}</div>
-                    </CardSubtitle>
+                    </CardSubtitle> */}
                     <div className="fw-bold" style={{ fontSize: "24px" }}>
                       {item.price}
                     </div>
