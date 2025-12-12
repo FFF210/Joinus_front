@@ -27,6 +27,7 @@ export default function GbProductMngList() {
 
   // 검색 필터 State
   const [filters, setFilters] = useState({
+    searchType: 'name',
     keyword: '',
     startDate: '',
     endDate: ''
@@ -47,7 +48,10 @@ export default function GbProductMngList() {
 
       const params = {
         status: activeTab === '전체' ? null : activeTab,
-        keyword: filters.keyword || null,
+        searchType: filters.searchType || null, 
+        searchKeyword: filters.searchKeyword || null,
+        startDate: filters.startDate || null,        
+        endDate: filters.endDate || null,   
         page: pagination.page,
         size: pagination.size,
         sort: getSortParam(sortBy)
@@ -109,7 +113,7 @@ export default function GbProductMngList() {
   // 탭/페이지/정렬 변경 시 데이터 새로고침
   useEffect(() => {
     fetchProducts();
-  }, [activeTab, pagination.page, sortBy]);
+  }, [activeTab, pagination.page, sortBy, filters]);
 
   // 참여인원 모달
   const handleViewParticipants = (productId) => {
@@ -125,20 +129,24 @@ export default function GbProductMngList() {
 
   // 검색
   const handleSearch = (searchFilters) => {
-    setFilters(searchFilters);
+    setFilters({
+      searchType: searchFilters.searchType || 'name',
+      searchKeyword: searchFilters.searchKeyword || '',
+      startDate: searchFilters.startDate || '',
+      endDate: searchFilters.endDate || ''
+    });
     setPagination(prev => ({ ...prev, page: 0 }));  // 첫 페이지로
-    fetchProducts();
   };
 
   // 초기화
   const handleReset = () => {
     setFilters({
-      keyword: '',
+      searchType: 'name',
+      searchKeyword: '',
       startDate: '',
       endDate: ''
     });
     setPagination(prev => ({ ...prev, page: 0 }));
-    fetchProducts();
   };
 
   // 체크박스 전체 선택/해제
@@ -208,6 +216,11 @@ export default function GbProductMngList() {
           {/* 검색 필터 */}
           <SearchFilter
             variant="withDate"
+            searchOptions={[
+              { value: 'name', label: '공구명' },
+              { value: 'id', label: '공구코드' }
+            ]}
+            showResetButton={true}
             onSearch={handleSearch}
             onReset={handleReset}
           />

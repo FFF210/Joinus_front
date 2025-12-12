@@ -25,6 +25,7 @@
 }
 
 .content-area {
+  margin-top: 40px;
   padding: var(--spacing-8);
 }
 

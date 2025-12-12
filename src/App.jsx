@@ -305,12 +305,12 @@ function AppContent() {
                 <MemberList />
               </ProtectedRoute>
             } />
-            <Route path="/admin/member/:id" element={
+            <Route path="/admin/memberDetail/:username" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <MemberDetail />
               </ProtectedRoute>
             } />
-            {/* 자엔 디테일 관리자 화면 */}
+            {/* 제안 디테일 관리자 화면 */}
             <Route path="/admin/proposalDetailAdmin" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <ProposalDetailAdmin />
