@@ -33,7 +33,7 @@ export default function ProposalDetailConsumar() {
     }, [])
 
     const handleVote = () => {
-    myAxios().get("/proposalDdabong", { params: { proposalId: id, username: "kakao_4436272679" } })
+    myAxios().get("/proposalHeart", { params: { proposalId: id, username: "admin" } })
       .then(res => {
         const voted = res.data; // true or false
         setIsDdabong(voted);

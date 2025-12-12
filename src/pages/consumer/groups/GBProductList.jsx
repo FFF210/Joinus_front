@@ -1,15 +1,72 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Label, Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
-import axios from "axios";
-import { baseUrl } from "../../../config";
+import { baseUrl, myAxios } from "../../../config";
+import GroupBuyCard from '../../../components/common/GroupBuyCard';
+import { transformGbProduct } from '../../../utils/searchDataTransform';
+import '../MainPage.css';
 
 export default function GBProductList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // 카테고리 및 정렬 클릭 적용
+  const [selectCategory, setSelectCategory] = useState(["전체"]);//초기값
+  const [selectedSort, setSelectedSort] = useState("최신순");
+  const [selectStatus, setSelectStatus] = useState(["전체"]);
+
+  const allCategories = ["전체", "뷰티", "패션", "전자기기", "홈&리빙", "식품", "스포츠"];
+  const sortOptions = ["최신순", "투표순"];
+  const allStatus = ["전체","진행중","마감","취소"];
+
+  const handleCartegopryClick = (category) => {
+    if (category === "전체") {
+      setSelectCategory(["전체"]);
+    } else {
+      let newCategories = [...selectCategory];
+      if (newCategories.includes("전체")) newCategories = [];
+      if (newCategories.includes(category)) {
+        newCategories = newCategories.filter((c) => c !== category);
+      } else {
+        newCategories.push(category);
+      }
+      if (newCategories.length === 0) newCategories = ["전체"];
+      setSelectCategory(newCategories);
+    }
+  };
+
+  // 진행상태 (중복 선택 가능)
+  const handleStatusClick = (status) => {
+    if (status === "전체") {
+      setSelectStatus(["전체"]);
+    } else {
+      let newStatus = [...selectStatus];
+      if (newStatus.includes("전체")) newStatus = [];
+      if (newStatus.includes(status)) {
+        newStatus = newStatus.filter(s => s !== status);
+      } else {
+        newStatus.push(status);
+      }
+      if (newStatus.length === 0) newStatus = ["전체"];
+      setSelectStatus(newStatus);
+    }
+  };
+
+  const handleSortClick = (sort) => {
+    setSelectedSort(sort);
+  };
+
+  // 필터링 적용
+  const filteredProducts = products.filter((p) => {
+    // 카테고리 필터
+    const categoryCheck = selectCategory.includes("전체") || selectCategory.includes(p.category);
+
+    // 진행상태 필터
+    const statusCheck = selectStatus.includes("전체") || selectStatus.includes(p.status);
+
+    return categoryCheck && statusCheck;
+  });
 
   // URL에서 type 파라미터 추출
   // type 파라미터가 없으면 ongoing로 설정
@@ -20,29 +77,12 @@ export default function GBProductList() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${baseUrl}/api/gb-products`, {  // API응답이 올 때까지 대기 후 결과 받음
+        const response = await myAxios().get('/api/gb-products', {
           params: { type },  
         });
 
-        // GbProductDto -> 화면 카드용 데이터로 변환
-        // 받아온 공구 상품 데이터를 프론트엔드 카드 UI에 맞는 형식으로 변환하는 부분
-        const transformed = response.data.map((p) => ({
-          id: p.id,
-          title: p.name,
-          category: p.categoryId, // TODO: 카테고리 이름 매핑
-          status: p.status === "ONGOING" ? "진행중" : "마감",
-          description: p.description,
-          price: p.price ? `${p.price.toLocaleString()}원` : "0원",
-          rating: 0, // TODO: 리뷰 평균 별점
-          currentParticipants: p.participants || 0,
-          maxParticipants: p.minParticipants || 0,
-          deadlineTime: p.endDate,
-          image: p.thumbnailFileName
-            ? `/mainPage/${p.thumbnailFileName}`
-            : "https://picsum.photos/300/200",
-        }));
-
-        // 변환된 데이터를 products 상태에 저장
+        // transformGbProduct를 사용하여 데이터 변환
+        const transformed = response.data.map(transformGbProduct);
         setProducts(transformed);
       } catch (e) {
         console.error("공구 목록 조회 실패:", e);
@@ -79,44 +119,56 @@ export default function GBProductList() {
         </div>
       </div>
 
-      {/* 필터 영역 (현재는 UI만 유지) */}
+      {/* 필터 영역 (카테고리, 정렬, 진행상태) */}
       <div style={styles.pageWrapper}>
         <div style={styles.container2}>
           {/* 카테고리 줄 */}
-          <div
-            style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}
-          >
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
             <div style={{ width: "120px", fontWeight: "bold" }}>카테고리</div>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <span style={styles.tag}>뷰티</span>
-              <span style={styles.tag}>패션</span>
-              <span style={styles.tag}>전자기기</span>
-              <span style={styles.tag}>홈&리빙</span>
-              <span style={styles.tag}>식품</span>
-              <span style={styles.tag}>스포츠</span>
+              {allCategories.map((category) => (
+                <span
+                  key={category}
+                  style={selectCategory.includes(category) ? styles.tagWhite : styles.tag}
+                  onClick={() => handleCartegopryClick(category)}
+                >
+                  {category}
+                </span>
+              ))}
             </div>
           </div>
           <hr style={{ color: "#B5B1B1" }} />
-          {/* 정렬 줄 */}
-          <div
-            style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}
-          >
-            <div style={{ width: "120px", fontWeight: "bold" }}>정렬</div>
 
+          {/* 정렬 줄 */}
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
+            <div style={{ width: "120px", fontWeight: "bold" }}>정렬</div>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <span style={styles.tag}>최신순</span>
-              <span style={styles.tagWhite}>마감임박순</span>
+              {sortOptions.map((s) => (
+                <span
+                  key={s}
+                  style={selectedSort === s ? styles.tagWhite : styles.tag}
+                  onClick={() => handleSortClick(s)}
+                >
+                  {s}
+                </span>
+              ))}
             </div>
           </div>
           <hr style={{ color: "#B5B1B1" }} />
+
           {/* 진행상태 줄 */}
           <div style={{ display: "flex", alignItems: "center" }}>
             <div style={{ width: "120px", fontWeight: "bold" }}>진행상태</div>
-
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <span style={styles.tag}>진행중</span>
-              <span style={styles.tag}>마감</span>
-              <span style={styles.tag}>취소</span>
+              {allStatus.map((status) => (
+                <span
+                  key={status}
+                  style={selectStatus.includes(status) ? styles.tagWhite : styles.tag}
+                  onClick={() => handleStatusClick(status)}
+                >
+                  {status}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -126,101 +178,26 @@ export default function GBProductList() {
       <div style={styles.pageWrapper}>
         <div style={styles.container}>
           {loading ? (
-            <p>로딩 중...</p>
-          ) : products.length === 0 ? (
-            <p>공구가 없습니다.</p>
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gap: "20px",
-                gridTemplateColumns: "repeat(4, 1fr)",
-              }}
-            >
-              {products.map((item) => (
-                <Card
+            <div style={{ textAlign: 'center', padding: '50px' }}>로딩 중...</div>
+            ) : filteredProducts.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '20px' }}>공구가 없습니다.</div>
+            ) : (
+              <div className="card-grid" style={{ gap: "20px" }}>
+              {filteredProducts.map((item) => (
+                <GroupBuyCard
                   key={item.id}
-                  style={{
-                    width: "240px",
-                    boxShadow: "0 5px 20px rgba(88 88 88 / 20%)",
-                    border: "none",
-                  }}
-                  onClick={() => navigate(`/gbProductDetail/${item.id}`)}
-                >
-                  <img src={item.image} />
-                  <CardBody>
-                    <CardTitle
-                      tag="h5"
-                      style={{ display: "flex", justifyContent: "space-between" }}
-                    >
-                      <div
-                        style={{
-                          border: "1px solid black",
-                          fontSize: "10px",
-                          padding: "5px",
-                        }}
-                      >
-                        {item.category || "카테고리"}
-                      </div>
-                      <div
-                        style={{
-                          backgroundColor: "#BBFFAC",
-                          color: "#0A8F30",
-                          fontSize: "10px",
-                          padding: "5px",
-                        }}
-                      >
-                        {item.status}
-                      </div>
-                    </CardTitle>
-                    <CardSubtitle
-                      className="mb-2 text-muted"
-                      tag="h6"
-                      style={{ fontSize: "14px" }}
-                    >
-                      {item.title}
-                    </CardSubtitle>
-                    <CardSubtitle>
-                      <div style={{ fontSize: "12px" }}>{item.description}</div>
-                    </CardSubtitle>
-                    <div className="fw-bold" style={{ fontSize: "24px" }}>
-                      {item.price}
-                    </div>
-                    <CardSubtitle>
-                      <div>
-                        <img
-                          src="/CountingStars.png"
-                          style={{ width: "12px", marginRight: "5px" }}
-                        />
-                        <Label style={{ fontSize: "12px" }}>4.6</Label>
-                      </div>
-                    </CardSubtitle>
-                    <CardSubtitle>
-                      <div
-                        style={{
-                          justifyContent: "space-between",
-                          display: "flex",
-                        }}
-                      >
-                        <div>
-                          <img
-                            src="/person.png"
-                            style={{ width: "15px", marginRight: "5px" }}
-                          />
-                          <Label style={{ fontSize: "12px" }}>
-                            참여 인원 : {item.currentParticipants}/{item.maxParticipants}
-                          </Label>
-                        </div>
-                        <div>
-                          <Label style={{ color: "red", fontSize: "10px" }}>
-                            {/* TODO: GBProductList에서도 남은 시간 계산 적용 가능 */}
-                            {item.deadlineTime}
-                          </Label>
-                        </div>
-                      </div>
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
+                  image={item.image}
+                  title={item.title}
+                  category={item.category}
+                  status={item.status}
+                  price={item.price}
+                  rating={item.rating}
+                  currentParticipants={item.currentParticipants}
+                  maxParticipants={item.maxParticipants}
+                  deadlineTime={item.deadlineTime}
+                  productId={item.id}
+                  isProposal={false}
+                />
               ))}
             </div>
           )}

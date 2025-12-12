@@ -41,19 +41,24 @@ export default function ShopCartList() {
       <div className="productList">
         {cartList.map(item=>(
           <FormGroup  check className="productItem" key={item.cartId}>
-            <img src={item.thumbnailPath} className="productImg" />
+            {/* <img src={item.thumbnailPath} className="productImg" /> */}
+            <img
+                    src={`http://localhost:8080/file/proposal/${item.product?.thumbnail?.fileName}`}
+                    style={{ width: "70px", height: "70px", marginRight: "20px" }}
+                />
             <div className="productName">{item.productName}</div>
-            <div className="productPrice">{item.price}원</div>
+            <div className="productPrice">{item.price.toLocaleString()}원</div>
             <div className="productQuantity">{item.quantity}</div>
-            <div className="productTotal">{item.price * item.quantity}원</div>
+            <div className="productTotal">{(item.price * item.quantity).toLocaleString()}원</div>
             <div className="buttonGroup">
               <Button size="sm" className="buttonPrimary" style={{width:"70px"}}>결제</Button>
               <Button size="sm" className="buttonSecondary">삭제</Button>
             </div>
           </FormGroup>
           ))}
+          <hr style={{ margin: "5px auto" }} />
       </div>
-      <hr style={{ margin: "5px auto" }} />
+      
 
       {/* 페이지네이션 */}
       <Pagination className="paginationContainer">

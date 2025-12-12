@@ -9,6 +9,7 @@ export default function GBProductDetail() {
     
     const [timeLeft, setTimeLeft] = useState("");
 
+    
     useEffect(()=>{
       if (!detail.product.endDate) return;
 
@@ -81,6 +82,34 @@ export default function GBProductDetail() {
         alert("장바구니 추가 중 오류 발생");
     });
 }
+
+    const [isHeart, setIsHeart] = useState(false);
+    const [wishCount, setWishCount] = useState(0);
+
+
+    const handleWishList = () => {
+      myAxios().get("/product/productHeart", {
+        params: { gbProductId: id, username: "kakao_4436272679" }
+      })
+      .then(res => {
+        setIsHeart(res.data.isHeart);
+        setWishCount(res.data.wishCount);
+      })
+      .catch(err => console.log(err));
+    }
+
+    useEffect(() => {
+      // 페이지 진입 시 하트 상태 + wishCount 가져오기
+      myAxios()
+        .get("/product/productHeart/status", {
+          params: { productId: id, username: "kakao_4436272679" }
+        })
+        .then(res => {
+          setIsHeart(res.data.isHeart);  // true/false
+          setWishCount(res.data.wishCount); // 서버에서 받은 최신 숫자
+        })
+        .catch(err => console.log(err));
+    }, [id]);
 
 
     return(
@@ -156,7 +185,7 @@ export default function GBProductDetail() {
                                     >
                                         <option value="" disabled>{groupName}</option>
                                         {options.map(opt => (
-                                            <option key={opt.id} value={opt.id}>{opt.name}</option>
+                                            <option key={opt.id} value={opt.id}>{opt.name.replace(/ /g, "\u00A0").padEnd(80, "\u00A0")}(+{opt.price})</option>
                                         ))}
                                     </Input>
                                 </FormGroup>
@@ -177,7 +206,14 @@ export default function GBProductDetail() {
                             </div>
                             <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
                             <div style={{display:"flex",alignItems: "center", marginTop:'20px'}}>
-                                <img src="/heart.png" style={{width:"25px", height:'25px', marginRight:'20px'}}/>
+                                <img src={isHeart ? "/heart.png" : "/wHeart.png"} style={{width:"25px", height:'25px', marginRight:'10px'}}/>
+                                  <div style={{fontSize:'24px', marginRight:'20px'}}>{wishCount}</div>
+                                  <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}
+                                    onClick={handleWishList}
+                                  >
+                                    {isHeart ? "취소하기" : "투표하기"}
+                                  </Button>
+
                                 <img src="/share.png" style={{width:"25px", height:'25px', marginRight:'40px'}}/>
                                 <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}
                                   onClick={() => submit()}

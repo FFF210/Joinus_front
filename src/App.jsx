@@ -145,8 +145,8 @@ function AppContent() {
                     <Route path="inquiryHistoryList" element={<InquiryHistoryList />} />
                     <Route path="inquiryDetail/:id" element={<InquiryDetail />} />
 
-                     {/*교환 취소 반품*/}
-                    <Route path="cnclExchRtrnHisList" element={<CnclExchRtrnHisList />} /> 
+                    {/*교환 취소 반품*/}
+                    <Route path="cnclExchRtrnHisList" element={<CnclExchRtrnHisList />} />
                     <Route path="exchangeReq" element={<ExchangeReq />} />
                     <Route path="returnReq" element={<ReturnReq />} />
                     <Route path="exchangeDetail:/id" element={<ExchangeDetail />} />
@@ -285,7 +285,7 @@ function AppContent() {
                 <FaqAndInquiryList />
               </ProtectedRoute>
             } />
-            <Route path="/admin/admininquiryDetail/:id" element={
+            <Route path="/admin/admininquiryDetail/:type/:id" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <AdminInquiryDetail />
               </ProtectedRoute>
@@ -295,17 +295,22 @@ function AppContent() {
                 <FaqForm />
               </ProtectedRoute>
             } />
+            <Route path="/admin/faqForm/:id" element={ // 수정: ID 파라미터 추가
+              <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
+                <FaqForm />
+              </ProtectedRoute>
+            } />
             <Route path="/admin/memberList" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <MemberList />
               </ProtectedRoute>
             } />
-            <Route path="/admin/member/:id" element={
+            <Route path="/admin/memberDetail/:username" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <MemberDetail />
               </ProtectedRoute>
             } />
-            {/* 자엔 디테일 관리자 화면 */}
+            {/* 제안 디테일 관리자 화면 */}
             <Route path="/admin/proposalDetailAdmin" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <ProposalDetailAdmin />
@@ -347,11 +352,11 @@ function AppContent() {
             <Route path="/payComplate" element={<PayComplete />} />
             <Route path="/gbProductList" element={<GBProductList />} />
             <Route path="/gbProductDetail/:id" element={<GBProductDetail />}>
-                <Route index element={<DetailInfo />} />
-                <Route path="detailInfo" element={<DetailInfo />} />
-                <Route path="policy" element={<Policy />} />
-                <Route path="reviews" element={<Reviews />} />
-                <Route path="qAndA" element={<QAndA />} />
+              <Route index element={<DetailInfo />} />
+              <Route path="detailInfo" element={<DetailInfo />} />
+              <Route path="policy" element={<Policy />} />
+              <Route path="reviews" element={<Reviews />} />
+              <Route path="qAndA" element={<QAndA />} />
             </Route>
           </Routes>
         </main>
