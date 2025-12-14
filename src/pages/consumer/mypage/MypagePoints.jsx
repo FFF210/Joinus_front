@@ -72,26 +72,36 @@ export default function MypagePoints() {
 
       {/* 탭 메뉴 */}
       <div className="points-tab-menu">
-        <button
-          className={tab === "all" ? "active" : ""}
-          onClick={() => setTab("all")}
-        >
-          전체
-        </button>
+   <button
+  className={tab === "all" ? "active" : ""}
+  onClick={() => {
+    setTab("all");
+    setCurrentPage(1);
+  }}
+>
+  전체
+</button>
 
-        <button
-          className={tab === "save" ? "active" : ""}
-          onClick={() => setTab("save")}
-        >
-          적립
-        </button>
+<button
+  className={tab === "save" ? "active" : ""}
+  onClick={() => {
+    setTab("save");
+    setCurrentPage(1);
+  }}
+>
+  적립
+</button>
 
-        <button
-          className={tab === "use" ? "active" : ""}
-          onClick={() => setTab("use")}
-        >
-          사용
-        </button>
+<button
+  className={tab === "use" ? "active" : ""}
+  onClick={() => {
+    setTab("use");
+    setCurrentPage(1);
+  }}
+>
+  사용
+</button>
+
       </div>
 
      {/* 포인트 목록 */}

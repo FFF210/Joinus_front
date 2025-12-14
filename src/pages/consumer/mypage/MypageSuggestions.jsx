@@ -99,8 +99,8 @@ export default function MypageSuggestions() {
         {currentItems.length === 0 ? (
           <div className="suggestions-empty">
             {tab === "participated"
-              ? "참여한 공동구매가 없습니다."
-              : "작성한 공동구매 요청이 없습니다."}
+              ? "내가 투표한 공동구매가 없습니다."
+              : "내가 요청한 공동구매가 없습니다."}
           </div>
         ) : (
           currentItems.map((item) => (

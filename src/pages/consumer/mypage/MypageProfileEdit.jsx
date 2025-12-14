@@ -57,23 +57,26 @@ export default function MypageProfileEdit() {
   // ===============================
   // 저장
   // ===============================
-  const handleSave = () => {
-    if (!form.password) {
-      alert("비밀번호를 입력해주세요.");
-      return;
-    }
+const handleSave = () => {
+  const payload = { ...form };
 
-    axios
-      .put("http://localhost:8080/mypage/profile/update", form)
-      .then(() => {
-        alert("개인정보가 수정되었습니다.");
-        navigate("/mypage/profileDetail");
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("수정 중 오류가 발생했습니다.");
-      });
-  };
+  // ✅ 비밀번호를 입력하지 않으면 아예 보내지 않음
+  if (!payload.password) {
+    delete payload.password;
+  }
+
+  axios
+    .put("http://localhost:8080/mypage/profile/update", payload)
+    .then(() => {
+      alert("개인정보가 수정되었습니다.");
+      navigate("/mypage/profileDetail");
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("수정 중 오류가 발생했습니다.");
+    });
+};
+
 
   return (
     <>
