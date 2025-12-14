@@ -23,6 +23,8 @@ export default function MypageProfileEdit() {
 
   // ✔ 기존 정보 불러오기
   useEffect(() => {
+    if (!username) return; // 🔒 안전장치
+
     axios
       .get(`http://localhost:8080/mypage/profile?username=${username}`)
       .then((res) => {
@@ -133,10 +135,17 @@ export default function MypageProfileEdit() {
         {/* 성별 */}
         <div className="profileedit-form-group">
           <label>성별</label>
-          <select name="gender" value={form.gender} onChange={handleChange}>
-            <option value="M">남성</option>
-            <option value="F">여성</option>
-          </select>
+    <select
+  name="gender"
+  value={form.gender}
+  onChange={handleChange}
+>
+  <option value="">선택</option>
+  <option value="M">남성</option>
+  <option value="F">여성</option>
+</select>
+
+
         </div>
 
         {/* 추천인 ID */}

@@ -25,7 +25,7 @@ export default function AddressList() {
 
   useEffect(() => {
     getAddressList();
-  }, []);
+ }, [username]);
 
 const handleDelete = async (id) => {
   if (!window.confirm("정말 삭제하시겠습니까?")) return;

@@ -7,13 +7,12 @@ export default function AddressEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // ✅ 로그인 유저
+  // 로그인 유저
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const username = userInfo?.username;
 
   const [form, setForm] = useState({
     id: null,
-    memberUsername: "",
     addressName: "",
     recipientName: "",
     phone: "",
@@ -24,7 +23,7 @@ export default function AddressEdit() {
     isDefault: false,
   });
 
-  // ✅ 기존 배송지 불러오기
+  // 기존 배송지 조회
   useEffect(() => {
     myAxios()
       .get(`/mypage/address/${id}`)
@@ -34,17 +33,7 @@ export default function AddressEdit() {
       .catch((err) => console.error(err));
   }, [id]);
 
-  // ✅ 로그인 유저 username을 form에 강제 주입
-  useEffect(() => {
-    if (username) {
-      setForm((prev) => ({
-        ...prev,
-        memberUsername: username,
-      }));
-    }
-  }, [username]);
-
-  // ✅ input 공용 핸들러
+  // input 공용 핸들러
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -53,7 +42,7 @@ export default function AddressEdit() {
     }));
   };
 
-  // ✅ 수정 요청
+  // 수정 요청
   const handleSubmit = () => {
     if (!username) {
       alert("로그인이 필요합니다.");
@@ -61,7 +50,10 @@ export default function AddressEdit() {
     }
 
     myAxios()
-      .put(`/mypage/address/${id}`, form)
+      .put(`/mypage/address/${id}`, {
+        ...form,
+        memberUsername: username, // ✅ submit 시점에만 주입
+      })
       .then(() => {
         alert("배송지가 수정되었습니다!");
         navigate("/mypage/addressList");
@@ -73,112 +65,73 @@ export default function AddressEdit() {
     <div className="addressedit-content">
       <div className="addressedit-title">배송지 수정</div>
 
-      {/* 배송지명 */}
       <div className="addressedit-form-row">
-        <div className="addressedit-label-flex">
-          <label className="addressedit-label">
-            배송지명 <span className="addressedit-required">*</span>
-          </label>
-
-          <label className="addressedit-checkbox-default">
-            <input
-              type="checkbox"
-              name="isDefault"
-              checked={form.isDefault}
-              onChange={handleChange}
-            />
-            기본배송지 설정
-          </label>
-        </div>
-
+        <label className="addressedit-label">배송지명</label>
         <input
-          type="text"
-          className="addressedit-input-box"
           name="addressName"
           value={form.addressName}
           onChange={handleChange}
+          className="addressedit-input-box"
         />
       </div>
 
-      {/* 받는 분 */}
       <div className="addressedit-form-row">
-        <label className="addressedit-label">
-          받는 분 <span className="addressedit-required">*</span>
-        </label>
+        <label className="addressedit-label">받는 분</label>
         <input
-          type="text"
-          className="addressedit-input-box"
           name="recipientName"
           value={form.recipientName}
           onChange={handleChange}
+          className="addressedit-input-box"
         />
       </div>
 
-      {/* 연락처 */}
       <div className="addressedit-form-row">
-        <label className="addressedit-label">
-          연락처 <span className="addressedit-required">*</span>
-        </label>
+        <label className="addressedit-label">연락처</label>
         <input
-          type="text"
           name="phone"
-          className="addressedit-input-box"
           value={form.phone}
           onChange={handleChange}
+          className="addressedit-input-box"
         />
       </div>
 
-      {/* 주소 */}
       <div className="addressedit-form-row">
         <label className="addressedit-label">주소</label>
-
-        <div className="addressedit-address-row">
-          <input
-            type="text"
-            className="addressedit-postcode-input"
-            name="postcode"
-            value={form.postcode}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            className="addressedit-road-input"
-            name="streetAddress"
-            value={form.streetAddress}
-            onChange={handleChange}
-          />
-        </div>
-
+        <input
+          name="postcode"
+          value={form.postcode}
+          onChange={handleChange}
+          className="addressedit-input-box"
+        />
+        <input
+          name="streetAddress"
+          value={form.streetAddress}
+          onChange={handleChange}
+          className="addressedit-input-box"
+        />
         <textarea
-          className="addressedit-textarea-box"
           name="addressDetail"
           value={form.addressDetail}
           onChange={handleChange}
+          className="addressedit-textarea-box"
         />
       </div>
 
-      {/* 출입방법 */}
       <div className="addressedit-form-row">
-        <label className="addressedit-label">공동현관 출입방법</label>
+        <label className="addressedit-label">출입방법</label>
         <input
-          type="text"
-          className="addressedit-input-box"
           name="accessInstructions"
           value={form.accessInstructions}
           onChange={handleChange}
+          className="addressedit-input-box"
         />
       </div>
 
-      {/* 버튼 */}
       <div className="addressedit-btn-row">
-        <button className="addressedit-btn-confirm" onClick={handleSubmit}>
+        <button onClick={handleSubmit} className="addressedit-btn-confirm">
           확인
         </button>
-        <button
-          className="addressedit-btn-cancel"
-          onClick={() => navigate(-1)}
-        >
+        <button onClick={() => navigate(-1)} className="addressedit-btn-cancel">
           취소
         </button>
       </div>

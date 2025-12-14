@@ -28,6 +28,10 @@ useEffect(() => {
   getAlertList();
 }, [username]);
 
+useEffect(() => {
+  setCurrentPage(1);
+}, [username]);
+
 
    // 페이징 계산
   const totalPages = Math.ceil(alertList.length / itemsPerPage);
@@ -39,6 +43,12 @@ useEffect(() => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
   };
+
+  useEffect(() => {
+  if (currentPage > totalPages) {
+    setCurrentPage(totalPages || 1);
+  }
+}, [alertList]);
 
   // 읽지 않은 알림 수
   const unreadCount = alertList.filter(
