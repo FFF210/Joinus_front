@@ -6,8 +6,8 @@ import "./AddressAdd.css";
 export default function AddressAdd() {
   const navigate = useNavigate();
 
-const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-const username = userInfo?.username;
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const username = userInfo?.username;
 
   // 서버로 보낼 폼 데이터
   const [form, setForm] = useState({
@@ -21,48 +21,67 @@ const username = userInfo?.username;
     isDefault: false,
   });
 
-  // input 공용 핸들러
+  // ===============================
+  // 공용 input 핸들러
+  // ===============================
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
   };
 
-  // 전화번호 3칸 조합
-  const handlePhoneChange = (index, value) => {
-    const parts = form.phone ? form.phone.split("-") : ["", "", ""];
-    parts[index] = value;
+  // ===============================
+  // 주소 표시용 문자열
+  // ===============================
+  const displayAddress =
+    form.postcode && form.streetAddress
+      ? `[${form.postcode}] ${form.streetAddress}`
+      : "";
 
-    setForm({
-      ...form,
-      phone: parts.join("-"),
-    });
+  // ===============================
+  // 다음 주소 검색
+  // ===============================
+  const openDaumPostcode = () => {
+    if (!window.daum || !window.daum.Postcode) {
+      alert("주소 검색 서비스를 불러오지 못했습니다.");
+      return;
+    }
+
+    new window.daum.Postcode({
+      oncomplete: function (data) {
+        setForm((prev) => ({
+          ...prev,
+          postcode: data.zonecode,
+          streetAddress: data.roadAddress,
+        }));
+      },
+    }).open();
   };
 
+  // ===============================
   // 제출 처리
-const handleSubmit = async () => {
-  if (!username) {
-    alert("로그인이 필요합니다.");
-    return;
-  }
+  // ===============================
+  const handleSubmit = async () => {
+    if (!username) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
 
-  try {
-    await axios.post("http://localhost:8080/mypage/address", {
-      ...form,
-      memberUsername: username, // ✅ 여기서 주입
-    });
+    try {
+      await axios.post("http://localhost:8080/mypage/address", {
+        ...form,
+        memberUsername: username,
+      });
 
-    alert("배송지가 등록되었습니다!");
-    navigate("/mypage/addressList");
-  } catch (err) {
-    console.error(err);
-    alert("등록 실패했습니다.");
-  }
-};
-
+      alert("배송지가 등록되었습니다!");
+      navigate("/mypage/addressList");
+    } catch (err) {
+      console.error(err);
+      alert("등록 실패했습니다.");
+    }
+  };
 
   return (
     <div className="addressadd-content">
@@ -112,51 +131,51 @@ const handleSubmit = async () => {
         />
       </div>
 
-{/* ===== 연락처 ===== */}
-<div className="addressadd-form-row">
-  <label className="addressadd-label">
-    연락처 <span className="addressadd-required">*</span>
-  </label>
+      {/* ===== 연락처 ===== */}
+      <div className="addressadd-form-row">
+        <label className="addressadd-label">
+          연락처 <span className="addressadd-required">*</span>
+        </label>
+        <input
+          type="text"
+          name="phone"
+          className="addressadd-input-box"
+          placeholder="연락처를 입력하세요."
+          value={form.phone}
+          onChange={handleChange}
+        />
+      </div>
 
-  <input
-    type="text"
-    name="phone"
-    className="addressadd-input-box"
-    placeholder="연락처를 입력하세요."
-    value={form.phone}
-    onChange={handleChange}
-  />
-</div>
-
-
-      {/* ===== 주소 ===== */}
+      {/* ===== 주소 (하나의 입력칸 + 검색 버튼) ===== */}
       <div className="addressadd-form-row">
         <label className="addressadd-label">
           주소 <span className="addressadd-required">*</span>
         </label>
 
-        <div className="addressadd-address-row">
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            alignItems: "center",
+          }}
+        >
           <input
             type="text"
-            name="postcode"
-            className="addressadd-postcode-input"
-            placeholder="우편번호"
-            value={form.postcode}
-            onChange={handleChange}
+            readOnly
+            value={displayAddress}
+            placeholder="[우편번호] 주소"
+            className="addressadd-input-box"
+            style={{ flex: 1 }}
           />
 
-          <button className="addressadd-postcode-btn">검색</button>
-
-          <input
-            type="text"
-            name="streetAddress"
-            className="addressadd-road-input"
-            placeholder="도로명 주소를 입력하세요."
-            value={form.streetAddress}
-            onChange={handleChange}
-          />
-
-          <button className="addressadd-postcode-btn">검색</button>
+          <button
+            type="button"
+            className="addressadd-postcode-btn"
+            onClick={openDaumPostcode}
+            style={{ whiteSpace: "nowrap" }}
+          >
+            주소 검색
+          </button>
         </div>
 
         <textarea
@@ -189,7 +208,11 @@ const handleSubmit = async () => {
           확인
         </button>
 
-        <button className="addressadd-btn-cancel" onClick={() => navigate(-1)}>
+        <button
+          type="button"
+          className="addressadd-btn-cancel"
+          onClick={() => navigate(-1)}
+        >
           취소
         </button>
       </div>

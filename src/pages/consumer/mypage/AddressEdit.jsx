@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./AddressAdd.css"; // 🔥 Add랑 같은 CSS 사용
+import "./AddressAdd.css"; // 🔥 Add와 동일 CSS 사용
 
 export default function AddressEdit() {
   const { id } = useParams();
@@ -36,7 +36,7 @@ export default function AddressEdit() {
   }, [id, username]);
 
   // =======================
-  // input 공용 핸들러
+  // 공용 input 핸들러
   // =======================
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -47,7 +47,35 @@ export default function AddressEdit() {
   };
 
   // =======================
-  // 수정 처리 (PUT)
+  // 주소 표시용 문자열
+  // =======================
+  const displayAddress =
+    form.postcode && form.streetAddress
+      ? `[${form.postcode}] ${form.streetAddress}`
+      : "";
+
+  // =======================
+  // 다음 주소 검색
+  // =======================
+  const openDaumPostcode = () => {
+    if (!window.daum || !window.daum.Postcode) {
+      alert("주소 검색 서비스를 불러오지 못했습니다.");
+      return;
+    }
+
+    new window.daum.Postcode({
+      oncomplete: function (data) {
+        setForm((prev) => ({
+          ...prev,
+          postcode: data.zonecode,
+          streetAddress: data.roadAddress,
+        }));
+      },
+    }).open();
+  };
+
+  // =======================
+  // 수정 처리
   // =======================
   const handleSubmit = async () => {
     if (!username) {
@@ -129,37 +157,42 @@ export default function AddressEdit() {
         />
       </div>
 
-      {/* ===== 주소 ===== */}
+      {/* ===== 주소 (단일 입력 + 검색 버튼) ===== */}
       <div className="addressadd-form-row">
         <label className="addressadd-label">
           주소 <span className="addressadd-required">*</span>
         </label>
 
-        <div className="addressadd-address-row">
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            alignItems: "center",
+          }}
+        >
           <input
             type="text"
-            name="postcode"
-            className="addressadd-postcode-input"
-            value={form.postcode}
-            onChange={handleChange}
+            readOnly
+            value={displayAddress}
+            placeholder="[우편번호] 주소"
+            className="addressadd-input-box"
+            style={{ flex: 1 }}
           />
 
-          <button className="addressadd-postcode-btn">검색</button>
-
-          <input
-            type="text"
-            name="streetAddress"
-            className="addressadd-road-input"
-            value={form.streetAddress}
-            onChange={handleChange}
-          />
-
-          <button className="addressadd-postcode-btn">검색</button>
+          <button
+            type="button"
+            className="addressadd-postcode-btn"
+            onClick={openDaumPostcode}
+            style={{ whiteSpace: "nowrap" }}
+          >
+            주소 검색
+          </button>
         </div>
 
         <textarea
           name="addressDetail"
           className="addressadd-textarea-box"
+          placeholder="상세주소를 입력하세요."
           value={form.addressDetail}
           onChange={handleChange}
         ></textarea>
@@ -186,6 +219,7 @@ export default function AddressEdit() {
         </button>
 
         <button
+          type="button"
           className="addressadd-btn-cancel"
           onClick={() => navigate(-1)}
         >
