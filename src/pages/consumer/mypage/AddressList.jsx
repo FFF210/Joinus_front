@@ -14,7 +14,8 @@ export default function AddressList() {
   const getAddressList = () => {
     if (!username) return; // 🔒 안전장치
     axios
-      .get(`http://localhost:8080/mypage/point?username=${username}`)
+ .get(`http://localhost:8080/mypage/address?username=${username}`)
+
       .then((res) => {
         console.log(res.data);
         setAddressList(res.data);

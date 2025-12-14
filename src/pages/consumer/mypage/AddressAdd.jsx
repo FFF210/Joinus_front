@@ -6,11 +6,14 @@ import "./AddressAdd.css";
 export default function AddressAdd() {
   const navigate = useNavigate();
 
+const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+const username = userInfo?.username;
+
   // 서버로 보낼 폼 데이터
   const [form, setForm] = useState({
-    memberUsername: "ehgns0311", // 로그인 연동 전까지 하드코딩
     addressName: "",
     recipientName: "",
+    phone: "",
     postcode: "",
     streetAddress: "",
     addressDetail: "",
@@ -40,17 +43,26 @@ export default function AddressAdd() {
   };
 
   // 제출 처리
-  const handleSubmit = async () => {
-    try {
-      await axios.post("http://localhost:8080/mypage/address", form);
+const handleSubmit = async () => {
+  if (!username) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
 
-      alert("배송지가 등록되었습니다!");
-      navigate("/mypage/addressList");
-    } catch (err) {
-      console.error(err);
-      alert("등록 실패했습니다.");
-    }
-  };
+  try {
+    await axios.post("http://localhost:8080/mypage/address", {
+      ...form,
+      memberUsername: username, // ✅ 여기서 주입
+    });
+
+    alert("배송지가 등록되었습니다!");
+    navigate("/mypage/addressList");
+  } catch (err) {
+    console.error(err);
+    alert("등록 실패했습니다.");
+  }
+};
+
 
   return (
     <div className="addressadd-content">

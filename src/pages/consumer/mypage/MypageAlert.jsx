@@ -11,19 +11,23 @@ export default function MypageAlert() {
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 10; // 페이지당 10개
 
-  const username = "ehgns0311";
+// 로그인 유저 정보
+const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+const username = userInfo?.username;
 
   // 알림 리스트 불러오기
   const getAlertList = () => {
+    if (!username) return; // 로그인 안 된 경우 방어
     axios
       .get(`http://localhost:8080/mypage/alert?username=${username}`)
       .then((res) => setAlertList(res.data))
       .catch((err) => console.log(err));
   };
 
-  useEffect(() => {
-    getAlertList();
-  }, []);
+useEffect(() => {
+  getAlertList();
+}, [username]);
+
 
    // 페이징 계산
   const totalPages = Math.ceil(alertList.length / itemsPerPage);
