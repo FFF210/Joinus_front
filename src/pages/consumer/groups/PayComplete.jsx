@@ -12,6 +12,7 @@ const didRun = useRef(false); // ✅ StrictMode 방어
   const [paymentConfirmed, setPaymentConfirmed] = useState(false); // 결제 확인 상태
 
   const orderId = searchParams.get("orderId");
+  const productId = searchParams.get("productId");
   const paymentKey = searchParams.get("paymentKey");
 
   useEffect(() => {
@@ -32,13 +33,32 @@ const didRun = useRef(false); // ✅ StrictMode 방어
 
         console.log("결제 성공:", response.data);
         setPaymentConfirmed(true);
-        // ✅ 결제 확인 후 /payCompleteSuccess로 이동
-        // navigate("/payComplete", {
-        //   state: {
-        //     orderId,
-        //     productId: location.state?.productId || null,
-        //   },
-        // });
+
+        // 2️⃣ OrderItem 생성 전에 필수 값 체크
+        const productId = location.state?.productId;
+        const quantity = location.state?.quantity || 1;
+        const amount = location.state?.amount || 0;
+        const selectedOptions = location.state?.selectedOptions || [];
+
+        if (!orderId || !productId) {
+            console.error("OrderId 또는 ProductId가 없습니다.", { orderId, productId });
+            return navigate(`/fail?message=필수 데이터 누락`);
+        }
+
+        // 3️⃣ OrderItem 생성
+        await myAxios().post("/orderItems", {
+          orderId,
+          memberUsername: "kakao_4436272679", // 실제 DB 존재 확인 필요
+          gbProductId: productId,
+          quantity,
+          unitPrice: amount,
+          lineSubtotal: amount * quantity,
+          total: amount,
+          gbProductOptionIds: selectedOptions, // 서버에서 JSON 변환
+        });
+
+        console.log("OrderItem 생성 완료");
+        
       } catch (error) {
         console.error("결제 확인 에러:", error);
         navigate(`/fail?message=${error.message}`);
@@ -47,38 +67,6 @@ const didRun = useRef(false); // ✅ StrictMode 방어
 
     confirmPayment();
   }, [navigate, location.state, orderId, paymentKey]);
-
-// useEffect(() => {
-//     if (didRun.current) return;
-//     didRun.current = true;
-
-//     async function confirmPayment() {
-//       if (!orderId || !paymentKey) return;
-
-//       try {
-//         // 서버에 orderId로 조회 후 금액 검증
-//         const response = await myAxios().post("/payments/confirm", {
-//           paymentKey,
-//           orderId,
-//           method: "CARD",
-//           status: "PAID",
-//           approvedAt: new Date().toISOString(),
-//         });
-
-//         console.log("결제 성공:", response.data);
-//         setPaymentConfirmed(true); // 결제 확인 완료
-//       } catch (error) {
-//         console.error("결제 확인 에러:", error);
-//         navigate(`/fail?message=${error.message}`);
-//       }
-//     }
-
-//     confirmPayment();
-//   }, [navigate, orderId, paymentKey]);
-
-
-
-
     return(
         <>
             <div style={styles.pageWrapper}>

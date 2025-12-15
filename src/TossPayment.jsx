@@ -8,8 +8,12 @@ const customerKey = "NWNmY8ZpgKTZUzoW8EKVJ";
 export function CheckoutPage() {
   // ✅ Pay.jsx에서 전달한 값 받기
   const location = useLocation();
-  const { orderId, amount: payAmount, productName, productId } = location.state || {};
-
+  const { productId } = location.state || {};
+  if (!productId) {
+    alert("상품 정보가 올바르게 전달되지 않았습니다.");
+    return null;
+  }
+  const { orderId, amount: payAmount, productName, quantity, selectedOptions } = location.state || {};
   const [amount, setAmount] = useState({
     currency: "KRW",
     value: payAmount || 0,   // ✅ 하드코딩 제거
@@ -70,6 +74,7 @@ export function CheckoutPage() {
             try {
               await widgets.requestPayment({
                 orderId: orderId,
+                productId : productId,
                 orderName: productName || "상품 결제",
                 successUrl: window.location.origin + "/paycomplate", // ✅ :id 제거
                 failUrl: window.location.origin + "/fail",
