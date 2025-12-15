@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./AddressList.css";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function AddressList() {
@@ -11,13 +11,15 @@ export default function AddressList() {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const username = userInfo?.username;
 
-const handleAddAddress = () => {
-  if (addressList.length >= 3) {
-    alert("배송지는 최대 3개까지 등록할 수 있습니다.\n기존 배송지를 삭제해주세요.");
-    return;
-  }
-  navigate("/mypage/addressAdd");
-};
+  const handleAddAddress = () => {
+    if (addressList.length >= 3) {
+      alert(
+        "배송지는 최대 3개까지 등록할 수 있습니다.\n기존 배송지를 삭제해주세요."
+      );
+      return;
+    }
+    navigate("/mypage/addressAdd");
+  };
 
   const getAddressList = () => {
     if (!username) return;
@@ -25,7 +27,11 @@ const handleAddAddress = () => {
     axios
       .get(`http://localhost:8080/mypage/address?username=${username}`)
       .then((res) => {
-        setAddressList(res.data);
+        // 🔥 기본배송지 먼저 정렬
+        const sorted = [...res.data].sort(
+          (a, b) => b.defaultAddress - a.defaultAddress
+        );
+        setAddressList(sorted);
       })
       .catch((err) => console.log(err));
   };
@@ -54,15 +60,16 @@ const handleAddAddress = () => {
           <div className="addresslist-header">
             <h3>
               {addr.recipientName}
-              <span className="addresslist-label">{addr.addressName}</span>
+              <span className="addresslist-label">
+                {addr.addressName}
+              </span>
 
-              {/* ✅ 기본배송지 표시 (이미 잘 구현돼 있음) */}
-             {addr.isDefault && (
-  <span className="addresslist-badge-default">
-    기본배송지
-  </span>
-)}
-
+              {/* ✅ 기본배송지 표시 */}
+              {addr.defaultAddress && (
+                <span className="addresslist-badge-default">
+                  기본배송지
+                </span>
+              )}
             </h3>
 
             <div className="addresslist-btn-group">
@@ -84,7 +91,7 @@ const handleAddAddress = () => {
             </div>
           </div>
 
-          {/* ✅ 주소 출력 형식 통일 */}
+          {/* 주소 정보 */}
           <div className="addresslist-detail">
             [{addr.postcode}] {addr.streetAddress} {addr.addressDetail}
             <br />
@@ -95,13 +102,12 @@ const handleAddAddress = () => {
         </div>
       ))}
 
-
       {/* 추가 버튼 */}
-     <div className="addresslist-add">
-  <span onClick={handleAddAddress} style={{ cursor: "pointer" }}>
-    ＋ 배송지 추가
-  </span>
-</div>
+      <div className="addresslist-add">
+        <span onClick={handleAddAddress} style={{ cursor: "pointer" }}>
+          ＋ 배송지 추가
+        </span>
+      </div>
     </>
   );
 }

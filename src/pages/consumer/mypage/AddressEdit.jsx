@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./AddressAdd.css"; // 🔥 Add와 동일 CSS 사용
+import "./AddressAdd.css"; // Add와 동일 CSS 사용
 
 export default function AddressEdit() {
   const { id } = useParams();
@@ -18,22 +18,29 @@ export default function AddressEdit() {
     streetAddress: "",
     addressDetail: "",
     accessInstructions: "",
-    isDefault: false,
+    defaultAddress: false, // 🔥 핵심
   });
 
   // =======================
   // 기존 배송지 불러오기
   // =======================
   useEffect(() => {
-    if (!username) return;
-
     axios
       .get(`http://localhost:8080/mypage/address/${id}`)
       .then((res) => {
-        setForm(res.data);
+        setForm({
+          addressName: res.data.addressName,
+          recipientName: res.data.recipientName,
+          phone: res.data.phone,
+          postcode: res.data.postcode,
+          streetAddress: res.data.streetAddress,
+          addressDetail: res.data.addressDetail,
+          accessInstructions: res.data.accessInstructions,
+          defaultAddress: res.data.defaultAddress, // 🔥 유지
+        });
       })
       .catch((err) => console.error(err));
-  }, [id, username]);
+  }, [id]);
 
   // =======================
   // 공용 input 핸들러
@@ -78,11 +85,6 @@ export default function AddressEdit() {
   // 수정 처리
   // =======================
   const handleSubmit = async () => {
-    if (!username) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
-
     try {
       await axios.put(`http://localhost:8080/mypage/address/${id}`, {
         ...form,
@@ -99,10 +101,9 @@ export default function AddressEdit() {
 
   return (
     <div className="addressadd-content">
-      {/* ===== 페이지 제목 ===== */}
       <div className="addressadd-title">배송지 수정</div>
 
-      {/* ===== 배송지명 ===== */}
+      {/* 배송지명 + 기본배송지 */}
       <div className="addressadd-form-row">
         <div className="addressadd-label-flex">
           <label className="addressadd-label">
@@ -112,8 +113,8 @@ export default function AddressEdit() {
           <label className="addressadd-checkbox-default">
             <input
               type="checkbox"
-              name="isDefault"
-              checked={form.isDefault}
+              name="defaultAddress"              // 🔥 변경
+              checked={form.defaultAddress}     // 🔥 변경
               onChange={handleChange}
             />
             기본배송지 설정
@@ -129,7 +130,7 @@ export default function AddressEdit() {
         />
       </div>
 
-      {/* ===== 받는 분 ===== */}
+      {/* 받는 분 */}
       <div className="addressadd-form-row">
         <label className="addressadd-label">
           받는 분 <span className="addressadd-required">*</span>
@@ -143,7 +144,7 @@ export default function AddressEdit() {
         />
       </div>
 
-      {/* ===== 연락처 ===== */}
+      {/* 연락처 */}
       <div className="addressadd-form-row">
         <label className="addressadd-label">
           연락처 <span className="addressadd-required">*</span>
@@ -157,24 +158,17 @@ export default function AddressEdit() {
         />
       </div>
 
-      {/* ===== 주소 (단일 입력 + 검색 버튼) ===== */}
+      {/* 주소 */}
       <div className="addressadd-form-row">
         <label className="addressadd-label">
           주소 <span className="addressadd-required">*</span>
         </label>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "8px",
-            alignItems: "center",
-          }}
-        >
+        <div style={{ display: "flex", gap: "8px" }}>
           <input
             type="text"
             readOnly
             value={displayAddress}
-            placeholder="[우편번호] 주소"
             className="addressadd-input-box"
             style={{ flex: 1 }}
           />
@@ -183,7 +177,6 @@ export default function AddressEdit() {
             type="button"
             className="addressadd-postcode-btn"
             onClick={openDaumPostcode}
-            style={{ whiteSpace: "nowrap" }}
           >
             주소 검색
           </button>
@@ -192,13 +185,12 @@ export default function AddressEdit() {
         <textarea
           name="addressDetail"
           className="addressadd-textarea-box"
-          placeholder="상세주소를 입력하세요."
           value={form.addressDetail}
           onChange={handleChange}
-        ></textarea>
+        />
       </div>
 
-      {/* ===== 출입방법 ===== */}
+      {/* 출입방법 */}
       <div className="addressadd-form-row">
         <label className="addressadd-label">
           공동현관 출입방법 <span className="addressadd-required">*</span>
@@ -212,12 +204,11 @@ export default function AddressEdit() {
         />
       </div>
 
-      {/* ===== 버튼 ===== */}
+      {/* 버튼 */}
       <div className="addressadd-btn-row">
         <button className="addressadd-btn-confirm" onClick={handleSubmit}>
           확인
         </button>
-
         <button
           type="button"
           className="addressadd-btn-cancel"

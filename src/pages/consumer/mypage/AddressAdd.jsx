@@ -18,7 +18,7 @@ export default function AddressAdd() {
     streetAddress: "",
     addressDetail: "",
     accessInstructions: "",
-    isDefault: false,
+    defaultAddress: false, // ✅ 백엔드 DTO와 일치
   });
 
   // ===============================
@@ -88,7 +88,7 @@ export default function AddressAdd() {
       {/* ===== 페이지 제목 ===== */}
       <div className="addressadd-title">배송지 등록</div>
 
-      {/* ===== 배송지명 ===== */}
+      {/* ===== 배송지명 + 기본배송지 ===== */}
       <div className="addressadd-form-row">
         <div className="addressadd-label-flex">
           <label className="addressadd-label">
@@ -98,8 +98,8 @@ export default function AddressAdd() {
           <label className="addressadd-checkbox-default">
             <input
               type="checkbox"
-              name="isDefault"
-              checked={form.isDefault}
+              name="defaultAddress"
+              checked={form.defaultAddress}
               onChange={handleChange}
             />
             기본배송지 설정
@@ -125,7 +125,7 @@ export default function AddressAdd() {
           type="text"
           name="recipientName"
           className="addressadd-input-box"
-          placeholder="이름 입력"
+          placeholder="이름을 입력하세요."
           value={form.recipientName}
           onChange={handleChange}
         />
@@ -146,19 +146,13 @@ export default function AddressAdd() {
         />
       </div>
 
-      {/* ===== 주소 (하나의 입력칸 + 검색 버튼) ===== */}
+      {/* ===== 주소 ===== */}
       <div className="addressadd-form-row">
         <label className="addressadd-label">
           주소 <span className="addressadd-required">*</span>
         </label>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "8px",
-            alignItems: "center",
-          }}
-        >
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <input
             type="text"
             readOnly
@@ -184,7 +178,7 @@ export default function AddressAdd() {
           placeholder="상세주소를 입력하세요."
           value={form.addressDetail}
           onChange={handleChange}
-        ></textarea>
+        />
       </div>
 
       {/* ===== 출입방법 ===== */}
