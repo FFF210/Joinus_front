@@ -9,7 +9,7 @@ export default function Pay(){
     const { id } = useParams();
     const location = useLocation();
     const [detail, setDetail] = useState({ product: {}, category: {}, thumbnailFile: {}, images: [], options: []});
-    const { productId, thumbnail, finalPrice, productName, quantity } = location.state || {};
+    const { productId, thumbnail, finalPrice, productName, quantity, selectedOptions: selectedOptionsFromDetail } = location.state || {};
     const navigate = useNavigate();
     // 🔹 회원 포인트
     const [memberPoint, setMemberPoint] = useState(0);
@@ -24,7 +24,14 @@ export default function Pay(){
     const [streetAddress, setStreetAddress] = useState("");
     const [addressDetail, setAddressDetail] = useState("");
     const [accessInstructions, setAccessInstructions] = useState("");
-    const [optionIds, setOptionIds] = useState([]); // 상품 옵션 선택에 따라
+    // Pay 내부 상태
+    const [optionIds, setOptionIds] = useState(
+        selectedOptionsFromDetail?.map(opt => opt.optionId) || []
+    );
+    const [selectedOptions, setSelectedOptions] = useState(
+        selectedOptionsFromDetail || []
+    );
+    
 
     const shippingAmount = 0;
     const totalAmount = finalPrice + shippingAmount - usingPoint;
@@ -292,24 +299,6 @@ export default function Pay(){
                                     </div>
                                 </div>
                             </div>
-                            {/* 결제 수단 */}
-                            {/* <div style={{ border: '1px solid black', width: '500px', height: '110px' }}>
-                                <div style={row}>
-                                    <div style={{width: '128px',padding: '10px',fontWeight: 'bold',display: 'flex',          
-                                        alignItems: 'center',textAlign: 'center', fontSize:'12px', height:'35px'}}>
-                                        결제 수단
-                                    </div>
-                                </div>
-                                <hr style={{border:'1px solid black', margin:'0'}}/>
-                                    <FormGroup check style={{ display: "flex", alignItems: "center", gap: "5px" ,fontSize:"12px", marginLeft:'10px', marginTop:'10px'}}>
-                                        <Input name="radio1" type="radio"/>
-                                        <Label check >카카오페이</Label>
-                                    </FormGroup>
-                                    <FormGroup check style={{ display: "flex", alignItems: "center", gap: "5px"  ,fontSize:"12px", marginLeft:'10px'}}>
-                                        <Input name="radio1" type="radio"  />
-                                    <Label check >네이버페이</Label>
-                                    </FormGroup>
-                            </div> */}
                             <div style={{ border: '1px solid black', width: '500px', height: '190px' }}>
                                 <div style={row}>
                                     <div className="fw-bold" style={{width: '500px',padding: '10px',fontWeight: 'bold',display: 'flex',          
@@ -354,6 +343,10 @@ export default function Pay(){
                                                         amount: totalAmount,
                                                         productName,
                                                         productId: id,
+                                                        selectedOptions: Object.entries(selectedOptions).map(([group, optId]) => ({
+                                                            groupName: group,
+                                                            optionId: Number(optId)
+                                                        })),
                                                         },
                                                     });
                                                     } catch (e) {

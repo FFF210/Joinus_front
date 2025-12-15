@@ -256,14 +256,26 @@ export default function GBProductDetail() {
                                 <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}
                                   onClick={() => submit()}
                                 >장바구니</Button>
-                                <Link to={`/pay/${detail.product.id}`}
-                                  state={{productId: detail.product.id,
-                                  thumbnail: detail.thumbnailFile?.fileName,
-                                  finalPrice: finalPrice,
-                                  productName: detail.product.name,
-                                  quantity: 1,
-                                  optionIds: Object.values(selectedOptions).map(Number),
-                                  }}>
+                                <Link
+                                  to={`/pay/${detail.product.id}`}
+                                  state={{
+                                    productId: detail.product.id,
+                                    thumbnail: detail.thumbnailFile?.fileName,
+                                    finalPrice: finalPrice,
+                                    productName: detail.product.name,
+                                    quantity: 1,
+                                    // 선택된 옵션 정보
+                                    selectedOptions: Object.entries(selectedOptions).map(([groupName, optionId]) => {
+                                      const option = detail.options.find(opt => opt.id === Number(optionId));
+                                      return {
+                                        groupName,
+                                        optionId: Number(optionId),
+                                        optionName: option?.name || "",
+                                        optionPrice: option?.price || 0,
+                                      };
+                                    }),
+                                  }}
+                                >
                                   <Button style={{backgroundColor:'#F7F7F7', width:"120px", height:"35px", fontSize:"16px", padding:"0", color:'black', border:'1px solid black'}}>참여하기</Button>
                                 </Link>
                             </div>
