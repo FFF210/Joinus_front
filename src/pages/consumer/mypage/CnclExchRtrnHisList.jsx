@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, FormGroup, Input } from "reactstrap";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -38,7 +39,7 @@ export default function CnclExchRtrnHisList() {
 
   // ============= 기간 필터 =============
     const parseTime = (v) => {
-    const t = new Date(v ?? 0).getTime();
+    const t = new Date(v ?? 0)  .getTime();
     return Number.isNaN(t) ? 0 : t;
   };
 
@@ -126,6 +127,9 @@ export default function CnclExchRtrnHisList() {
 
   // 탭 누르면 표시만 바뀌고, 실제 조회는 조회 버튼 눌러야 반영
   const isActive = (t) => draftHistoryType === t;
+
+  // 버튼 클릭 시 이동
+  const navigate = useNavigate();
 
   return (
     <>
@@ -281,6 +285,29 @@ export default function CnclExchRtrnHisList() {
                   quantity={quantity}
                   price={getPriceText(item)}
                   status={statusText}
+                  onDetailClick={() => {
+                  // 1) 현재 row의 타입 결정 (all이면 item.type, 개별탭이면 draftHistoryType 기반)
+                  const type =
+                    draftHistoryType === "all"
+                      ? item.type // "취소" | "반품" | "교환"
+                      : draftHistoryType === "cancel"
+                      ? "취소"
+                      : draftHistoryType === "return"
+                      ? "반품"
+                      : "교환";
+
+                  // 2) 상세 조회에 사용할 ID 결정
+                  // - all: HistoryItemDto.requestId
+                  // - 개별탭: Cancel/Return/ExchangeListDto.id
+                  const detailId = draftHistoryType === "all" ? item.requestId : item.id;
+
+                  if (!detailId) return;
+
+                  // 3) 타입별 상세 페이지로 이동 (App.jsx)
+                  if (type === "교환") navigate(`/mypage/exchangeDetail/${detailId}`);
+                  else if (type === "반품") navigate(`/mypage/returnDetail/${detailId}`);
+                  else if (type === "취소") navigate(`/mypage/cancelDetail/${detailId}`);
+                }}
                 />
               );
             })}
