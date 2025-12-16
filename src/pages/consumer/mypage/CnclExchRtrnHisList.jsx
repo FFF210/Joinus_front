@@ -5,11 +5,52 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import OrderItem from "./OrderItem";
 
 export default function CnclExchRtrnHisList() {
+  
+  // 실제 조회에 적용되는 값(조회 버튼 눌렀을 때만 변경)
   const [historyType, setHistoryType] = useState("all");
+    
+  // ============= 화면에서 선택 중인 값 =============
+  const [draftHistoryType, setDraftHistoryType] = useState("all");
+  const [draftPeriod, setDraftPeriod] = useState(null);
+  // 1 | 3 | 6 | 12 | null
+  const [draftStartDate, setDraftStartDate] = useState("");
+  const [draftEndDate, setDraftEndDate] = useState("");
+  
   const [historyList, setHistoryList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // 임시 사용자
   const username = "kakao_4633814946";
+
+  // ============= 구매기간 버튼/날짜 추가 =============
+  const pad2 = (n) => String(n).padStart(2, "0");
+  const toYMD = (d) =>
+    `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
+  const setPeriodMonths = (months) => {
+    const today = new Date();
+    const from = new Date(today);
+    from.setMonth(from.getMonth() - months);
+
+    setDraftStartDate(toYMD(from));
+    setDraftEndDate(toYMD(today));
+  };
+
+  // ============= 기간 필터 =============
+    const parseTime = (v) => {
+    const t = new Date(v ?? 0).getTime();
+    return Number.isNaN(t) ? 0 : t;
+  };
+
+  // 조회 버튼 눌렀을 때 
+  const onSearch = async () => {
+    // 1) 적용값 업데이트
+    setHistoryType(draftHistoryType);
+
+    // 2) 서버 조회
+    await fetchHistory(draftHistoryType);
+
+  };
 
   const fetchHistory = async (type) => {
     setLoading(true);
@@ -21,7 +62,12 @@ export default function CnclExchRtrnHisList() {
       else if (type === "exchange") url = `/mypage/cnclExchRtrnHisList/exchange/${username}`;
       else url = `/mypage/cnclExchRtrnHisList/all/${username}`;
 
-      const res = await axios.get(`http://localhost:8080${url}`);
+      // 백엔드 기간 필터 사용 (쿼리 파라미터)
+      const params = {};
+      if (draftStartDate) params.startDate = draftStartDate;
+      if (draftEndDate) params.endDate = draftEndDate;
+
+      const res = await axios.get(`http://localhost:8080${url}`, { params });
 
       if (type === "all") {
         const items = res.data?.items ?? [];
@@ -45,9 +91,10 @@ export default function CnclExchRtrnHisList() {
     }
   };
 
+  // 기본 all 조회
   useEffect(() => {
-    fetchHistory(historyType);
-  }, [historyType]);
+    fetchHistory("all");
+  }, []);
 
   const formatDate = (value) => {
     if (!value) return "-";
@@ -77,11 +124,12 @@ export default function CnclExchRtrnHisList() {
     return STATUS_LABEL[key] ?? raw ?? "-";
   };
 
-  const isActive = (t) => historyType === t;
+  // 탭 누르면 표시만 바뀌고, 실제 조회는 조회 버튼 눌러야 반영
+  const isActive = (t) => draftHistoryType === t;
 
   return (
     <>
-      {/* 제목 */}
+      {/* 조회 조건 */}
       <div style={styles.pageWrapper}>
         <div style={styles.container}>
           <div style={{ fontSize: "20px", fontWeight: "bold" }}>
@@ -101,7 +149,8 @@ export default function CnclExchRtrnHisList() {
                   <button
                     key={t}
                     style={isActive(t) ? styles.tabBtnActive : styles.tabBtn}
-                    onClick={() => setHistoryType(t)}
+                    onClick={() => setDraftHistoryType(t)}
+                    type="button"
                   >
                     {t === "all"
                       ? "전체"
@@ -116,26 +165,46 @@ export default function CnclExchRtrnHisList() {
 
               <div style={{ marginBottom: "10px" }}>구매기간</div>
               <div style={{ marginBottom: "15px" }}>
-                <button style={styles.periodBtn}>1개월</button>
-                <button style={styles.periodBtn}>3개월</button>
-                <button style={styles.periodBtn}>6개월</button>
-                <button style={styles.periodBtn}>12개월</button>
+                {[1, 3, 6, 12].map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    style={draftPeriod === m ? styles.tabBtnActive : styles.tabBtn}
+                    onClick={() => {
+                      setDraftPeriod(m);
+                      setPeriodMonths(m);
+                    }}
+                  >
+                    {m}개월
+                  </button>
+              ))}
               </div>
 
               <div style={{ display: "flex", gap: "20px" }}>
                 <FormGroup style={{ margin: 0 }}>
-                  <Input type="date" />
+                  <Input type="date" 
+                        value={draftStartDate}
+                        onChange={(e) => {
+                          setDraftStartDate(e.target.value);
+                          setDraftPeriod(null); // ⬅ 기간 버튼 선택 해제
+                        }}
+                  />
                 </FormGroup>
                 <span>~</span>
                 <FormGroup style={{ margin: 0 }}>
-                  <Input type="date" />
+                  <Input type="date" 
+                          value={draftEndDate}
+                          onChange={(e) => setDraftEndDate(e.target.value)}/>
                 </FormGroup>
               </div>
             </div>
 
             {/* 조회 버튼 */}
                     <div style={{width: "120px", display: "flex",justifyContent: "center",alignItems: "center", padding:'0'}}>
-                        <Button style={{padding: "10px 10px", backgroundColor: "#E7EBF3", border: "1px solid #ccc", borderRadius: "6px", fontSize:'12px', color:'black'}}>조회</Button>
+                        <Button style={{padding: "10px 10px", backgroundColor: "#E7EBF3", border: "1px solid #ccc", borderRadius: "6px", fontSize:'12px', color:'black'}} 
+                        onClick={onSearch}
+                        disabled={loading}
+                        >조회</Button>
                     </div>
           </div>
         </div>
@@ -238,15 +307,6 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     gap: "20px",
-  },
-  periodBtn: {
-    padding: "6px 14px",
-    marginRight: "8px",
-    border: "1px solid #CCD1D8",
-    borderRadius: "4px",
-    backgroundColor: "#F5F6F8",
-    cursor: "pointer",
-    fontSize: "12px",
   },
   tabBtn: {
     padding: "6px 14px",
