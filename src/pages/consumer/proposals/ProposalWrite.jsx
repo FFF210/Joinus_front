@@ -32,6 +32,10 @@ export default function ProposalWrite() {
   const navigate = useNavigate();
 
   const submit = () => {
+
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const username = userInfo?.username;
+
     const formData = new FormData();
     formData.append('productName', productName);
     formData.append('category', category !== "선택하세요." ? category : "");
@@ -40,7 +44,8 @@ export default function ProposalWrite() {
     formData.append('originalPrice', originalPrice);
     formData.append('abroadShippingCost', abroadShippingCost);
     formData.append('minPart', minPart);
-    formData.append('memberUsername', "testUser");
+    
+    formData.append('memberUsername', username);
     // 대표 이미지
     if (mainFile) formData.append('mainImage', mainFile);
 

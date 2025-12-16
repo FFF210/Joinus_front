@@ -23,6 +23,10 @@ const [mainFile, setMainFile] = useState(null); // 서버 전송
 const [subFiles, setSubFiles] = useState([null, null, null, null]); // 서버 전송
 
 const submit = () => {
+
+   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const username = userInfo?.username;
+
   const formData = new FormData();
   formData.append('id', id);
   formData.append('productName', productName);
@@ -32,7 +36,7 @@ const submit = () => {
   formData.append('originalPrice', originalPrice);
   formData.append('abroadShippingCost', abroadShippingCost);
   formData.append('minPart', minPart);
-  formData.append('memberUsername', "1"); // 임시
+  formData.append('memberUsername', username);  // 기존 작성자 ID 유지
 
   // 새 대표 이미지가 있을 때만 추가
   if (mainFile) formData.append('mainImage', mainFile);
