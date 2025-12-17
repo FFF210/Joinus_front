@@ -75,7 +75,6 @@ const didRun = useRef(false); // ✅ StrictMode 방어
             // 3️⃣ OrderItem 생성
             await myAxios().post("/orderItems", {
             orderId,
-            memberUsername: "kakao_4436272679", // 실제 DB 존재 확인 필요
             gbProductId,
             quantity,
             unitPrice: amount,

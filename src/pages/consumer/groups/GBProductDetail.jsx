@@ -114,7 +114,6 @@ export default function GBProductDetail() {
   
 
   const submit = (quantity = 1) => {
-    const username = "kakao_4436272679";
 
     const selectedIds = Object.values(selectedOptions); // 선택된 모든 옵션
     if (selectedIds.includes("") || selectedIds.length !== Object.keys(optionGroups).length) {
@@ -123,7 +122,6 @@ export default function GBProductDetail() {
     }
 
     myAxios().post(`/addCart`, {
-        username: username,
         gbProductId: detail.product.id,
         gbProductOptionIds: selectedIds.map(id => Number(id)), // 여러 옵션 전달
         quantity: quantity
@@ -141,7 +139,7 @@ export default function GBProductDetail() {
     /* ========================= 찜하기 ========================= */
     const handleWishList = () => {
       myAxios().get("/product/productHeart", {
-        params: { gbProductId: id, username: "kakao_4436272679" }
+        params: { gbProductId: id}
       })
       .then(res => {
         setIsHeart(res.data.isHeart);
@@ -154,7 +152,7 @@ export default function GBProductDetail() {
       // 페이지 진입 시 하트 상태 + wishCount 가져오기
       myAxios()
         .get("/product/productHeart/status", {
-          params: { productId: id, username: "kakao_4436272679" }
+          params: { productId: id }
         })
         .then(res => {
           setIsHeart(res.data.isHeart);  // true/false
@@ -162,7 +160,13 @@ export default function GBProductDetail() {
         })
         .catch(err => console.log(err));
     }, [id]);
-
+const progress =
+  detail.product.minParticipants
+    ? Math.min(
+        (detail.product.participants / detail.product.minParticipants) * 100,
+        100
+      )
+    : 0;
 
     return(
         <>
@@ -209,7 +213,7 @@ export default function GBProductDetail() {
                         <div style={{flexGrow:1}}>
                             <div style={{width:"450px", height:'10px', backgroundColor:'#AFACEE', borderRadius:'5px',
                                 overflow:'hidden', margin:'5px'}}>
-                                <div style={{width: `${((detail.product.participants || 0) / (detail.product.minParticipants || 0)).toLocaleString() * 100}%`, height:'100%',backgroundColor: '#007BFF',}}></div>
+                                <div style={{width: `${progress}%`, height:'100%',backgroundColor: '#007BFF',}}></div>
                             </div>
                         </div>
                         <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
