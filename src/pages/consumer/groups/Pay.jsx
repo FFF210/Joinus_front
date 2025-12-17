@@ -4,6 +4,8 @@ import { Link, useParams, useLocation, useNavigate  } from "react-router-dom";
 import { myAxios , baseUrl} from "../../../config";
 
 export default function Pay(){
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+const username = userInfo?.username;
     const [addressType, setAddressType] = useState("new");
     
     const { id } = useParams();
@@ -19,8 +21,8 @@ export default function Pay(){
     const [shipRecipient, setShipRecipient] = useState("");
     const [phone, setPhone] = useState("");
     const [postcode, setPostcode] = useState("");
-    const [name, setName] = useState("");  // 이름
-    const [email, setEmail] = useState("");                 // 이메일
+    const [name, setName] = useState(""); // 이름
+    const [email, setEmail] = useState(""); // 이메일
     const [streetAddress, setStreetAddress] = useState("");
     const [addressDetail, setAddressDetail] = useState("");
     const [accessInstructions, setAccessInstructions] = useState("");
@@ -38,7 +40,10 @@ export default function Pay(){
     const totalAmount = finalPrice + shippingAmount - usingPoint;
 
     const getMemberPoint = () => {
-        myAxios().get("/member/detail", { params: { username: "kakao_4436272679" } })
+        myAxios().get("/member/detail", { 
+  params: { username } 
+})
+
         .then(res => {
             console.log(res.data);
         setMemberPoint(res.data.pointBalance);
@@ -70,7 +75,7 @@ export default function Pay(){
     const createOrder = async () => {
         try {
             const response = await myAxios().post("/orders", {
-                member: { username: "kakao_4436272679" },
+                member: { username },
                 gbProduct: { id: productId },
                 optionIds,
                 quantity,
@@ -137,12 +142,12 @@ export default function Pay(){
 
                         {/* 2행(내용) */}
                         <div style={{ display: "flex", height: "118px", fontSize:'12px' }}>
-                            <div style={{ flex: 1, borderRight: "1px solid black", display: "flex", justifyContent: "center", alignItems: "center" }}>2025-12-01</div>
+                            <div style={{ flex: 1, borderRight: "1px solid black", display: "flex", justifyContent: "center", alignItems: "center" }}>{new Date().toISOString().slice(0,10)}</div>
                             <div style={{flex: 2,borderRight: "1px solid black",display: "flex",alignItems: "center",gap: "10px",}}>
                                 <img src={`${baseUrl}/files/${thumbnail}`} style={{ width: "60px", height: "60px", marginLeft:'20px' }} />
                                 <div>{productName}</div>
                             </div>
-                            <div style={{ flex: 1, borderRight: "1px solid black", display: "flex", justifyContent: "center", alignItems: "center" }}>1</div>
+                            <div style={{ flex: 1, borderRight: "1px solid black", display: "flex", justifyContent: "center", alignItems: "center" }}>{quantity}</div>
                             <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>{finalPrice?.toLocaleString()}원</div>
                         </div>
                     </div>
@@ -212,8 +217,8 @@ export default function Pay(){
                             <div style={leftCol}>이름</div>
                             <div style={rightCol}>
                             <Input
-                                value={addressType === "new" ? name : "최지성"}
-                                onChange={(e) => addressType === "new" && setName(e.target.value)}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                                 style={{ fontSize: "12px", height: "20px" }}
                             />
                             </div>
