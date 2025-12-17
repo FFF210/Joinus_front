@@ -207,6 +207,8 @@ export default function GbProductMngList() {
     setShowNotificationModal(true);
   };
 
+
+  
   return (
     <div className="admin-layout">
       <div className="main-content">

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
     Container,
     Row,
@@ -10,142 +11,306 @@ import {
     PaginationItem,
     PaginationLink
 } from "reactstrap";
+import { myAxios } from "../../config";
 import AdminHeader from "../../components/layout/AdminHeader";
 import "bootstrap/dist/css/bootstrap.min.css";
-export default function AdminOrderDetail() {
-    const rows = Array.from({ length: 10 }).map((_, i) => ({
-        orderNo: "ORD20251118",
-        date: "2025.11.18",
-        buyer: "홍길동",
-        option1: "s size",
-        option2: "m size",
-        qty1: 2,
-        qty2: 3,
-        method: "간편결제",
-        amount: "880,000원",
-    }));
 
+export default function AdminOrderDetail() {
+    const { gbProductId } = useParams();
+    
+    // ========================================
+    // State
+    // ========================================
+    const [orderDetail, setOrderDetail] = useState(null);
+    const [adminOrderNo, setAdminOrderNo] = useState("");
+    
+    const [participantPage, setParticipantPage] = useState({
+        content: [],
+        totalPages: 0,
+        totalElements: 0,
+        number: 0
+    });
+    const [currentPage, setCurrentPage] = useState(0);
+    
+    
+    // ========================================
+    // 공구 상품 정보 조회
+    // ========================================
+    const fetchOrderDetail = async () => {
+        try {
+            const response = await myAxios().get(
+                `/admin/adminOrderDetail/${gbProductId}`
+            );
+            
+            console.log('📥 공구 상품 정보:', response.data);
+            
+            setOrderDetail(response.data);
+            setAdminOrderNo(response.data.adminOrderId || "");
+            
+        } catch (error) {
+            console.error("공구 상품 정보 조회 실패:", error);
+            alert("공구 상품 정보를 불러오는 데 실패했습니다.");
+        }
+    };
+    
+    
+    // ========================================
+    // 참여자 목록 조회
+    // ========================================
+    const fetchParticipants = async (page = 0) => {
+        try {
+            const response = await myAxios().get(
+                `/admin/adminOrderDetail/${gbProductId}/participants`,
+                { params: { page, size: 10 } }
+            );
+            
+            console.log('📥 참여자 목록:', response.data);
+            
+            setParticipantPage(response.data);
+            setCurrentPage(page);
+            
+        } catch (error) {
+            console.error("참여자 목록 조회 실패:", error);
+            alert("참여자 목록을 불러오는 데 실패했습니다.");
+        }
+    };
+    
+    
+    // ========================================
+    // 초기 로드
+    // ========================================
+    useEffect(() => {
+        fetchOrderDetail();
+        fetchParticipants();
+    }, [gbProductId]);
+    
+    
+    // ========================================
+    // 페이지 변경
+    // ========================================
+    const handlePageChange = (pageNumber) => {
+        if (pageNumber >= 0 && pageNumber < participantPage.totalPages) {
+            fetchParticipants(pageNumber);
+        }
+    };
+    
+    
+    // ========================================
+    // 관리자 주문번호 저장
+    // ========================================
+    const handleSaveAdminOrder = async () => {
+        if (!adminOrderNo.trim()) {
+            alert("관리자 주문번호를 입력해주세요.");
+            return;
+        }
+        
+        try {
+            // TODO: API 구현 후 연결
+            console.log('💾 관리자 주문번호 저장:', adminOrderNo);
+            alert("관리자 주문번호가 저장되었습니다.");
+            fetchOrderDetail();
+            
+        } catch (error) {
+            console.error("관리자 주문번호 저장 실패:", error);
+            alert("저장에 실패했습니다.");
+        }
+    };
+    
+    
+    // ========================================
+    // 송장번호 저장
+    // ========================================
+    const handleSaveTracking = async (orderId) => {
+        // TODO: API 구현 후 연결
+        console.log('💾 송장번호 저장:', orderId);
+        alert("송장번호가 저장되었습니다.");
+        fetchParticipants(currentPage);
+    };
+    
+    
+    // ========================================
+    // 로딩 중
+    // ========================================
+    if (!orderDetail) {
+        return (
+            <div className="admin-layout">
+                <div className="main-content">
+                    <AdminHeader title="공구관리 > 주문 공구 상품" />
+                    <div className="content-area">
+                        <Container fluid className="p-5">
+                            <p>로딩 중...</p>
+                        </Container>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
+    
     return (
         <div className="admin-layout">
-          <div className="main-content">
-            <AdminHeader title="공구관리 > 주문 공구 상품" />
-            <div className="content-area">
-        <Container fluid className="p-5">
-            <h5 className="mb-4">공구관리 &gt; 주문 공구 상품</h5>
-            {/* 공구 상품 카드 */}
-            <div>
-                <h6 className="fw-bold mb-3 admin-order-section-header" style={{ background: '#eaf1ff' }}>공구 상품</h6>
-                <Row className="align-items-start align-items-center justify-content-center" style={{ backgroundColor: 'white', height: '250px' }}>
-                    <Col md="2">
-                        <img
-                            src="/productSampleImg.png"
-                            alt="product"
-                            className="img-fluid rounded"
-                            style={{width: '200px'}}
-                        />
-                    </Col>
+            <div className="main-content">
+                <AdminHeader title="공구관리 > 주문 공구 상품" />
+                <div className="content-area">
+                    <Container fluid className="p-5">
+                        <h5 className="mb-4">공구관리 &gt; 주문 공구 상품</h5>
+                        
+                        {/* 공구 상품 카드 */}
+                        <div>
+                            <h6 
+                                className="fw-bold mb-3 admin-order-section-header" 
+                                style={{ background: '#eaf1ff', padding: '10px' }}
+                            >
+                                공구 상품
+                            </h6>
+                            <Row 
+                                className="align-items-start align-items-center justify-content-center" 
+                                style={{ backgroundColor: 'white', minHeight: '250px', padding: '20px' }}
+                            >
+                                <Col md="2">
+                                    <img
+                                        src={orderDetail.thumbnailFileId 
+                                            ? `/api/files/${orderDetail.thumbnailFileId}` 
+                                            : "/productSampleImg.png"}
+                                        alt="product"
+                                        className="img-fluid rounded"
+                                        style={{ width: '200px' }}
+                                    />
+                                </Col>
 
-                    <Col md="10">
-                        {/* 주문번호 입력 */}
-                        <div className="d-flex flex-row gap-2 text-center align-items-center">
-                            <div>
-                                주문번호:
-                            </div>
-                            <div>
-                                <Input type="text" placeholder="주문번호 입력" />
-                            </div>
-                            <div>
-                                <Button  style={{backgroundColor: '#739FF2'}}>
-                                    저장
-                                </Button>
-                            </div>
+                                <Col md="10">
+                                    {/* 주문번호 입력 */}
+                                    <div className="d-flex flex-row gap-2 text-center align-items-center mb-3">
+                                        <div>주문번호:</div>
+                                        <div>
+                                            <Input 
+                                                type="text" 
+                                                placeholder="주문번호 입력"
+                                                value={adminOrderNo}
+                                                onChange={(e) => setAdminOrderNo(e.target.value)}
+                                                disabled={!!orderDetail.adminOrderId}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Button 
+                                                style={{ backgroundColor: '#739FF2' }}
+                                                onClick={handleSaveAdminOrder}
+                                                disabled={!!orderDetail.adminOrderId}
+                                            >
+                                                저장
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* 상품 상세정보 */}
+                                    <div className="mb-1">
+                                        <strong>상품명:</strong> {orderDetail.gbProductName}
+                                    </div>
+                                    
+                                    {/* 옵션별 수량 */}
+                                    {orderDetail.optionSummaries?.map((option) => (
+                                        <div key={option.optionId} className="mb-1">
+                                            옵션: {option.optionName} / 수량: {option.totalQuantity}
+                                        </div>
+                                    ))}
+
+                                    {orderDetail.originalSiteUrl && (
+                                        <a 
+                                            href={orderDetail.originalSiteUrl} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="mt-3 text-muted" 
+                                            style={{ fontSize: "0.9rem" }}
+                                        >
+                                            원 사이트 주소: {orderDetail.originalSiteUrl}
+                                        </a>
+                                    )}
+                                </Col>
+                            </Row>
                         </div>
-                        {/* 상품 상세정보 */}
-                        <div className="mb-1">상품명: Start Fuck 500ml 세트 묶음</div>
-                        <div className="mb-1">옵션:S size / 수량: 15</div>
-                        <div className="mb-1">옵션:M size / 수량: 30</div>
 
-                        <a href="https://drop.com/buy/drop-ctrl1-metal-gmk?mecha=00&keycap=set7&defaultSelectionIds=988595" target="_blank" className="mt-3 text-muted" style={{ fontSize: "0.9rem" }}>
-                            원 사이트 주소:
-                            https://drop.com/buy/drop-ctrl1-metal-gmk?mecha=00&keycap=set7&defaultSelectionIds=988595
-                        </a>
-                    </Col>
-                </Row>
-            </div>
+                        {/* 참여자 테이블 */}
+                        <Table bordered hover className="align-middle text-center mt-5">
+                            <thead style={{ background: '#eaf1ff' }}>
+                                <tr>
+                                    <th style={{ background: '#eaf1ff' }}>주문번호</th>
+                                    <th style={{ background: '#eaf1ff' }}>주문일</th>
+                                    <th style={{ background: '#eaf1ff' }}>주문자명</th>
+                                    <th style={{ background: '#eaf1ff' }}>옵션명</th>
+                                    <th style={{ background: '#eaf1ff' }}>수량</th>
+                                    <th style={{ background: '#eaf1ff' }}>결제수단</th>
+                                    <th style={{ background: '#eaf1ff' }}>결제금액</th>
+                                    <th style={{ background: '#eaf1ff' }}>송장번호</th>
+                                    <th style={{ background: '#eaf1ff' }}></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {participantPage.content.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="9">참여자가 없습니다.</td>
+                                    </tr>
+                                ) : (
+                                    participantPage.content.map((participant) => (
+                                        <tr key={participant.orderId}>
+                                            <td>{participant.orderId}</td>
+                                            <td>
+                                                {participant.orderDate 
+                                                    ? participant.orderDate.substring(0, 10).replace(/-/g, '.') 
+                                                    : 'N/A'}
+                                            </td>
+                                            <td>{participant.customerName}</td>
+                                            <td className="text-start">
+                                                {participant.options?.map((opt, idx) => (
+                                                    <div key={idx}>{opt.optionName}</div>
+                                                ))}
+                                            </td>
+                                            <td>
+                                                {participant.options?.map((opt, idx) => (
+                                                    <div key={idx}>{opt.quantity}</div>
+                                                ))}
+                                            </td>
+                                            <td>{participant.paymentMethod}</td>
+                                            <td>{participant.paymentAmount?.toLocaleString()}원</td>
+                                            {/* 송장번호 */}
+                                            <td>
+                                                <Input 
+                                                    placeholder={participant.trackingNo || ""} 
+                                                    disabled={!!participant.trackingNo}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Button 
+                                                    className="px-3" 
+                                                    style={{ backgroundColor: '#739FF2' }}
+                                                    onClick={() => handleSaveTracking(participant.orderId)}
+                                                    disabled={!!participant.trackingNo}
+                                                >
+                                                    저장
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </Table>
 
-            {/* 테이블 */}
-            <Table bordered hover className="align-middle text-center mt-5">
-                <thead  style={{ background: '#eaf1ff' }} >
-                    <tr>
-                        <th style={{ background: '#eaf1ff' }}>주문번호</th>
-                        <th style={{ background: '#eaf1ff' }}>주문일</th>
-                        <th style={{ background: '#eaf1ff' }}>주문자명</th>
-                        <th style={{ background: '#eaf1ff' }}>옵션명</th>
-                        <th style={{ background: '#eaf1ff' }}>수량</th>
-                        <th style={{ background: '#eaf1ff' }}>결제수단</th>
-                        <th style={{ background: '#eaf1ff' }}>결제금액</th>
-                        <th style={{ background: '#eaf1ff'}}>송장번호</th>
-                        <th style={{ background: '#eaf1ff'}}></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map((r, i) => (
-                        <tr key={i}>
-                            <td>{r.orderNo}</td>
-                            <td>{r.date}</td>
-                            <td>{r.buyer}</td>
-                            <td className="text-start">
-                                {r.option1}
-                                <br />
-                                {r.option2}
-                            </td>
-                            <td>
-                                {r.qty1}
-                                <br />
-                                {r.qty2}
-                            </td>
-                            <td>{r.method}</td>
-                            <td>{r.amount}</td>
-                            {/* 송장번호 */}
-                            <td>
-                                <Input placeholder="" disabled />
-                            </td>
-                            <td>
-                                <Button className="px-3" style={{backgroundColor: '#739FF2'}}>
-                                    저장
-                                </Button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
-
-            {/* 페이지네이션 */}
-            <div className="d-flex justify-content-center mt-4">
-                <Pagination>
-                    <PaginationItem active>
-                        <PaginationLink>1</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink>2</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink>3</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem disabled>
-                        <PaginationLink>…</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink>67</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink>68</PaginationLink>
-                    </PaginationItem>
-                </Pagination>
+                        {/* 페이지네이션 */}
+                        {participantPage.totalPages > 0 && (
+                            <div className="d-flex justify-content-center mt-4">
+                                <Pagination>
+                                    {Array.from({ length: participantPage.totalPages }, (_, i) => (
+                                        <PaginationItem key={i} active={i === currentPage}>
+                                            <PaginationLink onClick={() => handlePageChange(i)}>
+                                                {i + 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    ))}
+                                </Pagination>
+                            </div>
+                        )}
+                    </Container>
+                </div>
             </div>
-        </Container>
-            </div>
-          </div>
         </div>
     );
 }
