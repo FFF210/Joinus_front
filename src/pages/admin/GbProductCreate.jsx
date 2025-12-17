@@ -50,8 +50,14 @@ const GBProductCreatePage = () => {
 
   const formatDateFromTimestamp = (timestamp) => {
     if (!timestamp) return '';
+
     const date = new Date(timestamp);
-    return date.toISOString().split('T')[0];  // "2025-12-25"
+
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   };
 
   //제안 숫자 추출 함수
@@ -74,7 +80,7 @@ const GBProductCreatePage = () => {
     return '';
   };
 
-  
+
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -145,6 +151,17 @@ const GBProductCreatePage = () => {
       const response = await myAxios().get(`/admin/gbProduct/${id}`);
       const data = response.data;
 
+      console.log('========== 날짜 디버깅 ==========');
+      console.log('1. Backend 원본 startDate:', data.startDate);
+      console.log('2. Backend 원본 endDate:', data.endDate);
+
+      const formattedStartDate = formatDateFromTimestamp(data.startDate);
+      const formattedEndDate = formatDateFromTimestamp(data.endDate);
+
+      console.log('3. 변환 후 startDate:', formattedStartDate);
+      console.log('4. 변환 후 endDate:', formattedEndDate);
+      console.log('================================');
+
       setFormData({
         status: data.status || 'DRAFT',
         startDate: formatDateFromTimestamp(data.startDate),
@@ -198,25 +215,25 @@ const GBProductCreatePage = () => {
 
       // 옵션 로드
       if (data.options && data.options.length > 0) {
-      const groupMap = new Map();
-      
-      data.options.forEach(option => {
-        if (!groupMap.has(option.groupName)) {
-          groupMap.set(option.groupName, {
-            id: Date.now() + Math.random(),
-            groupName: option.groupName,
-            options: []
+        const groupMap = new Map();
+
+        data.options.forEach(option => {
+          if (!groupMap.has(option.groupName)) {
+            groupMap.set(option.groupName, {
+              id: Date.now() + Math.random(),
+              groupName: option.groupName,
+              options: []
+            });
+          }
+
+          groupMap.get(option.groupName).options.push({
+            name: option.name,
+            price: option.price
           });
-        }
-        
-        groupMap.get(option.groupName).options.push({
-          name: option.name,
-          price: option.price
         });
-      });
-      
-      setOptionGroups(Array.from(groupMap.values()));
-    }
+
+        setOptionGroups(Array.from(groupMap.values()));
+      }
 
     } catch (error) {
       console.error('데이터 로드 실패:', error);
@@ -263,11 +280,11 @@ const GBProductCreatePage = () => {
       productFormData.append('note', formData.productMemo);
 
       if (formData.proposalNumber) {
-      const proposalId = extractNumberOnly(formData.proposalNumber);
-      if (proposalId) {
-        productFormData.append('proposalId', proposalId);
+        const proposalId = extractNumberOnly(formData.proposalNumber);
+        if (proposalId) {
+          productFormData.append('proposalId', proposalId);
+        }
       }
-    }
 
       productFormData.append('status', isEditMode ? formData.status : 'DRAFT');
 
@@ -334,31 +351,52 @@ const GBProductCreatePage = () => {
       alert('대표 이미지를 업로드해주세요.');
       return;
     }
+    if (!formData.productName?.trim()) {
+      alert('상품명을 입력해주세요.');
+      return;
+    }
+    if (!formData.category) {
+      alert('카테고리를 선택해주세요.');
+      return;
+    }
 
     try {
       const productFormData = new FormData();
 
+      // 날짜 형식 수정 (시간 제거)
+      const startDateOnly = formData.startDate?.split(' ')[0] || formData.startDate || '';
+      const endDateOnly = formData.endDate?.split(' ')[0] || formData.endDate || '';
+
+      console.log('========== 전송 데이터 ==========');
+      console.log('원본 startDate:', formData.startDate);
+      console.log('원본 endDate:', formData.endDate);
+      console.log('변환 startDate:', startDateOnly);
+      console.log('변환 endDate:', endDateOnly);
+      console.log('================================');
+
       productFormData.append('name', formData.productName);
       productFormData.append('categoryId', formData.category);
-      productFormData.append('startDate', formatDateToTimestamp(formData.startDate));
-      productFormData.append('endDate', formatDateToTimestamp(formData.endDate));
-      productFormData.append('originalSiteUrl', formData.siteUrl);
-      productFormData.append('description', formData.description);
-      productFormData.append('originalPrice', formData.originalPrice);
-      productFormData.append('abroadShippingCost', formData.shippingCost);
-      productFormData.append('exchangeRate', formData.exchangeRate);
-      productFormData.append('minParticipants', formData.minParticipants);
-      productFormData.append('price', formData.groupBuyPrice);
-      productFormData.append('supplierName', formData.supplierName);
-      productFormData.append('shippingMethod', formData.shippingMethod);
-      productFormData.append('note', formData.productMemo);
+      productFormData.append('startDate', startDateOnly);
+      productFormData.append('endDate', endDateOnly);
+      productFormData.append('originalSiteUrl', formData.siteUrl || '');
+      productFormData.append('description', formData.description || '');
+      productFormData.append('originalPrice', formData.originalPrice || 0);
+      productFormData.append('abroadShippingCost', formData.shippingCost || 0);
+      productFormData.append('exchangeRate', formData.exchangeRate || 0);
+      productFormData.append('minParticipants', formData.minParticipants || 1);
+      productFormData.append('price', formData.groupBuyPrice || 0);
+      productFormData.append('supplierName', formData.supplierName || '');
+      productFormData.append('shippingMethod', formData.shippingMethod || 'DEFAULT');
+      productFormData.append('shippingAmount', formData.domesticShipping || 0);
+      productFormData.append('note', formData.productMemo || '');
+      productFormData.append('status', formData.status);
 
       if (formData.proposalNumber) {
-      const proposalId = extractNumberOnly(formData.proposalNumber);
-      if (proposalId) {  // 숫자가 있을 때만
-        productFormData.append('proposalId', proposalId);
+        const proposalId = extractNumberOnly(formData.proposalNumber);
+        if (proposalId) {  // 숫자가 있을 때만
+          productFormData.append('proposalId', proposalId);
+        }
       }
-    }
 
       productFormData.append('status', formData.status);
 
@@ -419,6 +457,7 @@ const GBProductCreatePage = () => {
 
     } catch (error) {
       console.error('처리 오류:', error);
+      console.error('응답 데이터:', error.response?.data);
       alert(`처리 실패: ${error.response?.data?.message || error.message}`);
     }
   };
@@ -426,7 +465,7 @@ const GBProductCreatePage = () => {
   // ========================================
   //  useEffect들
   // ========================================
-  
+
   //초기화
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
