@@ -3,6 +3,7 @@ import { Label, FormGroup, Input, Button, Pagination, PaginationItem, Pagination
 import { useEffect, useState } from "react";
 import { myAxios } from "../../../config";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../../config";
 
 export default function InterestList() {
     // 로그인 유저 정보 (추가)
@@ -126,7 +127,7 @@ const username = userInfo?.username;
                 {/* 상품 이미지 */}
                 <div onClick={()=> navigate(`/gbProductDetail/${item.product?.id}`)} style={{display:'flex', justifyContent:'center', alignItems:'center',cursor: 'pointer'}}>
                 <img
-                    src={`http://localhost:8080/file/gbProduct/${item.product?.thumbnail?.fileName}`}
+                     src={`${baseUrl}/file/gbProduct/${item.product?.thumbnail?.fileName}`}
                     style={{ width: "70px", height: "70px", marginRight: "20px" }}
                 />
 

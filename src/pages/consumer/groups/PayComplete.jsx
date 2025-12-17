@@ -4,20 +4,30 @@ import { useEffect, useRef,useState } from "react";
 import { myAxios,baseUrl } from "../../../config";
 
 export default function PayComplete(){
-const didRun = useRef(false); // ✅ StrictMode 방어
-  const navigate = useNavigate();
-  const location = useLocation(); // CheckoutPage에서 전달받은 state
-//   const [searchParams] = useSearchParams();
+    const didRun = useRef(false); // ✅ StrictMode 방어
+    const navigate = useNavigate();
+    const location = useLocation(); // CheckoutPage에서 전달받은 state
+    const searchParams = new URLSearchParams(window.location.search);
 
-const searchParams = new URLSearchParams(window.location.search);
-  const [paymentConfirmed, setPaymentConfirmed] = useState(false); // 결제 확인 상태
-    const orderId = searchParams.get("orderId");
-    const gbProductId = searchParams.get("productId"); 
+    const [paymentConfirmed, setPaymentConfirmed] = useState(false); // 결제 확인 상태
+    const orderId = location.state?.orderId || searchParams.getAll("orderId")[0];
+    const gbProductId = location.state?.productId || searchParams.get("productId");
+    const amount = location.state?.amount || parseInt(searchParams.get("amount")) || 0;
+    const quantity = location.state?.quantity || parseInt(searchParams.get("quantity")) || 1;
+    const selectedOptionsRaw = location.state?.selectedOptions || JSON.parse(searchParams.get("selectedOptions") || "[]");
     const paymentKey = searchParams.get("paymentKey");
-    const amount = parseInt(searchParams.get("amount")) || 0;
-    const quantity = parseInt(searchParams.get("quantity")) || 1;
-    const selectedOptionsRaw = JSON.parse(searchParams.get("selectedOptions") || "[]");
     const optionIds = selectedOptionsRaw.map(opt => opt.optionId);
+
+    
+    if (!orderId) {
+        console.error("orderId가 없음");
+        return navigate(`/fail?message=orderId가 없음`);
+    }
+
+    if (!gbProductId) {
+        console.error("gbProductId가 없음");
+        return navigate(`/fail?message=gbProductId가 없음`);
+    }
 
     useEffect(() => {
         if (didRun.current) return;
@@ -63,7 +73,6 @@ const searchParams = new URLSearchParams(window.location.search);
             // 3️⃣ OrderItem 생성
             await myAxios().post("/orderItems", {
             orderId,
-            memberUsername: "kakao_4436272679", // 실제 DB 존재 확인 필요
             gbProductId,
             quantity,
             unitPrice: amount,
@@ -85,25 +94,25 @@ const searchParams = new URLSearchParams(window.location.search);
 
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
-    useEffect(()=>{
-        if(!orderId)return;
+    useEffect(() => {
+        if (!orderId) return; // 안전하게 처리
 
         async function fetchOrder() {
             try {
-                const res = await myAxios().get(`/orders/${orderId}`)
-                setOrder(res.data);
+            const res = await myAxios().get(`/orders/${orderId}`);
+            setOrder(res.data);
             } catch (error) {
-                console.log("주문 조회 실패", error)
-            } finally {
-                setLoading(false);
-            }
+            console.log("주문 조회 실패", error);
+            } 
+            // finally {
+            //     setLoading(false);
+            // }
         }
         fetchOrder();
-    }, [orderId]);
+    }, [orderId, order]);
 
-
-    if (loading) return <div>로딩중...</div>;
     if (!order) return <div>주문 정보를 불러올 수 없습니다.</div>;
+    
     return(
         <>
             <div style={styles.pageWrapper}>

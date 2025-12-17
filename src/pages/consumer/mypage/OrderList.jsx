@@ -1,10 +1,10 @@
-import { Button,FormGroup,Label,Input } from "reactstrap";
+import { Button,FormGroup,Label,Input, PaginationItem ,PaginationLink,Pagination, } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect} from "react";
 import { myAxios } from "../../../config";
 
-export default function OrderList() {
+export default function OrderList({ id }) {
   const navigate = useNavigate();
 
   //  사용자 정보 추가
@@ -13,7 +13,7 @@ export default function OrderList() {
 
   //  리뷰 모달 상태
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-
+  
   //  추가: 주문 목록 상태
   const [orderList, setOrderList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -203,6 +203,21 @@ export default function OrderList() {
     fetchOrderList(currentPage);
   }, [currentPage, searchParams, username]);
 
+  useEffect(() => {
+    const fetchOrderList = async () => {
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+const username = userInfo?.username;
+
+      try {
+        const res = await myAxios().get("/orderList", { params: { username, page, size } });
+        setOrderList(res.data.content);  // Page의 content
+        setTotalPages(res.data.totalPages);
+      } catch (err) {
+        console.error("주문 목록 조회 실패", err);
+      }
+    };
+    fetchOrderList();
+  }, [page, size]);
   return (
     <>
         {/* 제목 영역 */}
@@ -283,10 +298,10 @@ export default function OrderList() {
                 {/* 헤더 영역 */}
                 <hr style={{margin:'0', border:'1px solid black'}}/>
                 <div style={{ display: "flex", backgroundColor: "#E7EBF3", padding: "12px 0", fontSize:'12px'}}>
-                    <div style={{ ...styles.rowHeader, width: "20%" }}>주문일자(주문번호)</div>
+                    <div style={{ ...styles.rowHeader, width: "20%" }}>{orderList.id}({orderList.createdAt})</div>
                     <div style={{ ...styles.rowHeader, width: "45%" }}>상품 정보</div>
                     <div style={{ ...styles.rowHeader, width: "10%" }}>수량</div>
-                    <div style={{ ...styles.rowHeader, width: "15%" }}>상품 금액</div>
+                    <div style={{ ...styles.rowHeader, width: "15%" }}>결제 금액</div>
                     <div style={{ ...styles.rowHeader, width: "10%" }}></div>
                 </div>
                 <hr style={{margin:'0', border:'1px solid black'}}/>
@@ -345,6 +360,27 @@ export default function OrderList() {
                         </div>
                     </div>
                 ))}
+                <Pagination>
+                  <PaginationItem disabled={page === 0}>
+                    <PaginationLink first onClick={() => setPage(0)} />
+                  </PaginationItem>
+                  <PaginationItem disabled={page === 0}>
+                    <PaginationLink previous onClick={() => setPage(prev => Math.max(prev-1, 0))} />
+                  </PaginationItem>
+
+                  {[...Array(totalPages)].map((_, i) => (
+                    <PaginationItem active={i === page} key={i}>
+                      <PaginationLink onClick={() => setPage(i)}>{i+1}</PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem disabled={page === totalPages-1}>
+                    <PaginationLink next onClick={() => setPage(prev => Math.min(prev+1, totalPages-1))} />
+                  </PaginationItem>
+                  <PaginationItem disabled={page === totalPages-1}>
+                    <PaginationLink last onClick={() => setPage(totalPages-1)} />
+                  </PaginationItem>
+                </Pagination>
             </div>
         </div>
 

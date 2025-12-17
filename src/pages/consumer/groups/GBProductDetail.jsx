@@ -1,5 +1,5 @@
 import { Label, Button, Input, FormGroup} from "reactstrap";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Link, Outlet, useParams ,useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { baseUrl, myAxios } from "../../../config";
 
@@ -9,7 +9,37 @@ export default function GBProductDetail() {
     
     const [timeLeft, setTimeLeft] = useState("");
     const [selectedOptions, setSelectedOptions] = useState({});
+    const navigate = useNavigate();
     
+    const handleParticipate = () => {
+      // 옵션 선택 체크
+      const selectedIds = Object.values(selectedOptions);
+
+      if (selectedIds.includes("") || selectedIds.length !== Object.keys(optionGroups).length) {
+        alert("모든 옵션을 선택해주세요");
+        return;
+      }
+
+      // 옵션 선택 완료 → 결제 페이지로 이동
+      navigate(`/pay/${detail.product.id}`, {
+        state: {
+          productId: detail.product.id,
+          thumbnail: detail.thumbnailFile?.fileName,
+          finalPrice: finalPrice,
+          productName: detail.product.name,
+          quantity: 1,
+          selectedOptions: Object.entries(selectedOptions).map(([groupName, optionId]) => {
+            const option = detail.options.find(opt => opt.id === Number(optionId));
+            return {
+              groupName,
+              optionId: Number(optionId),
+              optionName: option?.name || "",
+              optionPrice: option?.price || 0,
+            };
+          }),
+        },
+      });
+    };
 
     /* ========================= 타이머 ========================= */
     useEffect(()=>{
@@ -84,7 +114,6 @@ export default function GBProductDetail() {
   
 
   const submit = (quantity = 1) => {
-    const username = "kakao_4436272679";
 
     const selectedIds = Object.values(selectedOptions); // 선택된 모든 옵션
     if (selectedIds.includes("") || selectedIds.length !== Object.keys(optionGroups).length) {
@@ -93,7 +122,6 @@ export default function GBProductDetail() {
     }
 
     myAxios().post(`/addCart`, {
-        username: username,
         gbProductId: detail.product.id,
         gbProductOptionIds: selectedIds.map(id => Number(id)), // 여러 옵션 전달
         quantity: quantity
@@ -111,7 +139,7 @@ export default function GBProductDetail() {
     /* ========================= 찜하기 ========================= */
     const handleWishList = () => {
       myAxios().get("/product/productHeart", {
-        params: { gbProductId: id, username: "kakao_4436272679" }
+        params: { gbProductId: id}
       })
       .then(res => {
         setIsHeart(res.data.isHeart);
@@ -124,7 +152,7 @@ export default function GBProductDetail() {
       // 페이지 진입 시 하트 상태 + wishCount 가져오기
       myAxios()
         .get("/product/productHeart/status", {
-          params: { productId: id, username: "kakao_4436272679" }
+          params: { productId: id }
         })
         .then(res => {
           setIsHeart(res.data.isHeart);  // true/false
@@ -132,7 +160,13 @@ export default function GBProductDetail() {
         })
         .catch(err => console.log(err));
     }, [id]);
-
+const progress =
+  detail.product.minParticipants
+    ? Math.min(
+        (detail.product.participants / detail.product.minParticipants) * 100,
+        100
+      )
+    : 0;
 
     return(
         <>
@@ -179,7 +213,7 @@ export default function GBProductDetail() {
                         <div style={{flexGrow:1}}>
                             <div style={{width:"450px", height:'10px', backgroundColor:'#AFACEE', borderRadius:'5px',
                                 overflow:'hidden', margin:'5px'}}>
-                                <div style={{width: `${((detail.product.participants || 0) / (detail.product.minParticipants || 0)).toLocaleString() * 100}%`, height:'100%',backgroundColor: '#007BFF',}}></div>
+                                <div style={{width: `${progress}%`, height:'100%',backgroundColor: '#007BFF',}}></div>
                             </div>
                         </div>
                         <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
@@ -189,23 +223,6 @@ export default function GBProductDetail() {
                             </Label>
                            {/* 나중에 옵션 map으로 돌려 */}
                             {Object.entries(optionGroups).map(([groupName, options], idx) => (
-                                // <FormGroup key={idx}>
-                                //     <Input
-                                //         type="select"
-                                //         value={selectedOptions[groupName] || ""}
-                                //         onChange={(e) => {
-                                //             setSelectedOptions(prev => ({
-                                //                 ...prev,
-                                //                 [groupName]: e.target.value
-                                //             }));
-                                //         }}
-                                //     >
-                                //         <option value="" disabled>{groupName}</option>
-                                //         {options.map(opt => (
-                                //             <option key={opt.id} value={opt.id}>{opt.name.replace(/ /g, "\u00A0").padEnd(80, "\u00A0")}(+{opt.price})</option>
-                                //         ))}
-                                //     </Input>
-                                // </FormGroup>
                                 <FormGroup key={groupName}>
                                   <Input
                                     type="select"
@@ -256,7 +273,7 @@ export default function GBProductDetail() {
                                 <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}
                                   onClick={() => submit()}
                                 >장바구니</Button>
-                                <Link
+                                {/* <Link
                                   to={`/pay/${detail.product.id}`}
                                   state={{
                                     productId: detail.product.id,
@@ -275,9 +292,9 @@ export default function GBProductDetail() {
                                       };
                                     }),
                                   }}
-                                >
-                                  <Button style={{backgroundColor:'#F7F7F7', width:"120px", height:"35px", fontSize:"16px", padding:"0", color:'black', border:'1px solid black'}}>참여하기</Button>
-                                </Link>
+                                > */}
+                                  <Button  onClick={handleParticipate} style={{backgroundColor:'#F7F7F7', width:"120px", height:"35px", fontSize:"16px", padding:"0", color:'black', border:'1px solid black'}}>참여하기</Button>
+                                {/* </Link> */}
                             </div>
                         </div>
                     </div>

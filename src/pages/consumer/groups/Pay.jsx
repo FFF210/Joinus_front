@@ -4,6 +4,8 @@ import { Link, useParams, useLocation, useNavigate  } from "react-router-dom";
 import { myAxios , baseUrl} from "../../../config";
 
 export default function Pay(){
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+const username = userInfo?.username;
     const [addressType, setAddressType] = useState("new");
     
     const { id } = useParams();
@@ -19,11 +21,12 @@ export default function Pay(){
     const [shipRecipient, setShipRecipient] = useState("");
     const [phone, setPhone] = useState("");
     const [postcode, setPostcode] = useState("");
-    const [name, setName] = useState("");  // 이름
-    const [email, setEmail] = useState("");                 // 이메일
+    const [name, setName] = useState(""); // 이름
+    const [email, setEmail] = useState(""); // 이메일
     const [streetAddress, setStreetAddress] = useState("");
     const [addressDetail, setAddressDetail] = useState("");
     const [accessInstructions, setAccessInstructions] = useState("");
+    const [note, setNote] = useState("");
     // Pay 내부 상태
     const [optionIds, setOptionIds] = useState(
         selectedOptionsFromDetail?.map(opt => opt.optionId) || []
@@ -34,10 +37,20 @@ export default function Pay(){
     
 
     const shippingAmount = 0;
-    const totalAmount = finalPrice + shippingAmount - usingPoint;
+
+    const maxUsablePoint = Math.min(memberPoint, finalPrice + shippingAmount);
+
+    const safeUsingPoint = Math.min(usingPoint, maxUsablePoint);
+
+    const totalAmount = Math.max(finalPrice + shippingAmount - safeUsingPoint, 0);
+
+    const remainingPoint = Math.max(memberPoint - safeUsingPoint, 0);
 
     const getMemberPoint = () => {
-        myAxios().get("/member/detail", { params: { username: "kakao_4436272679" } })
+        myAxios().get("/member/detail", { 
+  params: { username } 
+})
+
         .then(res => {
             console.log(res.data);
         setMemberPoint(res.data.pointBalance);
@@ -69,7 +82,7 @@ export default function Pay(){
     const createOrder = async () => {
         try {
             const response = await myAxios().post("/orders", {
-                member: { username: "kakao_4436272679" },
+                member: { username },
                 gbProduct: { id: productId },
                 optionIds,
                 quantity,
@@ -79,16 +92,62 @@ export default function Pay(){
                 usingPoint,
                 shipRecipient,
                 phone,
-                postcode,
-                streetAddress,
-                addressDetail,
+                postcode, //우편번호
+                streetAddress, // 도로명 주소
+                addressDetail, //상세주소
                 accessInstructions,
+                note,
             });
             return response.data.orderId;
         } catch (e) {
             console.log("주문 생성 에러:", e.response?.data || e.message);
             throw e;
         }
+    };
+
+    // ===============================
+    // 다음 주소 검색
+    // ===============================
+    const openDaumPostcode = () => {
+        if (!window.daum || !window.daum.Postcode) {
+            alert("주소 검색 서비스를 불러오지 못했습니다.");
+            return;
+        }
+
+        new window.daum.Postcode({
+            oncomplete: function (data) {
+            setPostcode(data.zonecode);       // 우편번호
+            setStreetAddress(data.roadAddress); // 도로명 주소
+            },
+        }).open();
+    };
+
+    const validateShippingInfo = () => {
+        if (!shipRecipient.trim()) {
+            alert("배송지명을 입력해주세요.");
+            return false;
+        }
+        if (!name.trim()) {
+            alert("이름을 입력해주세요.");
+            return false;
+        }
+        if (!phone.trim()) {
+            alert("전화번호를 입력해주세요.");
+            return false;
+        }
+        if (!postcode || !streetAddress) {
+            alert("주소를 검색해주세요.");
+            return false;
+        }
+        if (!addressDetail.trim()) {
+            alert("상세주소를 입력해주세요.");
+            return false;
+        }
+        if (!email.trim()) {
+            alert("이메일을 입력해주세요.");
+            return false;
+        }
+        return true;
     };
 
 
@@ -118,18 +177,18 @@ export default function Pay(){
 
                         {/* 2행(내용) */}
                         <div style={{ display: "flex", height: "118px", fontSize:'12px' }}>
-                            <div style={{ flex: 1, borderRight: "1px solid black", display: "flex", justifyContent: "center", alignItems: "center" }}>2025-12-01</div>
+                            <div style={{ flex: 1, borderRight: "1px solid black", display: "flex", justifyContent: "center", alignItems: "center" }}>{new Date().toISOString().slice(0,10)}</div>
                             <div style={{flex: 2,borderRight: "1px solid black",display: "flex",alignItems: "center",gap: "10px",}}>
                                 <img src={`${baseUrl}/files/${thumbnail}`} style={{ width: "60px", height: "60px", marginLeft:'20px' }} />
                                 <div>{productName}</div>
                             </div>
-                            <div style={{ flex: 1, borderRight: "1px solid black", display: "flex", justifyContent: "center", alignItems: "center" }}>1</div>
+                            <div style={{ flex: 1, borderRight: "1px solid black", display: "flex", justifyContent: "center", alignItems: "center" }}>{quantity}</div>
                             <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>{finalPrice?.toLocaleString()}원</div>
                         </div>
                     </div>
                 </div>
             </div>
-            {/* 배송지 + 오른쪽 박스 3개 */}
+            {/* 배송지 + 오른쪽 박스 2개 */}
             <div style={styles.pageWrapper}>
                 <div style={styles.container}>
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
@@ -193,25 +252,50 @@ export default function Pay(){
                             <div style={leftCol}>이름</div>
                             <div style={rightCol}>
                             <Input
-                                value={addressType === "new" ? name : "최지성"}
-                                onChange={(e) => addressType === "new" && setName(e.target.value)}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                                 style={{ fontSize: "12px", height: "20px" }}
                             />
                             </div>
                         </div>
-
                         {/* 주소 */}
                         <div style={row}>
-                            <div style={leftCol}>주소</div>
+                        <div style={leftCol}>주소</div>
                             <div style={rightCol}>
-                            <Input
-                                value={streetAddress}
-                                onChange={(e) => setStreetAddress(e.target.value)}
-                                style={{ fontSize: "12px", height: "20px" }}
-                                placeholder="도로명 주소 입력"
-                            />
+                                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                {/* 우편번호 + 도로명 주소 표시 */}
+                                <Input
+                                    type="text"
+                                    readOnly
+                                    value={postcode ? `[${postcode}] ${streetAddress}` : ""}
+                                    placeholder="[우편번호] 주소"
+                                    style={{ flex: 1, fontSize: "12px", height: "20px" }}
+                                />
+                                <button
+                                    type="button"
+                                    style={{
+                                    fontSize: "12px",
+                                    height: "20px",
+                                    padding: "0 5px",
+                                    whiteSpace: "nowrap",
+                                    }}
+                                    onClick={openDaumPostcode}
+                                >
+                                    주소 검색
+                                </button>
+                                </div>
+
+                                {/* 상세주소 입력 */}
+                                <Input
+                                type="text"
+                                value={addressDetail}
+                                onChange={(e) => setAddressDetail(e.target.value)}
+                                style={{ width: "100%", marginTop: "5px", fontSize: "12px", height: "20px" }}
+                                placeholder="상세주소를 입력하세요."
+                                />
                             </div>
                         </div>
+      
 
                         {/* 이메일 */}
                         <div style={row}>
@@ -258,8 +342,8 @@ export default function Pay(){
                             <div style={rightCol}>
                             <Input
                                 type="textarea"
-                                value={addressDetail}
-                                onChange={(e) => setAddressDetail(e.target.value)}
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
                                 style={{ fontSize: "12px", height: "50px", resize: "none" }}
                                 placeholder="배송 요청사항"
                             />
@@ -269,7 +353,7 @@ export default function Pay(){
 
                         {/* 오른쪽 박스 3개 */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                            <div style={{ border: '1px solid black', width: '500px', height: '110px' }}>
+                            <div style={{ border: '1px solid black', width: '500px', height: '145px' }}>
                                 <div style={row}>
                                     <div style={{width: '128px',padding: '5px',fontWeight: 'bold',borderRight: '1px solid #A09B9B',display: 'flex',          
                                         alignItems: 'center',justifyContent: 'center',textAlign: 'center', fontSize:'12px', height:'35px'}}>
@@ -287,16 +371,34 @@ export default function Pay(){
                                     <div style={{width: '128px',padding: '5px',fontWeight: 'bold',borderRight: '1px solid #A09B9B',display: 'flex',          
                                         alignItems: 'center',justifyContent: 'center',textAlign: 'center', fontSize:'12px', height:'35px'}}>사용 포인트</div>
                                     <div style={{flex: 1, flexDirection: 'column', display:'flex',padding: '5px', justifyContent:'center'}}>
-                                        <Input style={{ fontSize: '12px', height: '20px' }}
-                                            value={usingPoint} onChange={(e) => {
-                                                const value = Number(e.target.value);
-                                                if (value <= memberPoint) {
-                                                setUsingPoint(value);
+                                        <Input
+                                            type="number"
+                                            style={{ fontSize: '12px', height: '20px' }}
+                                            value={usingPoint}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+
+                                                // ✅ 완전히 지운 경우
+                                                if (value === "") {
+                                                setUsingPoint("");
+                                                return;
                                                 }
+
+                                                const num = Number(value);
+
+                                                if (isNaN(num)) return;
+
+                                                // ✅ 최대 사용 포인트 제한
+                                                setUsingPoint(Math.min(num, maxUsablePoint));
                                             }}
                                             placeholder="사용할 포인트"
                                             />
                                     </div>
+                                </div>
+                                <div style={row}>
+                                    <div style={{width: '128px',padding: '5px',fontWeight: 'bold',borderRight: '1px solid #A09B9B',display: 'flex',          
+                                        alignItems: 'center',justifyContent: 'center',textAlign: 'center', fontSize:'12px', height:'34px'}}>남은 포인트</div>
+                                    <div style={{flex: 1, flexDirection: 'column', display:'flex',padding: '5px', justifyContent:'center', color:'#5173D2'}}>{remainingPoint.toLocaleString()}p</div>
                                 </div>
                             </div>
                             <div style={{ border: '1px solid black', width: '500px', height: '190px' }}>
@@ -331,6 +433,7 @@ export default function Pay(){
                                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                             <Button style={{ fontSize: '12px', backgroundColor: '#739FF2', padding: '3px', border:'none'}}
                                                 onClick={async () => {
+                                                    if (!validateShippingInfo()) return;
                                                     try {
                                                     // 1️⃣ 주문 먼저 생성
                                                     const createdOrderId = await createOrder();

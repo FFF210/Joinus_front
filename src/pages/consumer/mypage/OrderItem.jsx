@@ -11,7 +11,7 @@ export default function OrderItem({
   price,
   status,
   thumbnailFileId,
-}) {
+  onDetailClick}) {
 
   const imgSrc = thumbnailFileId
     ? `http://localhost:8080/files/id/${thumbnailFileId}`
@@ -58,7 +58,7 @@ export default function OrderItem({
       </div>
 
       <div style={{ ...styles.col, width: "10%" }}>
-        <Button size="sm" outline style={styles.detailBtn}>
+        <Button size="sm" outline style={styles.detailBtn} onClick={onDetailClick}>
           상세보기
         </Button>
       </div>
