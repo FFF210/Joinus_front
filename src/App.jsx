@@ -321,11 +321,12 @@ function AppContent() {
                 <AdminOrderList />
               </ProtectedRoute>
             } />
-            <Route path="/admin/adminOrderDetail" element={
+            <Route path="/admin/adminOrderDetail/:gbProductId" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <AdminOrderDetail />
               </ProtectedRoute>
             } />
+            
             <Route path="/admin/exchRtrnWaitingList" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <ExchRtrnWaitingList />

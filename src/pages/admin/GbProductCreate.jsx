@@ -16,7 +16,6 @@ const GBProductCreatePage = () => {
     endDate: '',
     category: '',
     productName: '',
-    country: '',
     siteUrl: '',
     description: '',
     originalPrice: '',
@@ -152,7 +151,6 @@ const GBProductCreatePage = () => {
         endDate: formatDateFromTimestamp(data.endDate),
         category: data.categoryId?.toString() || '',
         productName: data.name || '',
-        country: data.country || '',
         siteUrl: data.originalSiteUrl || '',
         description: data.description || '',
         originalPrice: data.originalPrice || '',
@@ -585,16 +583,6 @@ const GBProductCreatePage = () => {
                 placeholder="공동 구매로 등록할 상품명을 입력하세요"
                 value={formData.productName}
                 onChange={(e) => updateField('productName', e.target.value)}
-              />
-            </div>
-
-            <div className="form-field">
-              <label>원 판매 국가</label>
-              <input
-                type="text"
-                placeholder="원 판매 국가를 입력하세요"
-                value={formData.country}
-                onChange={(e) => updateField('country', e.target.value)}
               />
             </div>
 
