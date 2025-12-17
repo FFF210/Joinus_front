@@ -152,9 +152,9 @@ function AppContent() {
                     <Route path="cnclExchRtrnHisList" element={<CnclExchRtrnHisList />} />
                     <Route path="exchangeReq" element={<ExchangeReq />} />
                     <Route path="returnReq" element={<ReturnReq />} />
-                    <Route path="exchangeDetail:/id" element={<ExchangeDetail />} />
-                    <Route path="returnDetail:/id" element={<ReturnDetail />} />
-                    <Route path="cancelDetail:/id" element={<CancelDetail />} />
+                    <Route path="exchangeDetail/:id" element={<ExchangeDetail />} />
+                    <Route path="returnDetail/:id" element={<ReturnDetail />} />
+                    <Route path="cancelDetail/:id" element={<CancelDetail />} />
 
                     <Route path="addressList" element={<AddressList />} />
                     <Route path="addressAdd" element={<AddressAdd />} />
