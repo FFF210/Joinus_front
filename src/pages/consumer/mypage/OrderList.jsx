@@ -203,21 +203,6 @@ export default function OrderList({ id }) {
     fetchOrderList(currentPage);
   }, [currentPage, searchParams, username]);
 
-  useEffect(() => {
-    const fetchOrderList = async () => {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-const username = userInfo?.username;
-
-      try {
-        const res = await myAxios().get("/orderList", { params: { username, page, size } });
-        setOrderList(res.data.content);  // Page의 content
-        setTotalPages(res.data.totalPages);
-      } catch (err) {
-        console.error("주문 목록 조회 실패", err);
-      }
-    };
-    fetchOrderList();
-  }, [page, size]);
   return (
     <>
         {/* 제목 영역 */}
@@ -360,27 +345,6 @@ const username = userInfo?.username;
                         </div>
                     </div>
                 ))}
-                <Pagination>
-                  <PaginationItem disabled={page === 0}>
-                    <PaginationLink first onClick={() => setPage(0)} />
-                  </PaginationItem>
-                  <PaginationItem disabled={page === 0}>
-                    <PaginationLink previous onClick={() => setPage(prev => Math.max(prev-1, 0))} />
-                  </PaginationItem>
-
-                  {[...Array(totalPages)].map((_, i) => (
-                    <PaginationItem active={i === page} key={i}>
-                      <PaginationLink onClick={() => setPage(i)}>{i+1}</PaginationLink>
-                    </PaginationItem>
-                  ))}
-
-                  <PaginationItem disabled={page === totalPages-1}>
-                    <PaginationLink next onClick={() => setPage(prev => Math.min(prev+1, totalPages-1))} />
-                  </PaginationItem>
-                  <PaginationItem disabled={page === totalPages-1}>
-                    <PaginationLink last onClick={() => setPage(totalPages-1)} />
-                  </PaginationItem>
-                </Pagination>
             </div>
         </div>
 
