@@ -1,89 +1,106 @@
-
 import { Label } from "reactstrap";
-import { Link, useParams,Outlet} from "react-router-dom";
+import { Link, useParams, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { myAxios } from "../../../config";
-export default function Reviews(){
+
+export default function Reviews() {
     const { id } = useParams();
-    const { reviews, setReviews} = useState();
+    const [reviews, setReviews] = useState([]);
 
     const getReview = () => {
-          myAxios().get(`getReviewList/${id}`)
-          .then(res=>{
-            console.log(res)
-            setReviews(res.data)
-          })
-          .catch(err=>{
-            console.log(err)
-          })
-        }
-    
-        useEffect(() => {
-            getReview();   // 페이지 진입 시 QnA 로딩
-        }, [id]);
+        myAxios().get(`/getReviewList/${id}`) // GET 파라미터로 id 전달
+            .then(res => {
+                console.log(res);
+                setReviews(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    };
 
-    return(
+    useEffect(() => {
+        getReview();
+    }, [id]);
+
+    const renderStars = (rating) => {
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) stars.push(<img key={i} src="/star.png" style={{ width: "20px" }} />);
+            else stars.push(<img key={i} src="/whStar.png" style={{ width: "20px" }} />);
+        }
+        return stars;
+    };
+
+    return (
         <>
-        <div>
-            <div style={styles.pageWrapper}>
-                <div style={styles.container}>
-                    <div style={{display: 'flex',justifyContent: 'space-between',alignItems: 'center',width: '860px',}}>
-                        <div style={{  padding: '5px 0' }}><Link to={`/gbProductDetail/${id}/detailInfo`} style={{color:'black'}}>
-                        <Label style={{ fontWeight: 'bold', margin: '0', width:'255px', textAlign:'center'}}>상품 설명</Label></Link>
+            <div>
+                <div style={styles.pageWrapper}>
+                    <div style={styles.container}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '860px' }}>
+                            <div style={{ padding: '5px 0' }}>
+                                <Link to={`/gbProductDetail/${id}/detailInfo`} style={{ color: 'black' }}>
+                                    <Label style={{ fontWeight: 'bold', margin: '0', width: '255px', textAlign: 'center' }}>상품 설명</Label>
+                                </Link>
+                            </div>
+                            <div style={{ background: '#E5EEFF', padding: '5px 0' }}>
+                                <Link to={`/gbProductDetail/${id}/reviews`} style={{ color: 'black' }}>
+                                    <Label style={{ fontWeight: 'bold', margin: '0', width: '255px', textAlign: 'center' }}>리뷰</Label>
+                                </Link>
+                            </div>
+                            <div style={{ padding: '5px 0' }}>
+                                <Link to={`/gbProductDetail/${id}/qAndA`} style={{ color: 'black' }}>
+                                    <Label style={{ fontWeight: 'bold', margin: '0', width: '255px', textAlign: 'center' }}>Q & A</Label>
+                                </Link>
+                            </div>
+                            <div style={{ padding: '5px 0' }}>
+                                <Link to={`/gbProductDetail/${id}/policy`} style={{ color: 'black' }}>
+                                    <Label style={{ fontWeight: 'bold', margin: '0', width: '255px', textAlign: 'center' }}>배송/환불 규칙</Label>
+                                </Link>
+                            </div>
                         </div>
-                        <div style={{background: '#E5EEFF', padding: '5px 0' }}><Link to={`/gbProductDetail/${id}/reviews`} style={{color:'black'}}>
-                        <Label style={{ fontWeight: 'bold', margin: '0',width:'255px', textAlign:'center' }}>리뷰</Label></Link>
-                        </div>
-                        <div style={{  padding: '5px 0' }}><Link to={`/gbProductDetail/${id}/qAndA`} style={{color:'black'}}>
-                        <Label style={{ fontWeight: 'bold', margin: '0', width:'255px', textAlign:'center'}}>Q & A</Label></Link>
-                        </div>
-                        <div style={{ padding: '5px 0' }}><Link to={`/gbProductDetail/${id}/policy`} style={{color:'black'}}>
-                        <Label style={{ fontWeight: 'bold', margin: '0',width:'255px', textAlign:'center' }}>배송/환뷸 규칙</Label></Link>
-                        </div>
+                        <hr style={{ marginTop: '0' }} />
                     </div>
-                    <hr style={{marginTop:'0'}}/>
                 </div>
-            </div>
-            <div style={styles.pageWrapper}>
-                <div style={styles.container}>
-                    <div style={{padding:"0 20px", display:'flex', gap:'10px'}}>
-                        <div>최신순</div>
-                        <div>평점 높은 순</div>
-                        <div>평점 낮음 순</div>
-                    </div>
-                    <hr />                    
-                    <div style={{padding:" 0 20px"}}>
-                        <div className="fw-bold" style={{fontSize:'16px'}}>닉네임</div>
-                        <div style={{display:'flex'}}>
-                            <img src="/star.png" style={{width:"20px"}}/>
-                            <img src="/star.png" style={{width:"20px"}}/>
-                            <img src="/banStar.png" style={{width:"20px"}}/>
-                            <img src="/whStar.png" style={{width:"20px"}}/>
-                            <img src="/whStar.png" style={{width:"20px", marginRight:'10px'}}/>
-                            <div>2025-12-20</div>
+
+                <div style={styles.pageWrapper}>
+                    <div style={styles.container}>
+                        <div style={{ padding: "0 20px", display: 'flex', gap: '10px' }}>
+                            <div>최신순</div>
+                            <div>평점 높은 순</div>
+                            <div>평점 낮음 순</div>
                         </div>
+                        <hr />
+
+                        {reviews.length === 0 && <div style={{ padding: "20px" }}>리뷰가 없습니다.</div>}
+
+                        {reviews.map((review) => (
+                            <div key={review.id}>
+                                <div style={{ padding: "0 20px" }}>
+                                    <div className="fw-bold" style={{ fontSize: '16px' }}>{review.memberUsername}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        {renderStars(review.rating)}
+                                        <div>{new Date(review.createdAt).toLocaleDateString()}</div>
+                                    </div>
+                                </div>
+                                <div style={{ padding: "0 20px", marginTop: '5px' }}>{review.content}</div>
+
+                                {/* 리뷰 이미지 */}
+                                <div style={{ display: 'flex', gap: '10px', padding: '0 20px', marginTop: '10px' }}>
+                                    {review.image1Path && <img src={review.image1Path} alt="리뷰이미지1" style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '4px' }} />}
+                                    {review.image2Path && <img src={review.image2Path} alt="리뷰이미지2" style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '4px' }} />}
+                                    {review.image3Path && <img src={review.image3Path} alt="리뷰이미지3" style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '4px' }} />}
+                                </div>
+
+                                <hr style={{ marginTop: '20px' }} />
+                            </div>
+                        ))}
                     </div>
-                    <div style={{padding:" 0 20px"}}>1+1가성비가 좋은 상품입니다. 끈적임이 없어서 애용해요</div>
-                    <hr/>
-                    <div style={{padding:" 0 20px"}}>
-                        <div className="fw-bold" style={{fontSize:'16px'}}>닉네임</div>
-                        <div style={{display:'flex'}}>
-                            <img src="/star.png" style={{width:"20px"}}/>
-                            <img src="/star.png" style={{width:"20px"}}/>
-                            <img src="/banStar.png" style={{width:"20px"}}/>
-                            <img src="/whStar.png" style={{width:"20px"}}/>
-                            <img src="/whStar.png" style={{width:"20px", marginRight:'10px'}}/>
-                            <div>2025-12-20</div>
-                        </div>
-                    </div>
-                    <div style={{padding:" 0 20px"}}>1+1가성비가 좋은 상품입니다. 끈적임이 없어서 애용해요</div>
-                    <hr/>
                 </div>
-            </div>
-            <Outlet context={{ id }} />
+
+                <Outlet context={{ id }} />
             </div>
         </>
-    )
+    );
 }
 
 const styles = {
