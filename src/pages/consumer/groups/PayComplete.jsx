@@ -38,6 +38,7 @@ export default function PayComplete(){
         console.error("gbProductId가 없음");
         return navigate(`/fail?message=gbProductId가 없음`);
     }
+
     const [order, setOrder] = useState(null);
     const [orderCreated, setOrderCreated] = useState(false); // ✅ OrderItem 생성 완료 체크
 
