@@ -1,9 +1,27 @@
 
 import { Label } from "reactstrap";
 import { Link, useParams,Outlet} from "react-router-dom";
-
+import { useEffect, useState } from "react";
+import { myAxios } from "../../../config";
 export default function Reviews(){
     const { id } = useParams();
+    const { reviews, setReviews} = useState();
+
+    const getReview = () => {
+          myAxios().get(`getReviewList/${id}`)
+          .then(res=>{
+            console.log(res)
+            setReviews(res.data)
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        }
+    
+        useEffect(() => {
+            getReview();   // 페이지 진입 시 QnA 로딩
+        }, [id]);
+
     return(
         <>
         <div>
