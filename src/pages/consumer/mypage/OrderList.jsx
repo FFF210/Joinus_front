@@ -104,8 +104,9 @@ export default function OrderList({ id }) {
   };
 
   // 추가: 날짜 포맷팅 함수
+  // 수정
   const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
+    if (!dateStr) return ""; // 기본값 제거
     return String(dateStr).substring(0, 10).replace(/-/g, ".");
   };
 
@@ -118,54 +119,52 @@ export default function OrderList({ id }) {
   };
 
   // 추가: 주문 상태별 버튼 렌더링 함수
-  const renderActionButtons = (order) => {
-    const status = order.orderStatus;
+  // 수정된 주문 상태별 버튼 렌더링 함수
+const renderActionButtons = (order) => {
+  // 서버에서 내려주는 실제 상태 필드를 확인
+  const status = order.status; // 기존 order.orderStatus → order.status
 
-    if (status === "READY" || status === "PAID") {
+  switch(status) {
+    case "READY":
+    case "PAID":
       return (
         <>
           <button 
             style={styles.smallBtn}
-            onClick={() => navigate(`/mypage/orderList/orderDetail/${order.orderId}`)}
+            onClick={() => navigate(`/mypage/orderList/orderDetail/${order.id}`)}
           >
             주문 상세
           </button>
           <button style={styles.smallBtn}>취소 신청</button>
         </>
       );
-    }
-
-    if (status === "PREPARING") {
+    case "PREPARING":
       return (
         <button 
           style={styles.smallBtn}
-          onClick={() => navigate(`/mypage/orderList/orderDetail/${order.orderId}`)}
+          onClick={() => navigate(`/mypage/orderList/orderDetail/${order.id}`)}
         >
           주문 상세
         </button>
       );
-    }
-
-    if (status === "SHIPPING") {
+    case "SHIPPING":
       return (
         <>
           <button 
             style={styles.smallBtn}
-            onClick={() => navigate(`/mypage/orderList/orderDetail/${order.orderId}`)}
+            onClick={() => navigate(`/mypage/orderList/orderDetail/${order.id}`)}
           >
             주문 상세
           </button>
           <button style={styles.smallBtn}>배송 조회</button>
         </>
       );
-    }
-
-    if (status === "DELIVERED") {
+    case "DELIVERED":
       return (
         <>
           <button 
             style={styles.smallBtn}
-            onClick={() => navigate(`/mypage/orderList/orderDetail/${order.orderId}`)}
+            onClick={() => navigate(`/mypage/orderList/orderDetail/${order.id}`)}
           >
             주문 상세
           </button>
@@ -180,23 +179,21 @@ export default function OrderList({ id }) {
           <button style={styles.smallBtn}>교환 신청</button>
         </>
       );
-    }
-
-    if (status === "CANCELLED") {
+    case "CANCELLED":
       return (
         <button style={styles.smallBtn}>취소 상세</button>
       );
-    }
-
-    return (
-      <button 
-        style={styles.smallBtn}
-        onClick={() => navigate(`/mypage/orderList/orderDetail/${order.orderId}`)}
-      >
-        주문 상세
-      </button>
-    );
-  };
+    default:
+      return (
+        <button 
+          style={styles.smallBtn}
+          onClick={() => navigate(`/mypage/orderList/orderDetail/${order.id}`)}
+        >
+          주문 상세
+        </button>
+      );
+  }
+};
 
   // 추가: 데이터 로드 useEffect
   useEffect(() => {
@@ -283,7 +280,7 @@ export default function OrderList({ id }) {
                 {/* 헤더 영역 */}
                 <hr style={{margin:'0', border:'1px solid black'}}/>
                 <div style={{ display: "flex", backgroundColor: "#E7EBF3", padding: "12px 0", fontSize:'12px'}}>
-                    <div style={{ ...styles.rowHeader, width: "20%" }}>{orderList.id}({orderList.createdAt})</div>
+                    <div style={{ ...styles.rowHeader, width: "20%" }}>주문일자(주문번호)</div>
                     <div style={{ ...styles.rowHeader, width: "45%" }}>상품 정보</div>
                     <div style={{ ...styles.rowHeader, width: "10%" }}>수량</div>
                     <div style={{ ...styles.rowHeader, width: "15%" }}>결제 금액</div>
@@ -312,31 +309,31 @@ export default function OrderList({ id }) {
                             <div style={{ fontSize: '14px', marginBottom: '4px' }}>
                               {formatDate(order.orderedAt)}
                             </div>
-                            <div style={{ color: "#888", fontSize: '12px' }}>{order.orderId}</div>
+                            <div style={{ color: "#888", fontSize: '12px' }}>{order.id}</div>
                         </div>
 
                         {/* 상품 정보 */}
                         <div style={{ ...styles.col, width: "45%", display: "flex", alignItems: "center" }}>
                         <img 
-                          src={getThumbnailUrl(order)} 
+                          src={order.thumbnail?.id ? `/file/${order.thumbnail.id}` : "/computer.png"} 
                           alt={order.gbProductName}
                           style={{ width: "80px", height: "80px", marginRight: "10px", objectFit: "cover" }} 
                         />
                         <div style={{ flex: 1 }}>
-                            <div style={{fontSize:'14px', marginBottom: '4px'}}>{order.gbProductName}</div>
-                            <div style={{ color: "#777", fontSize: "12px" }}>주문 날짜: {formatDate(order.orderedAt)}</div>
+                            <div style={{fontSize:'14px', marginBottom: '4px'}}>{order.productName}</div>
+                            <div style={{ color: "#777", fontSize: "12px" }}>주문 날짜: {formatDate(order.createdAt)}</div>
                         </div>
                         <div style={{padding: "4px 10px", borderRadius: "6px", fontSize: "12px", marginLeft: "10px", whiteSpace: "nowrap", backgroundColor:'#F2F9FC', color:'#7693FC', border:'1px solid #7693FC'}}>
-                          {order.orderStatusDescription || order.orderStatus}
+                          {order.status || "상태 없음"}
                         </div>
                         </div>
 
                         {/* 수량 */}
-                        <div style={{ ...styles.col, width: "10%" }}>{order.quantity}</div>
+                        <div style={{ ...styles.col, width: "10%" }}>{order.quantity || 0}</div>
 
                         {/* 가격 */}
                         <div style={{ ...styles.col, width: "15%" }}>
-                          {order.total?.toLocaleString()}원
+                          {order.totalAmount?.toLocaleString() || 0}원
                         </div>
 
                         {/* 버튼 영역 */}
