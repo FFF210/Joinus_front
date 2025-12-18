@@ -18,7 +18,7 @@ export default function AddressEdit() {
     streetAddress: "",
     addressDetail: "",
     accessInstructions: "",
-    defaultAddress: false, // 🔥 핵심
+    defaultAddress: false, // 핵심
   });
 
   // =======================
@@ -36,7 +36,7 @@ export default function AddressEdit() {
           streetAddress: res.data.streetAddress,
           addressDetail: res.data.addressDetail,
           accessInstructions: res.data.accessInstructions,
-          defaultAddress: res.data.defaultAddress, // 🔥 유지
+          defaultAddress: res.data.defaultAddress, // 유지
         });
       })
       .catch((err) => console.error(err));
@@ -85,6 +85,38 @@ export default function AddressEdit() {
   // 수정 처리
   // =======================
   const handleSubmit = async () => {
+
+     // 필수값 검증 (Add와 동일)
+  if (!form.addressName.trim()) {
+    alert("배송지명을 입력해주세요.");
+    return;
+  }
+
+  if (!form.recipientName.trim()) {
+    alert("받는 분 이름을 입력해주세요.");
+    return;
+  }
+
+  if (!form.phone.trim()) {
+    alert("연락처를 입력해주세요.");
+    return;
+  }
+
+  if (!form.postcode || !form.streetAddress) {
+    alert("주소를 검색해주세요.");
+    return;
+  }
+
+  if (!form.addressDetail.trim()) {
+    alert("상세주소를 입력해주세요.");
+    return;
+  }
+
+  if (!form.accessInstructions.trim()) {
+    alert("출입방법을 입력해주세요.");
+    return;
+  }
+
     try {
       await axios.put(`http://localhost:8080/mypage/address/${id}`, {
         ...form,
@@ -113,8 +145,8 @@ export default function AddressEdit() {
           <label className="addressadd-checkbox-default">
             <input
               type="checkbox"
-              name="defaultAddress"              // 🔥 변경
-              checked={form.defaultAddress}     // 🔥 변경
+              name="defaultAddress"              // 변경
+              checked={form.defaultAddress}     // 변경
               onChange={handleChange}
             />
             기본배송지 설정

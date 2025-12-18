@@ -69,6 +69,37 @@ export default function AddressAdd() {
       return;
     }
 
+    // 필수값 검증
+  if (!form.addressName.trim()) {
+    alert("배송지명을 입력해주세요.");
+    return;
+  }
+
+  if (!form.recipientName.trim()) {
+    alert("받는 분 이름을 입력해주세요.");
+    return;
+  }
+
+  if (!form.phone.trim()) {
+    alert("연락처를 입력해주세요.");
+    return;
+  }
+
+  if (!form.postcode || !form.streetAddress) {
+    alert("주소를 검색해주세요.");
+    return;
+  }
+
+  if (!form.addressDetail.trim()) {
+    alert("상세주소를 입력해주세요.");
+    return;
+  }
+
+  if (!form.accessInstructions.trim()) {
+    alert("출입방법을 입력해주세요.");
+    return;
+  }
+
     try {
       await axios.post("http://localhost:8080/mypage/address", {
         ...form,
