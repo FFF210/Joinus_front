@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from "react-router-dom";
 import { myAxios } from '../../config';
 import { X, Plus, Minus, ChevronDown, ChevronUp } from 'lucide-react';
 import OptionAddModal from './OptionAddModal';
@@ -6,16 +7,23 @@ import '../../styles/components/button.css';
 import './GBProductCreate.css';
 
 const GBProductCreatePage = () => {
-  //수정모드 체크
+  // ========================================
+  // URL Parameters & Mode
+  // ========================================
+  const [searchParams] = useSearchParams();
   const [isEditMode, setIsEditMode] = useState(false);
   const [productId, setProductId] = useState(null);
 
+  // ========================================
+  // Form State
+  // ========================================
   const [formData, setFormData] = useState({
     status: 'DRAFT',
     startDate: '',
     endDate: '',
     category: '',
     productName: '',
+    proposalId: '',  // ✅ proposalId로 통일!
     siteUrl: '',
     description: '',
     originalPrice: '',
@@ -26,62 +34,43 @@ const GBProductCreatePage = () => {
     domesticShipping: '3000',
     groupBuyPrice: '',
     supplierName: '',
-    proposalNumber: '',
     minParticipants: '',
     productMemo: '',
     shippingMethod: 'DEFAULT'
   });
 
+  // ========================================
+  // Other States
+  // ========================================
   const [categories, setCategories] = useState([]);
   const [mainImage, setMainImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
   const [detailImages, setDetailImages] = useState([]);
   const [isLoadingRate, setIsLoadingRate] = useState(true);
-
-  // 옵션 그룹 상태
   const [optionGroups, setOptionGroups] = useState([]);
   const [expandedGroup, setExpandedGroup] = useState(null);
   const [showOptionModal, setShowOptionModal] = useState(false);
 
-  // 날짜 변환 함수 (timestamp형식으로 변환해줌)
-  const formatDateToTimestamp = (dateString) => {
-    if (!dateString) return null;
-    return `${dateString} 00:00:00`;
-  };
 
-  const formatDateFromTimestamp = (timestamp) => {
-    if (!timestamp) return '';
+  // ========================================
+  // Utility Functions
+  // ========================================
 
-    const date = new Date(timestamp);
+  // 날짜 변환 함수 삭제 (String으로 직접 처리)
 
-    const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(date.getUTCDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-  };
-
-  //제안 숫자 추출 함수
-  const extractNumberOnly = (input) => {
+  // 제안 숫자 추출 함수
+  const extractProposalId = (input) => {
     if (!input) return '';
+    if (/^\d+$/.test(input)) return input;
 
-    // 숫자만 있으면 그대로
-    if (/^\d+$/.test(input)) {
-      return input;
-    }
-
-    // URL에서 숫자 추출
     const parts = input.split('/');
     for (let i = parts.length - 1; i >= 0; i--) {
-      if (/^\d+$/.test(parts[i])) {
-        return parts[i];
-      }
+      if (/^\d+$/.test(parts[i])) return parts[i];
     }
-
     return '';
   };
 
-
+  // Form 업데이트
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -91,54 +80,54 @@ const GBProductCreatePage = () => {
     updateField('participants', Math.max(1, formData.participants + delta));
   };
 
-  // 옵션 그룹 추가
+
+  // ========================================
+  // Option Group Handlers
+  // ========================================
+
   const handleAddOptionGroup = (optionGroup) => {
     setOptionGroups(prev => [...prev, optionGroup]);
     setShowOptionModal(false);
   };
 
-  // 옵션 그룹 삭제
   const handleDeleteOptionGroup = (id) => {
     setOptionGroups(prev => prev.filter(group => group.id !== id));
   };
 
-  //  옵션 그룹 토글
   const toggleOptionGroup = (id) => {
     setExpandedGroup(prev => prev === id ? null : id);
   };
 
-  // 이미지 로드
+
+  // ========================================
+  // Image Loading (Edit Mode)
+  // ========================================
+
   const loadImageFile = async (fileId, setterFunction) => {
     try {
       const response = await myAxios().get(`/admin/file/${fileId}`, {
         responseType: 'blob'
       });
-
       const file = new File([response.data], `image-${fileId}.jpg`, {
         type: response.data.type || 'image/jpeg'
       });
-
       setterFunction(file);
     } catch (error) {
       console.error('이미지 로드 실패:', error);
     }
   };
 
-  // 이미지 파일 로드 (여러 개)
   const loadMultipleImages = async (fileIds, setterFunction) => {
     try {
       const promises = fileIds.map(id =>
         myAxios().get(`/admin/file/${id}`, { responseType: 'blob' })
       );
-
       const responses = await Promise.all(promises);
-
       const files = responses.map((response, index) =>
         new File([response.data], `image-${fileIds[index]}.jpg`, {
           type: response.data.type || 'image/jpeg'
         })
       );
-
       setterFunction(files);
     } catch (error) {
       console.error('이미지 로드 실패:', error);
@@ -146,29 +135,22 @@ const GBProductCreatePage = () => {
   };
 
 
-  //  데이터 로드 (수정 모드)
+  // ========================================
+  // Load Product Data (Edit Mode)
+  // ========================================
+
   const loadProductData = async (id) => {
     try {
       const response = await myAxios().get(`/admin/gbProduct/${id}`);
       const data = response.data;
 
-      console.log('========== 날짜 디버깅 ==========');
-      console.log('1. Backend 원본 startDate:', data.startDate);
-      console.log('2. Backend 원본 endDate:', data.endDate);
-
-      const formattedStartDate = formatDateFromTimestamp(data.startDate);
-      const formattedEndDate = formatDateFromTimestamp(data.endDate);
-
-      console.log('3. 변환 후 startDate:', formattedStartDate);
-      console.log('4. 변환 후 endDate:', formattedEndDate);
-      console.log('================================');
-
       setFormData({
         status: data.status || 'DRAFT',
-        startDate: formatDateFromTimestamp(data.startDate),
-        endDate: formatDateFromTimestamp(data.endDate),
+        startDate: data.startDate || '',  // String 그대로
+        endDate: data.endDate || '',      // String 그대로
         category: data.categoryId?.toString() || '',
         productName: data.name || '',
+        proposalId: data.proposalId?.toString() || '',  // ✅ proposalId로 통일!
         siteUrl: data.originalSiteUrl || '',
         description: data.description || '',
         originalPrice: data.originalPrice || '',
@@ -179,37 +161,28 @@ const GBProductCreatePage = () => {
         domesticShipping: data.shippingAmount || '3000',
         groupBuyPrice: data.price || '',
         supplierName: data.supplierName || '',
-        proposalNumber: data.proposalId || '',
         minParticipants: data.minParticipants || '',
         productMemo: data.note || '',
         shippingMethod: data.shippingMethod || 'DEFAULT'
       });
 
-      // 썸네일 로드
+      // 이미지 로드
       if (data.thumbnailFileId) {
         await loadImageFile(data.thumbnailFileId, setMainImage);
       }
 
-      // 추가 이미지 로드
       const imageIds = [
-        data.image1FileId,
-        data.image2FileId,
-        data.image3FileId,
-        data.image4FileId
+        data.image1FileId, data.image2FileId,
+        data.image3FileId, data.image4FileId
       ].filter(id => id);
-
       if (imageIds.length > 0) {
         await loadMultipleImages(imageIds, setAdditionalImages);
       }
 
-      // 상세 이미지 로드
       const detailIds = [
-        data.detail1FileId,
-        data.detail2FileId,
-        data.detail3FileId,
-        data.detail4FileId
+        data.detail1FileId, data.detail2FileId,
+        data.detail3FileId, data.detail4FileId
       ].filter(id => id);
-
       if (detailIds.length > 0) {
         await loadMultipleImages(detailIds, setDetailImages);
       }
@@ -217,7 +190,6 @@ const GBProductCreatePage = () => {
       // 옵션 로드
       if (data.options && data.options.length > 0) {
         const groupMap = new Map();
-
         data.options.forEach(option => {
           if (!groupMap.has(option.groupName)) {
             groupMap.set(option.groupName, {
@@ -226,13 +198,11 @@ const GBProductCreatePage = () => {
               options: []
             });
           }
-
           groupMap.get(option.groupName).options.push({
             name: option.name,
             price: option.price
           });
         });
-
         setOptionGroups(Array.from(groupMap.values()));
       }
 
@@ -243,7 +213,10 @@ const GBProductCreatePage = () => {
   };
 
 
-  // 환율 불러오기
+  // ========================================
+  // Fetch Exchange Rate
+  // ========================================
+
   const fetchExchangeRate = async () => {
     try {
       setIsLoadingRate(true);
@@ -260,15 +233,33 @@ const GBProductCreatePage = () => {
   };
 
 
-  // ===== 저장 (미게시) =====
+  // ========================================
+  // Fetch Categories
+  // ========================================
+
+  const fetchCategories = async () => {
+    try {
+      const response = await myAxios().get('/admin/categories');
+      console.log('📥 카테고리 목록:', response.data);
+      setCategories(response.data);
+    } catch (error) {
+      console.error('카테고리 조회 실패:', error);
+    }
+  };
+
+
+  // ========================================
+  // Save (Draft)
+  // ========================================
+
   const handleSave = async () => {
     try {
       const productFormData = new FormData();
 
       productFormData.append('name', formData.productName);
       productFormData.append('categoryId', formData.category);
-      productFormData.append('startDate', formatDateToTimestamp(formData.startDate));
-      productFormData.append('endDate', formatDateToTimestamp(formData.endDate));
+      productFormData.append('startDate', formData.startDate);  // String 그대로
+      productFormData.append('endDate', formData.endDate);      // String 그대로
       productFormData.append('originalSiteUrl', formData.siteUrl);
       productFormData.append('description', formData.description);
       productFormData.append('originalPrice', formData.originalPrice);
@@ -279,30 +270,20 @@ const GBProductCreatePage = () => {
       productFormData.append('supplierName', formData.supplierName);
       productFormData.append('shippingMethod', formData.shippingMethod);
       productFormData.append('note', formData.productMemo);
-
-      if (formData.proposalNumber) {
-        const proposalId = extractNumberOnly(formData.proposalNumber);
-        if (proposalId) {
-          productFormData.append('proposalId', proposalId);
-        }
-      }
-
       productFormData.append('status', isEditMode ? formData.status : 'DRAFT');
 
-      if (mainImage) {
-        productFormData.append('thumbnail', mainImage);
+      // ✅ proposalId 추가
+      if (formData.proposalId) {
+        productFormData.append('proposalId', extractProposalId(formData.proposalId));
       }
 
-      if (additionalImages && additionalImages.length > 0) {
-        additionalImages.forEach(img => {
-          productFormData.append('images', img);
-        });
+      // 이미지 추가
+      if (mainImage) productFormData.append('thumbnail', mainImage);
+      if (additionalImages.length > 0) {
+        additionalImages.forEach(img => productFormData.append('images', img));
       }
-
-      if (detailImages && detailImages.length > 0) {
-        detailImages.forEach(img => {
-          productFormData.append('details', img);
-        });
+      if (detailImages.length > 0) {
+        detailImages.forEach(img => productFormData.append('details', img));
       }
 
       let resultProductId;
@@ -322,7 +303,7 @@ const GBProductCreatePage = () => {
       }
 
       // 옵션 처리
-      if (optionGroups && optionGroups.length > 0) {
+      if (optionGroups.length > 0) {
         for (const group of optionGroups) {
           for (const option of group.options) {
             await myAxios().post(`/admin/gbProducts/${resultProductId}/options`, [{
@@ -337,7 +318,6 @@ const GBProductCreatePage = () => {
       if (window.opener && !window.opener.closed) {
         window.opener.location.reload();
       }
-
       window.close();
 
     } catch (error) {
@@ -346,8 +326,13 @@ const GBProductCreatePage = () => {
     }
   };
 
-  // ===== 게시 =====
+
+  // ========================================
+  // Submit (Publish)
+  // ========================================
+
   const handleSubmit = async () => {
+    // 유효성 검사
     if (!mainImage && !isEditMode) {
       alert('대표 이미지를 업로드해주세요.');
       return;
@@ -364,21 +349,10 @@ const GBProductCreatePage = () => {
     try {
       const productFormData = new FormData();
 
-      // 날짜 형식 수정 (시간 제거)
-      const startDateOnly = formData.startDate?.split(' ')[0] || formData.startDate || '';
-      const endDateOnly = formData.endDate?.split(' ')[0] || formData.endDate || '';
-
-      console.log('========== 전송 데이터 ==========');
-      console.log('원본 startDate:', formData.startDate);
-      console.log('원본 endDate:', formData.endDate);
-      console.log('변환 startDate:', startDateOnly);
-      console.log('변환 endDate:', endDateOnly);
-      console.log('================================');
-
       productFormData.append('name', formData.productName);
       productFormData.append('categoryId', formData.category);
-      productFormData.append('startDate', startDateOnly);
-      productFormData.append('endDate', endDateOnly);
+      productFormData.append('startDate', formData.startDate);  // String 그대로
+      productFormData.append('endDate', formData.endDate);      // String 그대로
       productFormData.append('originalSiteUrl', formData.siteUrl || '');
       productFormData.append('description', formData.description || '');
       productFormData.append('originalPrice', formData.originalPrice || 0);
@@ -392,29 +366,18 @@ const GBProductCreatePage = () => {
       productFormData.append('note', formData.productMemo || '');
       productFormData.append('status', formData.status);
 
-      if (formData.proposalNumber) {
-        const proposalId = extractNumberOnly(formData.proposalNumber);
-        if (proposalId) {  // 숫자가 있을 때만
-          productFormData.append('proposalId', proposalId);
-        }
+      // ✅ proposalId 추가
+      if (formData.proposalId) {
+        productFormData.append('proposalId', extractProposalId(formData.proposalId));
       }
 
-      productFormData.append('status', formData.status);
-
-      if (mainImage) {
-        productFormData.append('thumbnail', mainImage);
+      // 이미지 추가
+      if (mainImage) productFormData.append('thumbnail', mainImage);
+      if (additionalImages.length > 0) {
+        additionalImages.forEach(img => productFormData.append('images', img));
       }
-
-      if (additionalImages && additionalImages.length > 0) {
-        additionalImages.forEach(img => {
-          productFormData.append('images', img);
-        });
-      }
-
-      if (detailImages && detailImages.length > 0) {
-        detailImages.forEach(img => {
-          productFormData.append('details', img);
-        });
+      if (detailImages.length > 0) {
+        detailImages.forEach(img => productFormData.append('details', img));
       }
 
       let resultProductId;
@@ -432,7 +395,7 @@ const GBProductCreatePage = () => {
       }
 
       // 옵션 처리
-      if (optionGroups && optionGroups.length > 0) {
+      if (optionGroups.length > 0) {
         for (const group of optionGroups) {
           for (const option of group.options) {
             await myAxios().post(`/admin/gbProducts/${resultProductId}/options`, [{
@@ -446,6 +409,11 @@ const GBProductCreatePage = () => {
 
       alert(`공구가 ${isEditMode ? '수정' : '등록'}되었습니다!`);
 
+      // ✅ 제안 기반 등록이면 알림 안내
+      if (formData.proposalId) {
+        alert('제안자와 투표자들에게 알림이 발송되었습니다.');
+      }
+
       if (window.opener && !window.opener.closed) {
         window.opener.postMessage({
           type: isEditMode ? 'GB_PRODUCT_UPDATED' : 'GB_PRODUCT_CREATED',
@@ -453,24 +421,28 @@ const GBProductCreatePage = () => {
         }, '*');
         window.opener.location.reload();
       }
-
       window.close();
 
     } catch (error) {
       console.error('처리 오류:', error);
-      console.error('응답 데이터:', error.response?.data);
       alert(`처리 실패: ${error.response?.data?.message || error.message}`);
     }
   };
 
+
   // ========================================
-  //  useEffect들
+  // useEffect - Initialize
   // ========================================
 
-  //초기화
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
+    const id = searchParams.get('id');
+    const proposalId = searchParams.get('proposalId');
+
+    console.log('========== URL Parameters ==========');
+    console.log('전체 URL:', window.location.href);
+    console.log('id:', id);
+    console.log('proposalId:', proposalId);
+    console.log('====================================');
 
     if (id) {
       // 수정 모드
@@ -480,25 +452,34 @@ const GBProductCreatePage = () => {
     } else {
       // 생성 모드
       setIsEditMode(false);
+
+      // proposalId가 있으면 자동 입력
+      if (proposalId) {
+        console.log('제안 기반 공구 등록:', proposalId);
+        setFormData(prev => ({
+          ...prev,
+          proposalId: proposalId
+        }));
+      } else {
+        console.log('❌ proposalId 없음!');
+      }
     }
+  }, [searchParams]);
+
+
+  // ========================================
+  // useEffect - Fetch Categories
+  // ========================================
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
 
-  //카테고리 목록 조회
-  useEffect(() => {
-        fetchCategories();
-    }, []);
-    
-    const fetchCategories = async () => {
-        try {
-            const response = await myAxios().get('/admin/categories');
-            console.log('📥 카테고리 목록:', response.data);
-            setCategories(response.data);
-        } catch (error) {
-            console.error('카테고리 조회 실패:', error);
-        }
-    };
 
-  // 가격 자동 계산
+  // ========================================
+  // useEffect - Calculate Price
+  // ========================================
+
   useEffect(() => {
     const price = parseFloat(formData.originalPrice) || 0;
     const shipping = parseFloat(formData.shippingCost) || 0;
@@ -521,39 +502,40 @@ const GBProductCreatePage = () => {
     formData.domesticShipping
   ]);
 
-  // 환율 자동 불러오기
+
+  // ========================================
+  // useEffect - Fetch Exchange Rate
+  // ========================================
+
   useEffect(() => {
     fetchExchangeRate();
   }, []);
 
-  // 창 닫기 전 경고
+
+  // ========================================
+  // useEffect - Before Unload Warning
+  // ========================================
+
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       e.preventDefault();
       e.returnValue = '';
       return '';
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
 
-  //URL 파라미터로 proposalId 받을 때 대비
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const proposalId = urlParams.get('proposalId');
-
-    if (proposalId) {
-      updateField('proposalNumber', proposalId);  // 폼에 자동 입력
-    }
-  }, []);
-
+  // ========================================
+  // Render
+  // ========================================
 
   return (
     <div className="gb-product-create-page">
       <div className="create-container">
 
+        {/* ✅ 수정 배너 */}
         {isEditMode && productId && (
           <div className="edit-banner">
             <div className="edit-banner-icon">📝</div>
@@ -564,6 +546,27 @@ const GBProductCreatePage = () => {
                 <span>공구명: {formData.productName}</span>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ✅ 제안 기반 등록 배너 */}
+        {formData.proposalId && (
+          <div style={{
+            padding: '16px',
+            marginBottom: '24px',
+            backgroundColor: '#dbeafe',
+            border: '2px solid #3b82f6',
+            borderRadius: '8px'
+          }}>
+            <h4 style={{ margin: '0 0 8px 0', color: '#1e40af' }}>
+              📋 제안 기반 공구 등록
+            </h4>
+            <p style={{ margin: 0, color: '#1e3a8a' }}>
+              제안 ID: {extractProposalId(formData.proposalId)}
+            </p>
+            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#3730a3' }}>
+              등록 완료 시 제안자와 투표자들에게 알림이 발송됩니다.
+            </p>
           </div>
         )}
 
@@ -616,19 +619,19 @@ const GBProductCreatePage = () => {
           <section className="form-section">
             <h3 className="section-title">카테고리 선택</h3>
             <div className="form-field">
-              <select 
-                        value={formData.category} 
-                        onChange={(e) => updateField('category', e.target.value)}
-                    >
-                        <option value="">카테고리 선택</option>                        
-                        {categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                                {category.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            </section>
+              <select
+                value={formData.category}
+                onChange={(e) => updateField('category', e.target.value)}
+              >
+                <option value="">카테고리 선택</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </section>
 
           {/* 기본 정보 */}
           <section className="form-section">
@@ -691,7 +694,6 @@ const GBProductCreatePage = () => {
             {/* 추가 이미지 */}
             <div className="form-field">
               <label>추가 이미지 (최대 4개)</label>
-
               <div className="image-grid">
                 {additionalImages.map((img, index) => (
                   <div key={index} className="image-slot preview">
@@ -706,7 +708,6 @@ const GBProductCreatePage = () => {
                     </button>
                   </div>
                 ))}
-
                 {additionalImages.length < 4 && (
                   <div className="image-slot">
                     <input
@@ -747,14 +748,12 @@ const GBProductCreatePage = () => {
             </div>
           </section>
 
+          {/* 상세설명 이미지 */}
           <section className="form-section">
             <h3 className="section-title">상품 상세설명 이미지</h3>
-
             <div className="form-field">
               <label>상세설명 이미지 (최대 4개)</label>
-
               <div className="image-grid">
-                {/* 미리보기 */}
                 {detailImages.map((img, index) => (
                   <div key={index} className="image-slot preview">
                     <img src={URL.createObjectURL(img)} alt={`detail-${index}`} />
@@ -768,8 +767,6 @@ const GBProductCreatePage = () => {
                     </button>
                   </div>
                 ))}
-
-                {/* 추가 버튼 (4개 미만일 때만) */}
                 {detailImages.length < 4 && (
                   <div className="image-slot">
                     <input
@@ -797,11 +794,9 @@ const GBProductCreatePage = () => {
             </div>
           </section>
 
-
           {/* 옵션 정보 */}
           <section className="form-section">
             <h3 className="section-title">옵션 정보</h3>
-
             {optionGroups.length > 0 && (
               <div className="options-table">
                 {optionGroups.map((group) => (
@@ -823,7 +818,6 @@ const GBProductCreatePage = () => {
                         }
                       </div>
                     </div>
-
                     {expandedGroup === group.id && (
                       <div className="option-group-details">
                         {group.options.map((opt, index) => (
@@ -849,7 +843,6 @@ const GBProductCreatePage = () => {
                 ))}
               </div>
             )}
-
             <button
               className="add-btn"
               onClick={() => setShowOptionModal(true)}
@@ -861,9 +854,7 @@ const GBProductCreatePage = () => {
           {/* 판매 정보 */}
           <section className="form-section">
             <h3 className="section-title">판매 정보 및 가격 계산</h3>
-
             <div className="price-calc-grid">
-
               <div className="form-field">
                 <label>원가 ($) *</label>
                 <input
@@ -874,7 +865,6 @@ const GBProductCreatePage = () => {
                   onChange={(e) => updateField('originalPrice', e.target.value)}
                 />
               </div>
-
               <div className="form-field">
                 <label>해외 배송비 ($) *</label>
                 <input
@@ -885,7 +875,6 @@ const GBProductCreatePage = () => {
                   onChange={(e) => updateField('shippingCost', e.target.value)}
                 />
               </div>
-
               <div className="form-field full-width">
                 <label>환율 (₩/$)</label>
                 <div className="exchange-rate-box">
@@ -911,7 +900,6 @@ const GBProductCreatePage = () => {
                 </div>
                 <small className="field-hint">현재 환율 자동 적용 (실시간)</small>
               </div>
-
               <div className="form-field">
                 <label>예상 참여 인원 *</label>
                 <div className="calc-counter">
@@ -937,7 +925,6 @@ const GBProductCreatePage = () => {
                   </button>
                 </div>
               </div>
-
               <div className="form-field">
                 <label>수수료</label>
                 <input
@@ -947,7 +934,6 @@ const GBProductCreatePage = () => {
                   style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
                 />
               </div>
-
               <div className="form-field full-width">
                 <label>국내 배송비 (₩)</label>
                 <input
@@ -1010,30 +996,23 @@ const GBProductCreatePage = () => {
           <section className="form-section">
             <h3 className="section-title">공구 정보</h3>
 
+            {/* ✅ 제안 번호 필드 */}
             <div className="form-field">
-              <label>제안 번호 및 제안 url</label>
+              <label>제안 번호 / URL</label>
               <input
                 type="text"
                 placeholder="제안 번호 또는 URL을 입력하세요 (예: 123 또는 /proposal/123)"
-                value={formData.proposalNumber}
-                onChange={(e) => updateField('proposalNumber', e.target.value)}
+                value={formData.proposalId}
+                onChange={(e) => updateField('proposalId', e.target.value)}
+                disabled={!!searchParams.get('proposalId')}  // URL로 받은 경우 수정 불가
+                style={{
+                  backgroundColor: searchParams.get('proposalId') ? '#f3f4f6' : 'white'
+                }}
               />
               <small className="field-hint">
                 제안 번호만 입력하거나, 제안 페이지 URL을 복붙하세요.
               </small>
             </div>
-
-            {/* ✅ 제안 페이지 바로가기 버튼 (있을 때만) */}
-            {formData.proposalNumber && (
-              <a
-                href={`/proposal/${extractNumberOnly(formData.proposalNumber)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="proposal-link-btn"
-              >
-                📋 제안 페이지 보기
-              </a>
-            )}
 
             <div className="form-field">
               <label>최소 인원</label>
@@ -1059,8 +1038,6 @@ const GBProductCreatePage = () => {
           {/* 배송 정보 */}
           <section className="form-section">
             <h3 className="section-title">배송 정보</h3>
-
-            {/* 배송 방법 (Enum) */}
             <div className="form-field">
               <label>배송 방법</label>
               <select
@@ -1071,8 +1048,6 @@ const GBProductCreatePage = () => {
                 <option value="FREE">무료</option>
               </select>
             </div>
-
-
           </section>
 
         </div>

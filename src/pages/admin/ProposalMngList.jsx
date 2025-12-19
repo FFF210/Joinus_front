@@ -192,6 +192,7 @@ const ProposalMngList = () => {
                       <td>{proposal.voteCount}</td>
                       <td
                         className="title-cell"
+                        onClick={() => navigate(`/admin/proposalDetailAdmin/${proposal.id}`)}
                         style={{ cursor: 'pointer' }}
                       >
                         {proposal.productName}

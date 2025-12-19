@@ -309,7 +309,7 @@ function AppContent() {
               </ProtectedRoute>
             } />
             {/* ?�안 ?�테??관리자 ?�면 */}
-            <Route path="/admin/proposalDetailAdmin" element={
+            <Route path="/admin/proposalDetailAdmin/:id" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_MANAGER']}>
                 <ProposalDetailAdmin />
               </ProtectedRoute>

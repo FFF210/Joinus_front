@@ -4,7 +4,6 @@ import { myAxios } from '../../config';
 import AdminHeader from '../../components/layout/AdminHeader';
 import SearchFilter from './SearchFilter';
 import ParticipantsModal from './ParticipantsModal';
-import NotificationModal from './NotificationModal';
 import '../../styles/components/button.css';
 import '../../styles/components/table.css';
 import './admin-common.css';
@@ -18,7 +17,6 @@ export default function GbProductMngList() {
   const [activeTab, setActiveTab] = useState('ONGOING');
   const [sortBy, setSortBy] = useState('시작날짜-최신순');
   const [selectedItems, setSelectedItems] = useState([]);
-  const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showParticipantsModal, setShowParticipantsModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
 
@@ -150,24 +148,6 @@ export default function GbProductMngList() {
     setPagination(prev => ({ ...prev, page: 0 }));
   };
 
-  // 체크박스 전체 선택/해제
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedItems(gbProducts.map(p => p.id));
-    } else {
-      setSelectedItems([]);
-    }
-  };
-
-  // 개별 체크박스
-  const handleSelectItem = (id) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter(item => item !== id));
-    } else {
-      setSelectedItems([...selectedItems, id]);
-    }
-  };
-
   // 새 창 열기
   const handleOpenCreateWindow = () => {
     window.open(
@@ -198,16 +178,6 @@ export default function GbProductMngList() {
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
-
-  // 알림 발송
-  const handleNotification = () => {
-    if (selectedItems.length === 0) {
-      alert('알림을 발송할 공구를 선택해주세요.');
-      return;
-    }
-    setShowNotificationModal(true);
-  };
-
 
 
   return (
@@ -298,13 +268,6 @@ export default function GbProductMngList() {
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th>
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.length === gbProducts.length && gbProducts.length > 0}
-                        onChange={handleSelectAll}
-                      />
-                    </th>
                     <th>현재 인원</th>
                     <th>상태</th>
                     <th>공구 코드</th>
@@ -318,13 +281,6 @@ export default function GbProductMngList() {
                 <tbody>
                   {gbProducts.map((product) => (
                     <tr key={product.id}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selectedItems.includes(product.id)}
-                          onChange={() => handleSelectItem(product.id)}
-                        />
-                      </td>
                       <td>{product.participants || 0}</td>
                       <td>
                         <span className={`status-badge ${product.status === 'ONGOING' ? 'blue' :
@@ -383,12 +339,6 @@ export default function GbProductMngList() {
           {/* 하단 버튼 영역 */}
           <div className="bottom-actions">
             <button
-              className="admin-button secondary"
-              onClick={handleNotification}
-            >
-              알림 발송
-            </button>
-            <button
               className="admin-button primary"
               onClick={handleOpenCreateWindow}
             >
@@ -410,18 +360,6 @@ export default function GbProductMngList() {
           </div>
         </div>
       </div>
-
-      {showNotificationModal && (
-        <NotificationModal
-          selectedProducts={gbProducts.filter(p => selectedItems.includes(p.id))}
-          onClose={() => setShowNotificationModal(false)}
-          onSend={(data) => {
-            console.log('알림 발송:', data);
-            setShowNotificationModal(false);
-            setSelectedItems([]);
-          }}
-        />
-      )}
 
       {showParticipantsModal && (
         <ParticipantsModal
