@@ -19,7 +19,7 @@ const username = userInfo?.username;
 
     // 댓글 등록 함수
     const submit = () => {
-if (!username) return alert("로그인이 필요합니다.");
+      if (!username) return alert("로그인이 필요합니다.");
 
 
       myAxios().post("/writeComment", {
