@@ -38,15 +38,12 @@ export default function ShopCartList() {
     fetchCartList();
   }, []);
 
-<<<<<<< HEAD
+
   // ⭐ 현재 페이지 데이터
   const pagedCartList = cartList.slice(
     page * size,
     page * size + size
   );
-
-=======
->>>>>>> 7eb31d3 (.)
 
   const handlePay = (item) => {
     navigate(`/pay/${item.productId}`, {
