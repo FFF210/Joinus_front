@@ -46,10 +46,10 @@ export default function OAuthTokenHandler() {
         
         // 토큰 저장
         if (tokenData.access_token) {
-          localStorage.setItem('access_token', tokenData.access_token);
+          sessionStorage.setItem('access_token', tokenData.access_token);
         }
         if (tokenData.refresh_token) {
-          localStorage.setItem('refresh_token', tokenData.refresh_token);
+          sessionStorage.setItem('refresh_token', tokenData.refresh_token);
         }
 
         // 사용자 정보 가져오기
@@ -59,7 +59,7 @@ export default function OAuthTokenHandler() {
         const response = await myAxios().post('/user');
         if (response.status === 200) {
           userInfo = response.data;
-          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+          sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
         }
         } catch (error) {
           console.warn('사용자 정보 가져오기 실패:', error);

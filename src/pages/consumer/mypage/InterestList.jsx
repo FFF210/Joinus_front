@@ -7,7 +7,7 @@ import { baseUrl } from "../../../config";
 
 export default function InterestList() {
     // 로그인 유저 정보 (추가)
-const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
 const username = userInfo?.username;
 
     const [interestList, setInterestList] = useState([]);
@@ -60,7 +60,7 @@ const username = userInfo?.username;
 
   const deleteInterest = async (id) => {
     try {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
         const username = userInfo?.username;
 
         await myAxios().post("/deleteWish", { id, username });

@@ -43,13 +43,13 @@ export default function Login() {
     const authHeader = response.headers.get('Authorization');
     if (authHeader) {
       const tokenData = JSON.parse(authHeader);
-      localStorage.setItem('access_token', tokenData.access_token);
-      localStorage.setItem('refresh_token', tokenData.refresh_token);
+      sessionStorage.setItem('access_token', tokenData.access_token);
+      sessionStorage.setItem('refresh_token', tokenData.refresh_token);
     }
 
     // 응답 body에서 사용자 정보 가져오기
     const userInfo = await response.json();
-    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
 
     // ROLE에 따라 리다이렉트 분기
     const userRole = userInfo.roles;

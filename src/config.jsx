@@ -2,10 +2,10 @@ import axios from "axios";
 export const baseUrl = "http://localhost:8080";
 export const reactUrl = "http://localhost:5173";
 
-// localStorage에서 토큰을 가져와서 Authorization 헤더에 추가하는 헬퍼 함수
+// sessionStorage에서 토큰을 가져와서 Authorization 헤더에 추가하는 헬퍼 함수
 const getAuthHeader = () => {
-    const accessToken = localStorage.getItem('access_token');
-    const refreshToken = localStorage.getItem('refresh_token');
+    const accessToken = sessionStorage.getItem('access_token');
+    const refreshToken = sessionStorage.getItem('refresh_token');
     
     if (accessToken && refreshToken) {
         const tokenData = {
@@ -31,6 +31,8 @@ export const apiFetch = async (url, options = {}) => {
         headers['Authorization'] = authToken;
     }
     
+    // 서버에 비동기로 요청 보내고 응답을 기다릴 때 await fetch를 사용
+    // 즉, 서버에서 데이터 받을 때까지 멈췄다가 응답을 처리합니다.
     const response = await fetch(`${baseUrl}${url}`, {
         ...options,
         headers,
@@ -38,9 +40,9 @@ export const apiFetch = async (url, options = {}) => {
     
     // 401, 403 에러 시 로그인 페이지로 리다이렉트
     if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('userInfo');
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('refresh_token');
+        sessionStorage.removeItem('userInfo');
         window.location.href = `${reactUrl}/login`;
         throw new Error('인증이 필요합니다.');
     }
@@ -48,7 +50,7 @@ export const apiFetch = async (url, options = {}) => {
     return response;
 };
 
-// localStorage에서 토큰을 가져와서 Authorization 헤더에 자동으로 추가하는 axios 인스턴스
+// sessionStorage 토큰을 가져와서 Authorization 헤더에 자동으로 추가하는 axios 인스턴스
 export const myAxios = () => {
     let instance = axios.create({
         baseURL : baseUrl,
@@ -58,9 +60,9 @@ export const myAxios = () => {
     // Request Interceptor: 모든 요청 전에 토큰을 헤더에 추가
     instance.interceptors.request.use(
         (config) => {
-            // localStorage에서 토큰 가져오기
-            const accessToken = localStorage.getItem('access_token');
-            const refreshToken = localStorage.getItem('refresh_token');
+            // sessionStorage 토큰 가져오기
+            const accessToken = sessionStorage.getItem('access_token');
+            const refreshToken = sessionStorage.getItem('refresh_token');
             
             // 토큰이 있으면 JSON 문자열로 만들어서 Authorization 헤더에 추가
             if (accessToken && refreshToken) {
@@ -87,10 +89,10 @@ export const myAxios = () => {
                 try {
                     const tokenData = JSON.parse(authHeader);
                     if (tokenData.access_token) {
-                        localStorage.setItem('access_token', tokenData.access_token);
+                        sessionStorage.setItem('access_token', tokenData.access_token);
                     }
                     if (tokenData.refresh_token) {
-                        localStorage.setItem('refresh_token', tokenData.refresh_token);
+                        sessionStorage.setItem('refresh_token', tokenData.refresh_token);
                     }
                 } catch (e) {
                     console.error('토큰 갱신 실패:', e);
@@ -105,9 +107,9 @@ export const myAxios = () => {
                     case 401: // 인증 실패
                     case 403: // 권한 없음
                         // 토큰 삭제
-                        localStorage.removeItem('access_token');
-                        localStorage.removeItem('refresh_token');
-                        localStorage.removeItem('userInfo');
+                        sessionStorage.removeItem('access_token');
+                        sessionStorage.removeItem('refresh_token');
+                        sessionStorage.removeItem('userInfo');
                         // 로그인 페이지로 리다이렉트
                         window.location.href = `${reactUrl}/login`;
                         break;

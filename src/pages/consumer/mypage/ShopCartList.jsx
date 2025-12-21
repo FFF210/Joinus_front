@@ -11,7 +11,7 @@ export default function ShopCartList() {
   useEffect(() => {
     const fetchCartList = async () => {
       try {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
       const username = userInfo?.username;
         const response = await myAxios().get(`/cartList`, {
           params: { username }
@@ -29,7 +29,7 @@ export default function ShopCartList() {
 
   const deleteCartList = async (cartId) => {
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
       const username = userInfo?.username;
 
       await myAxios().post("/deleteCart",{ id: cartId, memberUsername: username });
