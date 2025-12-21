@@ -39,12 +39,18 @@ export default function AdminLogin() {
         throw new Error('로그인에 실패했습니다.');
       }
 
-      // 응답 헤더에서 Authorization 토큰 가져오기
+      // 응답 헤더에서 Authorization 토큰 가져오기 (표준 Bearer 형식)
       const authHeader = response.headers.get('Authorization');
-      if (authHeader) {
-        const tokenData = JSON.parse(authHeader);
-        sessionStorage.setItem('access_token', tokenData.access_token);
-        sessionStorage.setItem('refresh_token', tokenData.refresh_token);
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const accessToken = authHeader.replace('Bearer ', '');
+        sessionStorage.setItem('access_token', accessToken);
+      }
+      
+      // Refresh Token은 별도 헤더에서
+      const refreshHeader = response.headers.get('X-Refresh-Token');
+      if (refreshHeader && refreshHeader.startsWith('Bearer ')) {
+        const refreshToken = refreshHeader.replace('Bearer ', '');
+        sessionStorage.setItem('refresh_token', refreshToken);
       }
 
       // 응답 body에서 사용자 정보 가져오기

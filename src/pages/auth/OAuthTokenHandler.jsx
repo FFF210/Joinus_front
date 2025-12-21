@@ -41,15 +41,21 @@ export default function OAuthTokenHandler() {
           throw new Error('토큰 교환에 실패했습니다.');
         }
 
-        // 토큰 받기
+        // 토큰 받기 (바디에서 JSON으로 받음)
         const tokenData = await response.json();
         
-        // 토큰 저장
+        // 토큰 저장 (Bearer 접두사 제거)
         if (tokenData.access_token) {
-          sessionStorage.setItem('access_token', tokenData.access_token);
+          const accessToken = tokenData.access_token.startsWith('Bearer ') 
+            ? tokenData.access_token.replace('Bearer ', '') 
+            : tokenData.access_token;
+          sessionStorage.setItem('access_token', accessToken);
         }
         if (tokenData.refresh_token) {
-          sessionStorage.setItem('refresh_token', tokenData.refresh_token);
+          const refreshToken = tokenData.refresh_token.startsWith('Bearer ') 
+            ? tokenData.refresh_token.replace('Bearer ', '') 
+            : tokenData.refresh_token;
+          sessionStorage.setItem('refresh_token', refreshToken);
         }
 
         // 사용자 정보 가져오기

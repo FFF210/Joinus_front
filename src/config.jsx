@@ -2,17 +2,16 @@ import axios from "axios";
 export const baseUrl = "http://localhost:8080";
 export const reactUrl = "http://localhost:5173";
 
-// sessionStorage에서 토큰을 가져와서 Authorization 헤더에 추가하는 헬퍼 함수
+// sessionStorage에서 access token을 가져와서 Bearer 형식으로 반환하는 헬퍼 함수
 const getAuthHeader = () => {
     const accessToken = sessionStorage.getItem('access_token');
-    const refreshToken = sessionStorage.getItem('refresh_token');
     
-    if (accessToken && refreshToken) {
-        const tokenData = {
-            access_token: accessToken,
-            refresh_token: refreshToken
-        };
-        return JSON.stringify(tokenData);
+    if (accessToken) {
+        // Bearer 접두사가 없으면 추가
+        if (accessToken.startsWith('Bearer ')) {
+            return accessToken;
+        }
+        return `Bearer ${accessToken}`;
     }
     return null;
 };
@@ -26,9 +25,19 @@ export const apiFetch = async (url, options = {}) => {
         ...options.headers,
     };
     
-    // 토큰이 있으면 Authorization 헤더에 추가
+    // 표준 방식: Authorization 헤더에 Bearer <access_token>만 추가
     if (authToken) {
         headers['Authorization'] = authToken;
+    }
+    
+    // Refresh Token은 별도 헤더로 (필요한 경우)
+    const refreshToken = sessionStorage.getItem('refresh_token');
+    if (refreshToken) {
+        if (refreshToken.startsWith('Bearer ')) {
+            headers['X-Refresh-Token'] = refreshToken;
+        } else {
+            headers['X-Refresh-Token'] = `Bearer ${refreshToken}`;
+        }
     }
     
     // 서버에 비동기로 요청 보내고 응답을 기다릴 때 await fetch를 사용
@@ -60,17 +69,26 @@ export const myAxios = () => {
     // Request Interceptor: 모든 요청 전에 토큰을 헤더에 추가
     instance.interceptors.request.use(
         (config) => {
-            // sessionStorage 토큰 가져오기
+            // sessionStorage에서 access token 가져오기
             const accessToken = sessionStorage.getItem('access_token');
             const refreshToken = sessionStorage.getItem('refresh_token');
             
-            // 토큰이 있으면 JSON 문자열로 만들어서 Authorization 헤더에 추가
-            if (accessToken && refreshToken) {
-                const tokenData = {
-                    access_token: accessToken,
-                    refresh_token: refreshToken
-                };
-                config.headers.Authorization = JSON.stringify(tokenData);
+            // 표준 방식: Authorization 헤더에는 Bearer <access_token>만
+            if (accessToken) {
+                if (accessToken.startsWith('Bearer ')) {
+                    config.headers.Authorization = accessToken;
+                } else {
+                    config.headers.Authorization = `Bearer ${accessToken}`;
+                }
+            }
+            
+            // Refresh Token은 별도 헤더로 (필요한 경우)
+            if (refreshToken) {
+                if (refreshToken.startsWith('Bearer ')) {
+                    config.headers['X-Refresh-Token'] = refreshToken;
+                } else {
+                    config.headers['X-Refresh-Token'] = `Bearer ${refreshToken}`;
+                }
             }
             
             return config;
@@ -83,21 +101,20 @@ export const myAxios = () => {
     // Response Interceptor: 응답 처리 및 에러 처리
     instance.interceptors.response.use(
         (response) => {
-            // 응답 헤더에 새로운 토큰이 있으면 갱신
+            // 응답 헤더에 새로운 토큰이 있으면 갱신 (표준 Bearer 형식)
             const authHeader = response.headers.authorization || response.headers.Authorization;
-            if (authHeader) {
-                try {
-                    const tokenData = JSON.parse(authHeader);
-                    if (tokenData.access_token) {
-                        sessionStorage.setItem('access_token', tokenData.access_token);
-                    }
-                    if (tokenData.refresh_token) {
-                        sessionStorage.setItem('refresh_token', tokenData.refresh_token);
-                    }
-                } catch (e) {
-                    console.error('토큰 갱신 실패:', e);
-                }
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const accessToken = authHeader.replace('Bearer ', '');
+                sessionStorage.setItem('access_token', accessToken);
             }
+            
+            // Refresh Token은 별도 헤더에서
+            const refreshHeader = response.headers['x-refresh-token'] || response.headers['X-Refresh-Token'];
+            if (refreshHeader && refreshHeader.startsWith('Bearer ')) {
+                const refreshToken = refreshHeader.replace('Bearer ', '');
+                sessionStorage.setItem('refresh_token', refreshToken);
+            }
+            
             return response;
         },
         (error) => {
