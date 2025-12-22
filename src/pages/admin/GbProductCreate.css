@@ -500,14 +500,82 @@
 /* 버튼 스타일은 src/styles/components/button.css 사용 */
 /* 이 페이지 전용 버튼 스타일이 필요한 경우에만 여기에 추가 */
 
-.btn-outline {
+/* ========================================
+   공구 등록 푸터
+   ======================================== */
+.gb-product-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #fff;
+}
+
+/* ========================================
+   공구 등록 버튼 기본
+   ======================================== */
+.gb-product-btn {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+/* ========================================
+   취소 버튼 (회색)
+   ======================================== */
+.gb-product-btn-cancel {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.gb-product-btn-cancel:hover {
+  background-color: #e5e7eb;
+}
+
+/* ========================================
+   저장 버튼 (흰색 테두리)
+   ======================================== */
+.gb-product-btn-save {
   background-color: #ffffff;
   color: #6b7280;
   border: 1px solid #d1d5db;
 }
 
-.btn-outline:hover {
+.gb-product-btn-save:hover {
   background-color: #f9fafb;
+}
+
+/* ========================================
+   미리보기 버튼 (필요 시)
+   ======================================== */
+.gb-product-btn-preview {
+  background-color: #ffffff;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.gb-product-btn-preview:hover {
+  background-color: #f9fafb;
+}
+
+/* ========================================
+   게시 버튼 (파란색)
+   ======================================== */
+.gb-product-btn-submit {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: 1px solid #3b82f6;
+}
+
+.gb-product-btn-submit:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
 }
 
 /* ============================================

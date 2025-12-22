@@ -1061,13 +1061,15 @@ const GBProductCreatePage = () => {
         </div>
 
         {/* 푸터 */}
-        <div className="modal-footer-large">
-          <button className="btn-secondary" onClick={() => window.close()}>취소</button>
-          <button className="btn-outline" onClick={handleSave}>
+        <div className="gb-product-footer">
+          <button className="gb-product-btn gb-product-btn-cancel" onClick={() => window.close()}>
+            취소
+          </button>
+          <button className="gb-product-btn gb-product-btn-save" onClick={handleSave}>
             {isEditMode ? '수정 저장' : '저장'}
           </button>
-          <button className="btn-outline">미리보기</button>
-          <button className="btn-primary" onClick={handleSubmit}>
+          {/* <button className="gb-product-btn gb-product-btn-preview">미리보기</button> */}
+          <button className="gb-product-btn gb-product-btn-submit" onClick={handleSubmit}>
             {isEditMode ? '수정 완료' : '게시'}
           </button>
         </div>
