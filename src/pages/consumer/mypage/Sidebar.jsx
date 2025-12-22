@@ -1,10 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Nav, NavItem } from "reactstrap"; 
 import { NavLink } from "react-router-dom";   
 import "bootstrap/dist/css/bootstrap.min.css";
 import UserInfo from "./UserInfo";
+import axios from "axios";
 
 export default function Sidebar({children}) {
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+  const username = userInfo?.username;
+
+  useEffect(() => {
+    if (!username) return;
+
+    axios
+      .get(`http://localhost:8080/mypage/alert?username=${username}`)
+      .then((res) => {
+        const count = (res.data || []).filter(
+          (a) => !a.readedAt
+        ).length;
+        setUnreadCount(count);
+      })
+      .catch(() => setUnreadCount(0));
+  }, [username]);
   return (<>
     <div
       style={{
@@ -82,8 +101,41 @@ export default function Sidebar({children}) {
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/mypage/alert"  style={{ color: "#000", fontSize:"12px", textDecoration: "none" }}>
+              <NavLink
+                to="/mypage/alert"
+                style={{
+                  color: "#000",
+                  fontSize: "12px",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
                 알림
+                {unreadCount > 0 && (
+                 <span
+  style={{
+    fontSize: "12px",
+    backgroundColor: "#739FF2",
+    color: "#fff",
+    borderRadius: "7px",
+    marginLeft: "-1px",
+
+    minWidth: "18px",
+    height: "18px",
+
+    display: "flex",            
+    alignItems: "center",          
+    justifyContent: "center",      
+
+    fontWeight: "500",
+  }}
+>
+  {unreadCount}
+</span>
+
+                )}
               </NavLink>
             </NavItem>
           </Nav>
