@@ -20,9 +20,15 @@ export default function MypageAlert() {
     if (!username) return;
     axios
       .get(`http://localhost:8080/mypage/alert?username=${username}`)
-      .then((res) => setAlertList(res.data))
-      .catch((err) => console.log(err));
-  };
+.then((res) => {
+      // 최신순(createdAt 내림차순) 정렬 추가
+      const sortedData = (res.data || []).sort((a, b) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setAlertList(sortedData);
+    })
+    .catch((err) => console.log(err));
+};
 
   useEffect(() => {
     getAlertList();
@@ -154,43 +160,44 @@ export default function MypageAlert() {
       </div>
 
       {/* 페이지네이션 */}
-      <Pagination className="paginationContainer">
-        <PaginationItem disabled={currentPage === 1}>
-          <PaginationLink first onClick={() => handlePageChange(1)} />
-        </PaginationItem>
+     {totalPages > 1 && (
+  <Pagination className="paginationContainer">
+    <PaginationItem disabled={currentPage === 1}>
+      <PaginationLink first onClick={() => handlePageChange(1)} />
+    </PaginationItem>
 
-        <PaginationItem disabled={currentPage === 1}>
-          <PaginationLink
-            previous
-            onClick={() => handlePageChange(currentPage - 1)}
-          />
-        </PaginationItem>
+    <PaginationItem disabled={currentPage === 1}>
+      <PaginationLink
+        previous
+        onClick={() => handlePageChange(currentPage - 1)}
+      />
+    </PaginationItem>
 
-        {[...Array(totalPages)].map((_, i) => (
-          <PaginationItem key={i} active={currentPage === i + 1}>
-            <PaginationLink onClick={() => handlePageChange(i + 1)}>
-              {i + 1}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
+    {[...Array(totalPages)].map((_, i) => (
+      <PaginationItem key={i} active={currentPage === i + 1}>
+        <PaginationLink onClick={() => handlePageChange(i + 1)}>
+          {i + 1}
+        </PaginationLink>
+      </PaginationItem>
+    ))}
 
-        <PaginationItem disabled={currentPage === totalPages}>
-          <PaginationLink
-            next
-            onClick={() => handlePageChange(currentPage + 1)}
-          />
-        </PaginationItem>
+    <PaginationItem disabled={currentPage === totalPages}>
+      <PaginationLink
+        next
+        onClick={() => handlePageChange(currentPage + 1)}
+      />
+    </PaginationItem>
 
-        <PaginationItem disabled={currentPage === totalPages}>
-          <PaginationLink last onClick={() => handlePageChange(totalPages)} />
-        </PaginationItem>
-      </Pagination>
+    <PaginationItem disabled={currentPage === totalPages}>
+      <PaginationLink last onClick={() => handlePageChange(totalPages)} />
+    </PaginationItem>
+  </Pagination>
+)}
 
       <div className="alert-info-box">
         <div className="alert-info-title">안내사항</div>
-        • 알림은 30일 보관 후 자동 삭제됩니다.
         <br />
-        • 삭제된 알림은 복구할 수 없습니다.
+        삭제된 알림은 복구할 수 없습니다.
       </div>
     </>
   );
