@@ -127,7 +127,7 @@ export default function AdminOrderList() {
                                     <th style={{ width: '60px' }}>수량</th>
                                     <th style={{ width: '100px' }}>공구마감일</th>
                                     <th style={{ width: '100px' }}>가격</th>
-                                    <th style={{ width: '100px' }}>관리자 주문번호</th>
+                                    {/* <th style={{ width: '100px' }}>관리자 주문번호</th> */}
                                     <th style={{ width: '100px' }}>관리자 주문일</th>
                                 </tr>
                             </thead>
@@ -156,11 +156,11 @@ export default function AdminOrderList() {
                                                     : 'N/A'}
                                             </td>
                                             <td>{order.totalAmount?.toLocaleString()}원</td>
-                                            <td>
+                                            {/* <td>
                                                 {order.adminOrderId || (
                                                     <span style={{ color: '#999' }}>입력 필요</span>
                                                 )}
-                                            </td>
+                                            </td> */}
                                             <td>
                                                 {order.adminOrderDt
                                                     ? order.adminOrderDt.substring(0, 10).replace(/-/g, '.')
