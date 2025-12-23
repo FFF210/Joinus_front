@@ -4,6 +4,13 @@ import axios from "axios";
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
 
 export default function MypageAlert() {
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  return dateStr.substring(0, 10); // YYYY-MM-DD
+};
+
+
   const [alertList, setAlertList] = useState([]);
   const [openedIds, setOpenedIds] = useState([]);
   const [readUiIds, setReadUiIds] = useState([]);
@@ -22,9 +29,17 @@ export default function MypageAlert() {
       .get(`http://localhost:8080/mypage/alert?username=${username}`)
 .then((res) => {
       // 최신순(createdAt 내림차순) 정렬 추가
-      const sortedData = (res.data || []).sort((a, b) => 
-        new Date(b.createdAt) - new Date(a.createdAt)
-      );
+     const sortedData = (res.data || []).sort((a, b) => {
+  const aUnread = !a.readedAt;
+  const bUnread = !b.readedAt;
+
+  // 1️⃣ 안읽은 게 위
+  if (aUnread && !bUnread) return -1;
+  if (!aUnread && bUnread) return 1;
+
+  // 2️⃣ 같은 그룹 안에서는 최신순
+  return new Date(b.createdAt) - new Date(a.createdAt);
+});
       setAlertList(sortedData);
     })
     .catch((err) => console.log(err));
@@ -132,7 +147,7 @@ export default function MypageAlert() {
                         )}
                       </div>
                       <div className="alert-date">
-                        {alert.createdAt}
+                        {formatDate(alert.createdAt)}
                       </div>
                     </div>
                   </div>

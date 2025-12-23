@@ -18,6 +18,8 @@ const username = userInfo?.username;
     // 🔹 사용 포인트
     const [usingPoint, setUsingPoint] = useState(0);
 
+    // const [address, setAddress] = useState
+
     const [shipRecipient, setShipRecipient] = useState("");
     const [phone, setPhone] = useState("");
     const [postcode, setPostcode] = useState("");
@@ -27,6 +29,23 @@ const username = userInfo?.username;
     const [addressDetail, setAddressDetail] = useState("");
     const [accessInstructions, setAccessInstructions] = useState("");
     const [note, setNote] = useState("");
+
+    //기존 배송지 목록 상태 추가
+    const [addressList, setAddressList] = useState([]);
+    const [selectedAddressName, setSelectedAddressName] = useState("");
+
+    //
+    const resetAddress = () => {
+        setShipRecipient("");
+        setName("");
+        setPhone("");
+        setPostcode("");
+        setStreetAddress("");
+        setAddressDetail("");
+        setEmail(userInfo?.email || "");
+        setAccessInstructions("");
+        setNote("");
+    };
     // Pay 내부 상태
     const [optionIds, setOptionIds] = useState(
         selectedOptionsFromDetail?.map(opt => opt.optionId) || []
@@ -48,8 +67,8 @@ const username = userInfo?.username;
 
     const getMemberPoint = () => {
         myAxios().get("/member/detail", { 
-  params: { username } 
-})
+            params: { username } 
+        })
 
         .then(res => {
             console.log(res.data);
@@ -59,6 +78,79 @@ const username = userInfo?.username;
         console.log("회원 포인트 조회 실패", err);
         });
     };
+
+    // const getAddress = () => {
+    //     myAxios().get("/getAddress", {
+    //         params: { username }
+    //     })
+    //     .then(res => {
+    //         console.log("기존 배송지 데이터:", res.data);
+    //         // 예: 첫 번째 주소를 세팅
+    //         if(res.data.length > 0){
+    //             const addr = res.data[0];
+    //             setShipRecipient(addr.addressName);      // 배송지명
+    //             setName(addr.recipientName);             // 수령자 이름
+    //             setPhone(addr.phone);
+    //             setPostcode(addr.postcode);
+    //             setStreetAddress(addr.streetAddress);
+    //             setAddressDetail(addr.addressDetail);
+    //             setEmail(userInfo?.email || "");        // 이메일은 세션에서 가져올 수도 있음
+    //             setAccessInstructions(addr.accessInstructions);
+    //             setNote("");                             // 요청사항은 초기화
+    //         }
+    //     })
+    //     .catch(err => {
+    //         console.log("기존 배송지 조회 실패", err);
+    //     });
+    // }
+    const getAddress = () => {
+        myAxios().get("/getAddress", {
+            params: { username }
+        })
+        .then(res => {
+            console.log("기존 배송지 데이터:", res.data);
+            setAddressList(res.data);
+
+            // 기본 배송지 자동 선택 (있다면)
+            const defaultAddr = res.data.find(a => a.defaultAddress);
+            if (defaultAddr) {
+                setSelectedAddressName(defaultAddr.addressName);
+            }
+        })
+        .catch(err => {
+            console.log("기존 배송지 조회 실패", err);
+        });
+    };
+
+    useEffect(() => {
+        if (!selectedAddressName) return;
+
+        const selected = addressList.find(
+            addr => addr.addressName === selectedAddressName
+        );
+
+        if (!selected) return;
+
+        setShipRecipient(selected.addressName);
+        setName(selected.recipientName);
+        setPhone(selected.phone);
+        setPostcode(selected.postcode);
+        setStreetAddress(selected.streetAddress);
+        setAddressDetail(selected.addressDetail);
+        setAccessInstructions(selected.accessInstructions);
+        setEmail(userInfo?.email || "");
+        setNote("");
+    }, [selectedAddressName, addressList]);
+
+    useEffect(() => {
+        if(addressType === "old"){
+            getAddress();
+        }
+
+        if (addressType === "new") {
+            resetAddress();   // ⭐ 핵심
+        }
+    }, [addressType]);
     
     //상품 상세 조회
     const getProduct =()=>{
@@ -150,6 +242,7 @@ const username = userInfo?.username;
         }
         return true;
     };
+    
 
 
     return(
@@ -227,9 +320,19 @@ const username = userInfo?.username;
 
                             {addressType === "old" && (
                                 <FormGroup>
-                                <Input type="select" style={{ fontSize: "12px", width: "100px" }}>
-                                    <option>집으로</option>
-                                </Input>
+                                    <Input
+                                        type="select"
+                                        value={selectedAddressName}
+                                        onChange={(e) => setSelectedAddressName(e.target.value)}
+                                        style={{ fontSize: "12px", width: "150px" }}
+                                    >
+                                        <option value="">배송지 선택</option>
+                                        {addressList.map(addr => (
+                                            <option key={addr.id} value={addr.addressName}>
+                                                {addr.addressName}
+                                            </option>
+                                        ))}
+                                    </Input>
                                 </FormGroup>
                             )}
                             </div>
@@ -319,7 +422,7 @@ const username = userInfo?.username;
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 style={{ fontSize: "12px", height: "20px" }}
-                                placeholder="전화번호 입력"
+                                placeholder="예) 010-1234-5678"
                             />
                             </div>
                         </div>
