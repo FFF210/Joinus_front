@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { myAxios } from '../../config';
+import { getNoticeImageUrl } from '../../services/csApi';
 import AdminHeader from '../../components/layout/AdminHeader';
 import { X, Download, File } from 'lucide-react';
 import '../../styles/components/button.css';
@@ -15,31 +16,44 @@ const NoticeForm = () => {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    files: []  // images → files로 변경
+    files: []
   });
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   // 파일 미리보기 정보
   const [filePreviews, setFilePreviews] = useState([]);
 
   useEffect(() => {
-    if (isEdit) {
-      const fetchNotice = async () => {
-        try {
-          const response = await myAxios().get(`/admin/noticeDetail/${id}`);
-          const data = response.data;
-          setFormData({
-            title: data.title,
-            content: data.content,
-            files: []
-          });
-        } catch (error) {
-          console.error("데이터 불러오기 실패:", error);
-          alert("공지사항을 불러올 수 없습니다.");
-        }
-      };
-      fetchNotice();
+    // 새 글 작성 진입 시 상태 초기화
+    if (!id) {
+      setFormData({ title: '', content: '', files: [] });
+      setFilePreviews([]);
+      setPreviewUrl(null);
+      return;
     }
-  }, [id, isEdit]);
+
+    const fetchNotice = async () => {
+      try {
+        const response = await myAxios().get(`/admin/noticeDetail/${id}`);
+        const data = response.data;
+        setFormData({
+          title: data.title,
+          content: data.content,
+          files: [] // 기존 파일은 미리보기만 노출
+        });
+        if (data.image1FileId) {
+          setPreviewUrl(getNoticeImageUrl(data.image1FileId));
+        } else {
+          setPreviewUrl(null);
+        }
+      } catch (error) {
+        console.error("데이터 불러오기 실패:", error);
+        alert("공지사항을 불러올 수 없습니다.");
+      }
+    };
+
+    fetchNotice();
+  }, [id]);
 
   // 컴포넌트 언마운트 시 URL 정리
   useEffect(() => {
@@ -137,18 +151,26 @@ const NoticeForm = () => {
     });
 
     try {
-      if (isEdit) {
-        await myAxios().post(`/admin/noticeUpdate/${id}`, data, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        alert("수정되었습니다.");
-      } else {
-        await myAxios().post('/admin/noticeForm', data, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        alert("등록되었습니다.");
+      const response = isEdit
+        ? await myAxios().post(`/admin/noticeUpdate/${id}`, data, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
+        : await myAxios().post('/admin/noticeForm', data, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+
+      // 백엔드 응답에서 notice id 추출
+      let noticeId = response?.data?.id ?? response?.data?.noticeId;
+      if (!noticeId && typeof response?.data === 'string') {
+        const match = response.data.match(/(\d+)/);
+        if (match) noticeId = match[1];
       }
-      navigate('/admin/noticeList');
+      if (!noticeId && isEdit) {
+        noticeId = id; // fallback
+      }
+
+      alert(isEdit ? "수정되었습니다." : "등록되었습니다.");
+      navigate(`/cs/notice/${noticeId}`);
     } catch (error) {
       console.error("공지사항 등록 실패:", error);
       if (error.response && error.response.data) {
