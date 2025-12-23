@@ -23,7 +23,7 @@ const GBProductCreatePage = () => {
     endDate: '',
     category: '',
     productName: '',
-    proposalId: '',  // ✅ proposalId로 통일!
+    proposalId: '',  // proposalId로 통일
     siteUrl: '',
     description: '',
     originalPrice: '',
@@ -272,7 +272,7 @@ const GBProductCreatePage = () => {
       productFormData.append('note', formData.productMemo);
       productFormData.append('status', isEditMode ? formData.status : 'DRAFT');
 
-      // ✅ proposalId 추가
+      // proposalId 추가
       if (formData.proposalId) {
         productFormData.append('proposalId', extractProposalId(formData.proposalId));
       }
@@ -542,7 +542,7 @@ const GBProductCreatePage = () => {
     <div className="gb-product-create-page">
       <div className="create-container">
 
-        {/* ✅ 수정 배너 */}
+        {/* 수정 배너 */}
         {isEditMode && productId && (
           <div className="edit-banner">
             <div className="edit-banner-icon">📝</div>
@@ -556,7 +556,7 @@ const GBProductCreatePage = () => {
           </div>
         )}
 
-        {/* ✅ 제안 기반 등록 배너 */}
+        {/* 제안 기반 등록 배너 */}
         {formData.proposalId && (
           <div style={{
             padding: '16px',
@@ -1004,7 +1004,7 @@ const GBProductCreatePage = () => {
           <section className="form-section">
             <h3 className="section-title">공구 정보</h3>
 
-            {/* ✅ 제안 번호 필드 */}
+            {/* 제안 번호 필드 */}
             <div className="form-field">
               <label>제안 번호 / URL</label>
               <input

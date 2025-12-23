@@ -8,7 +8,7 @@ import './AdminInquiryDetail.css';
 
 const AdminInquiryDetail = () => {
   const navigate = useNavigate();
-  const { type, id } = useParams();  // ✅ type, id 받기
+  const { type, id } = useParams();  //  type, id 받기
   
   const [inquiry, setInquiry] = useState(null);
   const [answer, setAnswer] = useState('');
@@ -21,7 +21,6 @@ const AdminInquiryDetail = () => {
     const fetchInquiry = async () => {
       try {
         setLoading(true);
-        // ✅ 수정된 URL
         const response = await myAxios().get(`/admin/inquiryDetail/${type}/${id}`);
         setInquiry(response.data);
         setAnswer(response.data.answer || '');
@@ -46,7 +45,6 @@ const AdminInquiryDetail = () => {
     }
 
     try {
-      // ✅ 수정된 URL
       await myAxios().post(`/admin/inquiryDetail/${type}/${id}/answer`, {
         answer: answer
       });

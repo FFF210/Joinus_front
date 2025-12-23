@@ -14,7 +14,7 @@ export default function ProposalDetailAdmin() {
   const [voteCount, setVoteCount] = useState(0);
   const [isDdabong, setIsDdabong] = useState(false);
 
-  const [comment, setComment] = useState('');     
+  const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
 
   const [reason, setReason] = useState("");
@@ -49,7 +49,7 @@ export default function ProposalDetailAdmin() {
   };
 
   // ========================================
-  // 공구 등록 페이지로 이동 (이 부분 추가했습니다.)
+  // 공구 등록 페이지로 이동 (이 부분 추가)
   // ========================================
   const handleCreateGbProduct = () => {
     console.log('========== 공구 등록 버튼 클릭 ==========');
@@ -69,7 +69,6 @@ export default function ProposalDetailAdmin() {
       'width=1400,height=900'
     );
   };
-  // ============================================
 
   // ========================================
   // 반려 처리
@@ -85,7 +84,7 @@ export default function ProposalDetailAdmin() {
     }
 
     try {
-      console.log('========== 반려 처리 시작 ==========');
+      console.log('========== 반려 처리 ==========');
       console.log('제안 ID:', id);
       console.log('반려 사유:', reason);
 
@@ -106,51 +105,6 @@ export default function ProposalDetailAdmin() {
   };
 
   // ========================================
-// 댓글 등록
-// ========================================
-const submit = () => {
-  const userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
-  const memberUsername = userInfo.username;
-  
-  if (!memberUsername) {
-    alert("로그인이 필요합니다.");
-    return;
-  }
-
-  myAxios().post("/writeComment", {
-    proposalId: id,
-    memberUsername: memberUsername,
-    content: comment
-  })
-  .then(res => {
-    console.log(res);
-    setComment('');
-    getComment();
-  })
-  .catch(err => console.log(err));
-};
-
-
-// ========================================
-// 댓글 조회
-// ========================================
-const getComment = () => {
-  myAxios().get(`getComment/${id}`)
-  .then(res => {
-    console.log(res);
-    setComments(res.data);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-};
-
-useEffect(() => {
-  getComment();
-}, [id]);
-
-
-  // ========================================
   // 공구 상세 페이지로 이동
   // ========================================
   const handleGoToGbProduct = () => {
@@ -158,6 +112,53 @@ useEffect(() => {
       navigate(`/gbProductDetail/${proposal.gbProductId}`);
     }
   };
+
+
+  // ========================================
+  // 댓글 등록
+  // ========================================
+  const submit = () => {
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
+    const memberUsername = userInfo.username;
+
+    if (!memberUsername) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    myAxios().post("/writeComment", {
+      proposalId: id,
+      memberUsername: memberUsername,
+      content: comment
+    })
+      .then(res => {
+        console.log(res);
+        setComment('');
+        getComment();
+      })
+      .catch(err => console.log(err));
+  };
+
+
+  // ========================================
+  // 댓글 조회
+  // ========================================
+  const getComment = () => {
+    myAxios().get(`getComment/${id}`)
+      .then(res => {
+        console.log(res);
+        setComments(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getComment();
+  }, [id]);
+
+
 
   return (
     <>
@@ -235,13 +236,20 @@ useEffect(() => {
                     {proposal.gbProductId ? (
                       // 승인된 경우 → 공구 상세 보기
                       <>
-                        <div className="fw-bold" style={{ fontSize: '14px' }}>공구 상세 URL</div>
-                        <Button
-                          style={{ backgroundColor: '#739FF2', width: "100px", height: "25px", fontSize: "12px", padding: "0", border: 'none' }}
-                          onClick={() => navigate(`/gbProductDetail/${proposal.gbProductId}`)}
-                        >
-                          공구 상세 보기
-                        </Button>
+                          <Button
+                            style={{
+                              backgroundColor: '#0057FA',
+                              width: "100%",
+                              height: "40px",
+                              fontSize: "14px",
+                              padding: "0 14px",
+                              border: 'none',
+                              fontWeight: 'bold',
+                            }}
+                            onClick={() => navigate(`/gbProductDetail/${proposal.gbProductId}`)}
+                          >
+                            공구 바로가기
+                          </Button>
                       </>
                     ) : proposal.rejectReason ? (
                       // 반려된 경우 → 반려 사유 표시
@@ -269,7 +277,7 @@ useEffect(() => {
                           type="textarea"
                           value={reason}
                           onChange={(e) => setReason(e.target.value)}
-                          placeholder="반려 사유를 입력하세요"
+                          placeholder="반려일 경우 반려 사유를, 공구 등록일 경우 등록한 공구상품의 url을 입력하세요."
                           style={{ border: '1px solid black', width: '100%', height: '60px', backgroundColor: 'white', resize: 'none', fontSize: '12px' }}
                           maxLength={500}
                         />
@@ -277,12 +285,12 @@ useEffect(() => {
                           {reason.length}/500자
                         </small>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', gap: '10px' }}>
-                          <Button
+                          {/* <Button
                            style={{ fontSize: '12px', backgroundColor: '#739FF2', color: 'white', border: 'none' }}
                             onClick={handleCreateGbProduct}
                           >
                             공구 주소 등록
-                          </Button>
+                          </Button> */}
                           <Button
                             onClick={handleReject}
                             style={{ fontSize: '12px', backgroundColor: '#F55F5F', color: 'white', border: 'none' }}
@@ -303,7 +311,7 @@ useEffect(() => {
                   >
                     {isDdabong ? "취소하기" : "투표하기"}
                   </Button>
-                  <Button style={{ backgroundColor: '#739FF2', width: "120px", height: "35px", fontSize: "16px", padding: "0", border: 'none' }}
+                  <Button style={{ backgroundColor: '#0057FA', width: "120px", height: "35px", fontSize: "16px", padding: "0", border: 'none' }}
                     onClick={handleCreateGbProduct}
                   >공구 등록</Button>
                 </div>
@@ -335,24 +343,24 @@ useEffect(() => {
           ======================================== */}
       <div style={styles.pageWrapper}>
         <div style={styles.container}>
-          <hr style={{ alignItems:'center', margin:'10px 0 10px 0' }} />
+          <hr style={{ alignItems: 'center', margin: '10px 0 10px 0' }} />
           {comments.map((c) => (
-            <div key={c.id} style={{ marginBottom:'15px' }}>
-              <div style={{ padding:'0 10px', display:'flex', alignContent:'center', marginBottom:'10px' }}>
-                <div style={{ marginRight:'10px' }}>{c.memberNickname}</div>
-                <img 
-                  src={`/grade/${c.grade.charAt(0) + c.grade.slice(1).toLowerCase()}.png`} 
-                  style={{ width:'25px' }}
+            <div key={c.id} style={{ marginBottom: '15px' }}>
+              <div style={{ padding: '0 10px', display: 'flex', alignContent: 'center', marginBottom: '10px' }}>
+                <div style={{ marginRight: '10px' }}>{c.memberNickname}</div>
+                <img
+                  src={`/grade/${c.grade.charAt(0) + c.grade.slice(1).toLowerCase()}.png`}
+                  style={{ width: '25px' }}
                 />
               </div>
-              <div style={{ padding:'0 10px' }}>{c.createdAt}</div>
-              <div style={{ padding:'0 10px' }}>{c.content}</div>
-              <hr style={{ alignItems:'center', margin:'10px 0 10px 0' }} />
+              <div style={{ padding: '0 10px' }}>{c.createdAt}</div>
+              <div style={{ padding: '0 10px' }}>{c.content}</div>
+              <hr style={{ alignItems: 'center', margin: '10px 0 10px 0' }} />
             </div>
           ))}
         </div>
       </div>
-      
+
       {/* ========================================
           댓글 작성
           ======================================== */}
@@ -368,7 +376,7 @@ useEffect(() => {
             <label style={{ fontWeight: 'bold', fontSize: '14px', color: '#333' }}>
               댓글 작성
             </label>
-            
+
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
