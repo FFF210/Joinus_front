@@ -1,12 +1,11 @@
 import { Label, Button, Input, FormGroup} from "reactstrap";
-import { Link ,useParams, useNavigate} from "react-router-dom";
+import { Link ,useParams} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { baseUrl, myAxios } from "../../../config";
 
 export default function ProposalDetailConsumar() {
-  const navigate = useNavigate();
   const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-  const username = userInfo?.username;
+const username = userInfo?.username;
     const {id} = useParams();
     const [proposal, setPropsal] = useState({id:id,category:'',description:'',productName:'',memberName:'',originalPrice:'',createdAt:'',originalSiteUrl:'',abroadShippingCost:'',imageUrl:'', gbProductId:'', rejectReason:'', status:'', memberUsername:'' });
     const total = 15;
@@ -199,8 +198,7 @@ export default function ProposalDetailConsumar() {
                               {proposal.gbProductId ? (
                                 <>
                                 <div className="fw-bold" style={{fontSize:'14px'}}>공구 상세 URL</div>
-                                <Button style={{backgroundColor:'#739FF2', width:"70px", height:"25px", fontSize:"12px", padding:"0", border:'none'}}
-                                onClick={() => navigate(`/gbProductDetail/${proposal.gbProductId}`)}>바로가기</Button>
+                                <Button style={{backgroundColor:'#739FF2', width:"70px", height:"25px", fontSize:"12px", padding:"0", border:'none'}}>바로가기</Button>
                                 </>
                               ) : (
                                 <div style={{display:'flex', gap:'10px',alignItems: "center"}}>
