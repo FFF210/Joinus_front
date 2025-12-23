@@ -7,23 +7,17 @@ import '../../styles/components/button.css';
 import './GBProductCreate.css';
 
 const GBProductCreatePage = () => {
-  // ========================================
-  // URL Parameters & Mode
-  // ========================================
   const [searchParams] = useSearchParams();
   const [isEditMode, setIsEditMode] = useState(false);
   const [productId, setProductId] = useState(null);
 
-  // ========================================
-  // Form State
-  // ========================================
   const [formData, setFormData] = useState({
     status: 'DRAFT',
     startDate: '',
     endDate: '',
     category: '',
     productName: '',
-    proposalId: '',  // proposalId로 통일
+    proposalId: '', 
     siteUrl: '',
     description: '',
     originalPrice: '',
@@ -39,9 +33,6 @@ const GBProductCreatePage = () => {
     shippingMethod: 'DEFAULT'
   });
 
-  // ========================================
-  // Other States
-  // ========================================
   const [categories, setCategories] = useState([]);
   const [mainImage, setMainImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
@@ -50,13 +41,6 @@ const GBProductCreatePage = () => {
   const [optionGroups, setOptionGroups] = useState([]);
   const [expandedGroup, setExpandedGroup] = useState(null);
   const [showOptionModal, setShowOptionModal] = useState(false);
-
-
-  // ========================================
-  // Utility Functions
-  // ========================================
-
-  // 날짜 변환 함수 삭제 (String으로 직접 처리)
 
   // 제안 숫자 추출 함수
   const extractProposalId = (input) => {
@@ -351,8 +335,8 @@ const GBProductCreatePage = () => {
 
       productFormData.append('name', formData.productName);
       productFormData.append('categoryId', formData.category);
-      productFormData.append('startDate', formData.startDate);  // String 그대로
-      productFormData.append('endDate', formData.endDate);      // String 그대로
+      productFormData.append('startDate', formData.startDate);  
+      productFormData.append('endDate', formData.endDate);      
       productFormData.append('originalSiteUrl', formData.siteUrl || '');
       productFormData.append('description', formData.description || '');
       productFormData.append('originalPrice', formData.originalPrice || 0);

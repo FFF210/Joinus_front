@@ -104,7 +104,7 @@ export default function GbProductMngList() {
       'ORDERED': '구매완료',
       'ARRIVED': '국내 도착',
       'COMPLETED': '완료',
-      'CANCELED': '취소'
+      'CANCELLED': '취소'
     };
     return statusMap[status] || status;
   };
@@ -226,8 +226,8 @@ export default function GbProductMngList() {
                 완료된 공구
               </button>
               <button
-                className={`tab ${activeTab === 'CANCELED' ? 'active' : ''}`}
-                onClick={() => setActiveTab('CANCELED')}
+                className={`tab ${activeTab === 'CANCELLED' ? 'active' : ''}`}
+                onClick={() => setActiveTab('CANCELLED')}
               >
                 취소된 공구
               </button>
@@ -268,20 +268,20 @@ export default function GbProductMngList() {
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th style={{ width: '50px' }}>현재 인원</th>
+                    {/* <th style={{ width: '50px' }}>현재 인원</th> */}
                     <th style={{ width: '70px' }}>상태</th>
                     <th style={{ width: '100px' }}>공구 코드</th>
                     <th style={{ width: '30%' }}>공구명</th>
                     <th style={{ width: '80px' }}>가격</th>
                     <th style={{ width: '100px' }}>시작 날짜</th>
                     <th style={{ width: '100px' }}>종료 날짜</th>
-                    <th style={{ width: '60px' }}>작업</th>
+                    <th style={{ width: '100px' }}>작업</th>
                   </tr>
                 </thead>
                 <tbody>
                   {gbProducts.map((product) => (
                     <tr key={product.id}>
-                      <td>{product.participants || 0}</td>
+                      {/* <td>{product.participants || 0}</td> */}
                       <td>
                         <span className={`status-badge ${product.status === 'ONGOING' ? 'blue' :
                           product.status === 'DRAFT' ? 'gray' :
@@ -318,7 +318,7 @@ export default function GbProductMngList() {
                             className="admin-button secondary small"
                             onClick={() => handleViewParticipants(product.id)}
                           >
-                            참여인원
+                            참여인원 ({product.participants || 0})
                           </button>
                         </div>
                       </td>

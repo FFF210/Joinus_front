@@ -22,6 +22,10 @@ const NoticeList = () => {
     searchKeyword: ''
   });
 
+  const handleDetail = (id) => {
+    navigate(`/cs/notice/${id}`);
+  };
+
   // 공지사항 데이터 가져오는 함수 (검색 및 페이징 파라미터 사용)
   const fetchNotices = useCallback(async (page = 0) => {
     try {
@@ -56,26 +60,26 @@ const NoticeList = () => {
   }, [currentPage, filters, fetchNotices]);
 
   // 검색 함수
- const handleSearch = (searchFilters) => {
+  const handleSearch = (searchFilters) => {
     console.log('검색:', searchFilters);
-    
+
     // 검색 필터 업데이트
     setFilters({
       searchKeyword: searchFilters.searchKeyword || ''
     });
-    
+
     // 첫 페이지로 이동
     setCurrentPage(0);
   };
 
-    // 초기화 함수
+  // 초기화 함수
   const handleReset = () => {
     console.log('초기화');
-    
+
     setFilters({
       searchKeyword: ''
     });
-    
+
     setCurrentPage(0);
   };
 
@@ -93,22 +97,22 @@ const NoticeList = () => {
   };
 
   const handleDelete = async (id) => {
-  if (!window.confirm('이 공지사항을 삭제하시겠습니까?')) {
-    return;
-  }
-  
-  try {
-    await myAxios().delete(`/admin/noticeDelete/${id}`);
-    alert('삭제되었습니다.');
-    
-    // 현재 페이지 새로고침
-    fetchNotices(currentPage);
-    
-  } catch (error) {
-    console.error('삭제 실패:', error);
-    alert('삭제에 실패했습니다.');
-  }
-};
+    if (!window.confirm('이 공지사항을 삭제하시겠습니까?')) {
+      return;
+    }
+
+    try {
+      await myAxios().delete(`/admin/noticeDelete/${id}`);
+      alert('삭제되었습니다.');
+
+      // 현재 페이지 새로고침
+      fetchNotices(currentPage);
+
+    } catch (error) {
+      console.error('삭제 실패:', error);
+      alert('삭제에 실패했습니다.');
+    }
+  };
 
   return (
     <div className="admin-layout">
@@ -147,17 +151,19 @@ const NoticeList = () => {
                     </td>
                   </tr>
                 ) : (
-                  // ⭐️ notice.createdAt을 사용하여 게시 날짜 표시
                   noticePage.content.map((notice, index) => (
                     <tr key={notice.id}>
                       {/* DB 순서가 아닌 화면에 보이는 순번 (전체 요소 수 기반) */}
                       <td>{noticePage.totalElements - (noticePage.number * noticePage.size) - index}</td>
-                      <td className="title-cell">{notice.title}</td>
+                      <td className="title-cell"
+                        onClick={() => handleDetail(notice.id)}
+                        style={{ cursor: 'pointer', color: '#007bff' }}
+                      >{notice.title}</td>
                       <td>{notice.createdAt ? notice.createdAt.substring(0, 10) : 'N/A'}</td> {/* 날짜 포맷 */}
                       <td>
                         <button
-                        className="admin-button primary small"
-                        style={{ marginRight: '4px' }}
+                          className="admin-button primary small"
+                          style={{ marginRight: '4px' }}
                           onClick={() => handleEdit(notice.id)}
                         >
                           수정

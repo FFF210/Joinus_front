@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { myAxios } from '../../config';
 import AdminHeader from '../../components/layout/AdminHeader';
+import { X, Download, File } from 'lucide-react';
 import '../../styles/components/button.css';
 import './admin-common.css';
 import './NoticeForm.css';
@@ -14,8 +15,11 @@ const NoticeForm = () => {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    images: []
+    files: []  // images → files로 변경
   });
+
+  // 파일 미리보기 정보
+  const [filePreviews, setFilePreviews] = useState([]);
 
   useEffect(() => {
     if (isEdit) {
@@ -26,7 +30,7 @@ const NoticeForm = () => {
           setFormData({
             title: data.title,
             content: data.content,
-            images: [] // 기존 이미지는 보통 미리보기로 처리하지만 일단 비워둡니다.
+            files: []
           });
         } catch (error) {
           console.error("데이터 불러오기 실패:", error);
@@ -37,6 +41,17 @@ const NoticeForm = () => {
     }
   }, [id, isEdit]);
 
+  // 컴포넌트 언마운트 시 URL 정리
+  useEffect(() => {
+    return () => {
+      filePreviews.forEach(preview => {
+        if (preview.url) {
+          URL.revokeObjectURL(preview.url);
+        }
+      });
+    };
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -45,12 +60,67 @@ const NoticeForm = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
+  // ✅ 핵심 수정: 기존 파일에 추가하는 방식
+  const handleFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    const currentCount = formData.files.length;
+    const maxFiles = 3;
+    
+    // 3개 초과 체크
+    if (currentCount + newFiles.length > maxFiles) {
+      alert(`파일은 최대 ${maxFiles}개까지만 첨부할 수 있습니다.\n현재 ${currentCount}개, 추가하려는 파일 ${newFiles.length}개`);
+      e.target.value = ''; // input 초기화
+      return;
+    }
+
+    // 기존 파일에 새 파일 추가
+    const updatedFiles = [...formData.files, ...newFiles];
+
+    // 새 파일들의 미리보기만 생성
+    const newPreviews = newFiles.map(file => ({
+      url: URL.createObjectURL(file),
+      type: file.type,
+      name: file.name,
+      size: file.size
+    }));
+
+    // 기존 미리보기에 새 미리보기 추가
+    setFilePreviews(prev => [...prev, ...newPreviews]);
+    
     setFormData(prev => ({
       ...prev,
-      images: files.slice(0, 3) // 최대 3개만 저장
+      files: updatedFiles
     }));
+
+    // input 초기화 (같은 파일 다시 선택 가능하게)
+    e.target.value = '';
+  };
+
+  // 개별 파일 삭제
+  const handleRemoveFile = (index) => {
+    // URL 해제
+    if (filePreviews[index]?.url) {
+      URL.revokeObjectURL(filePreviews[index].url);
+    }
+
+    // 배열에서 제거
+    setFormData(prev => ({
+      ...prev,
+      files: prev.files.filter((_, i) => i !== index)
+    }));
+    setFilePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // 파일 타입 체크
+  const isImageFile = (type) => {
+    return type.startsWith('image/');
+  };
+
+  // 파일 크기 포맷
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
   const handleCancel = () => {
@@ -58,35 +128,29 @@ const NoticeForm = () => {
   };
 
   const handleSubmit = async () => {
-    // 1. FormData 객체 생성
     const data = new FormData();
-
-    // 2. 텍스트 필드 추가 (백엔드의 NoticeDto와 매칭시키기 위해)
     data.append('title', formData.title);
     data.append('content', formData.content);
 
-    // 3. 파일 필드  (백엔드의 @RequestParam(value = "images")와 매칭)
-    formData.images.forEach(file => {
-      // 백엔드에서 List<MultipartFile> images로 받기 위해 모든 파일에 동일한 'images' 키 사용
+    formData.files.forEach(file => {
       data.append('images', file);
     });
 
     try {
       if (isEdit) {
         await myAxios().post(`/admin/noticeUpdate/${id}`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      alert("수정되었습니다.");
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        alert("수정되었습니다.");
       } else {
-      await myAxios().post('/admin/noticeForm', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      alert("등록되었습니다.");
-    }
+        await myAxios().post('/admin/noticeForm', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        alert("등록되었습니다.");
+      }
       navigate('/admin/noticeList');
     } catch (error) {
       console.error("공지사항 등록 실패:", error);
-      // 서버 응답이 400 Bad Request일 경우 메시지를 표시
       if (error.response && error.response.data) {
         alert(error.response.data);
       } else {
@@ -97,7 +161,6 @@ const NoticeForm = () => {
 
   return (
     <div className="admin-layout">
-
       <div className="main-content">
         <AdminHeader title={isEdit ? "공지사항 수정" : "공지사항 등록"} />
 
@@ -129,24 +192,142 @@ const NoticeForm = () => {
               />
             </div>
 
-            {/* 이미지 첨부 */}
+            {/* 파일 첨부 */}
             <div className="form-group">
-              <label className="form-label">이미지 첨부(옵션, 최대 3개)</label>
-              <div className="image-upload-container">
-                <input
-                  type="file"
-                  id="image-upload"
-                  className="image-input"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  multiple //  다중 파일 선택 활성화
-                />
-                <label htmlFor="image-upload" className="image-upload-label">
-                  {formData.images.length > 0
-                    ? `파일 ${formData.images.length}개 선택됨`
-                    : '파일 선택'}
-                </label>
-              </div>
+              <label className="form-label">
+                파일 첨부 ({formData.files.length}/3)
+              </label>
+
+              {/* 파일 선택 버튼 - 3개 미만일 때만 표시 */}
+              {formData.files.length < 3 && (
+                <div className="image-upload-container" style={{ marginBottom: '16px' }}>
+                  <input
+                    type="file"
+                    id="file-upload"
+                    className="image-input"
+                    accept="*/*"
+                    onChange={handleFileChange}
+                    multiple
+                  />
+                  <label htmlFor="file-upload" className="image-upload-label">
+                     파일 선택 ({formData.files.length}/3)
+                  </label>
+                </div>
+              )}
+
+              {/* 파일 미리보기 영역 */}
+              {filePreviews.length > 0 && (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: '16px',
+                  marginTop: '16px'
+                }}>
+                  {filePreviews.map((preview, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        position: 'relative',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        backgroundColor: '#f9fafb'
+                      }}
+                    >
+                      {/* 삭제 버튼 */}
+                      <button
+                        onClick={() => handleRemoveFile(index)}
+                        style={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          border: 'none',
+                          backgroundColor: '#ef4444',
+                          color: 'white',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          zIndex: 10
+                        }}
+                      >
+                        <X size={14} />
+                      </button>
+
+                      {/* 이미지 미리보기 */}
+                      {isImageFile(preview.type) ? (
+                        <div style={{ marginBottom: '8px' }}>
+                          <img
+                            src={preview.url}
+                            alt={preview.name}
+                            style={{
+                              width: '100%',
+                              height: '150px',
+                              objectFit: 'cover',
+                              borderRadius: '4px'
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        /* 일반 파일 아이콘 */
+                        <div style={{
+                          width: '100%',
+                          height: '150px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: '#e5e7eb',
+                          borderRadius: '4px',
+                          marginBottom: '8px'
+                        }}>
+                          <File size={48} color="#6b7280" />
+                        </div>
+                      )}
+
+                      {/* 파일 정보 */}
+                      <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                        <div style={{
+                          fontWeight: 'bold',
+                          marginBottom: '4px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {preview.name}
+                        </div>
+                        <div>{formatFileSize(preview.size)}</div>
+                      </div>
+
+                      {/* 다운로드 버튼 (일반 파일만) */}
+                      {!isImageFile(preview.type) && (
+                        <a
+                          href={preview.url}
+                          download={preview.name}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '4px',
+                            marginTop: '8px',
+                            padding: '6px',
+                            backgroundColor: '#3b82f6',
+                            color: 'white',
+                            borderRadius: '4px',
+                            textDecoration: 'none',
+                            fontSize: '12px'
+                          }}
+                        >
+                          <Download size={14} />
+                          다운로드
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* 버튼 */}
