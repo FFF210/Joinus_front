@@ -203,8 +203,9 @@ const NoticeForm = () => {
 
             {/* 이미지 첨부 */}
             <div className="form-group">
-              <label className="form-label">이미지 첨부</label>
+              <label className="form-label">이미지 첨부 (최대 3개)</label>
               
+              {/* 공구 등록 폼 스타일 그리드 */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
@@ -243,7 +244,7 @@ const NoticeForm = () => {
                         style={{
                           maxWidth: '100%',
                           maxHeight: '100%',
-                          objectFit: 'contain' 
+                          objectFit: 'contain'
                         }}
                       />
                     </div>
@@ -292,7 +293,7 @@ const NoticeForm = () => {
                   </div>
                 ))}
 
-                {/* ✅ 추가 버튼 (3개 미만일 때) */}
+                {/* 추가 버튼 (3개 미만일 때) */}
                 {filePreviews.length < 3 && (
                   <div style={{
                     position: 'relative',
