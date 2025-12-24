@@ -3,6 +3,7 @@ import "./MypageSuggestions.css";
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
 import { myAxios } from "../../../config";
 import { useNavigate } from "react-router-dom";
+import { transformProposal } from "../../../utils/searchDataTransform";
 
 export default function MypageSuggestions() {
   const navigate = useNavigate();
@@ -25,19 +26,24 @@ export default function MypageSuggestions() {
   // ===============================
   // 데이터 조회
   // ===============================
-  useEffect(() => {
-    if (!username) return;
+useEffect(() => {
+  if (!username) return;
 
-    myAxios()
-      .get(`/mypage/suggestions/participated?username=${username}`)
-      .then((res) => setParticipatedList(res.data || []))
-      .catch(() => setParticipatedList([]));
+  myAxios()
+    .get(`/mypage/suggestions/participated?username=${username}`)
+    .then((res) => {
+      const transformed = (res.data || []).map(transformProposal);
+      setParticipatedList(transformed);
+    });
 
-    myAxios()
-      .get(`/mypage/suggestions/written?username=${username}`)
-      .then((res) => setWrittenList(res.data || []))
-      .catch(() => setWrittenList([]));
-  }, [username]);
+  myAxios()
+    .get(`/mypage/suggestions/written?username=${username}`)
+    .then((res) => {
+      const transformed = (res.data || []).map(transformProposal);
+      setWrittenList(transformed);
+    });
+}, [username]); // ✅ 반드시 닫아야 함
+
 
   // 탭 변경 시 페이지 초기화
   useEffect(() => {
@@ -106,7 +112,8 @@ export default function MypageSuggestions() {
           currentItems.map((item) => (
             <div className="suggestions-card" key={item.id}>
               <div className="suggest-card-img">
-                <img src={item.imageUrl || "/default.png"} alt="" />
+                <img src={item.image || "/default.png"} alt="" />
+
               </div>
 
               <div className="card-info">
