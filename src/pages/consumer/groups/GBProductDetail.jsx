@@ -109,8 +109,10 @@ export default function GBProductDetail() {
     (detail.product.shippingAmount || 0);
 
   const finalPrice = basePrice + getOptionTotalPrice();
-
-
+  /*=============== 인원이 맞춰지면 버튼 클릭 x ===============*/ 
+  const isClosed =
+    (detail.product.participants || 0) >=
+    (detail.product.minParticipants || Infinity);
 
   
 
@@ -207,136 +209,203 @@ export default function GBProductDetail() {
     return(
         <>
             <div style={styles.pageWrapper}>
-              <div style={styles.container}>
-                <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" ,gap:'10px'}}>
-                  <Link to="/gbProductList" style={{ textDecoration: 'none', color: 'black', display: "flex", alignItems: "center",gap:'10px' }}>
-                    <img src="/left.png" style={{width:'30px'}}/><h3 className="mb-0 fw-bold text-start">목록으로</h3>
-                  </Link>
-                </div>
-              </div>
+          <div style={styles.container}>
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" ,gap:'10px'}}>
+              <Link to="/gbProductList" style={{ textDecoration: 'none', color: 'black', display: "flex", alignItems: "center",gap:'10px' }}>
+                <img src="/left.png" style={{width:'28px'}}/>
+                <h3 className="mb-0 fw-bold text-start">목록으로</h3>
+              </Link>
             </div>
+          </div>
+        </div>
 
-            <div style={styles.pageWrapper}>
-              <div style={styles.container}>
-                <div style={{ display: "flex",alignContent:'space-between' , marginBottom: "20px" ,gap:'20px'}}>
-                    <div>
-                        <img 
-                          src={`${baseUrl}/files/${detail.thumbnailFile?.fileName}`} 
-                          style={{width:'500px', height:"500px", marginBottom:'30px', borderRadius:'10px'}}
-                        />
+        <div style={styles.pageWrapper}>
+          <div style={styles.container}>
+            <div style={{ display: "flex", justifyContent:'space-between', marginBottom: "20px" ,gap:'30px'}}>
+                <div>
+                    <img 
+                      src={`${baseUrl}/files/${detail.thumbnailFile?.fileName}`} 
+                      style={{width:'500px', height:"500px", border:'2px solid #000'}}
+                    />
+                </div>
+
+                <div style={{width:"500px", border:'2px solid #000', padding:'20px'}}>
+                    <div style={{ display:'flex', justifyContent: 'space-between', marginBottom:'10px'}}>
+                        <div style={{border:'1px solid #000', padding:'4px 8px', fontSize:'12px', fontWeight:'bold'}}>
+                          {detail.category.name}
+                        </div>
+                        <div style={{fontSize:'12px'}}>
+                          {detail.product.createdAt?.substring(0, 10)}
+                        </div>
                     </div>
-                    <div style={{width:"500px", border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
-                        <div style={{ display:'flex', justifyContent: 'space-between', marginBottom:'10px'}}>
-                            <div style={{border:'1px solid black', borderRadius:'5px', fontSize:'12px'}}>{detail.category.name}</div>
-                            <div>{detail.product.createdAt?.substring(0, 10)}</div>
+
+                    <Label style={{fontSize:"20px", fontWeight:'bold'}}>
+                      {detail.product.name}
+                    </Label>
+
+                    <div style={{marginTop:'10px'}}>
+                        <Label style={{fontSize:"22px", fontWeight:'bold'}}>
+                          {((detail.product.price || 0) + (detail.product.abroadShippingCost || 0)).toLocaleString()}원
+                        </Label>
+                    </div>
+
+                    <hr style={{border:'1px solid #000', margin:'20px 0'}}/>
+
+                    <div style={{display:'flex', alignItems:'center'}}>
+                        <img src="/clock.png" style={{width:'22px', marginRight:'8px'}}/>
+                        <Label style={{color:'#C40000', fontSize:'14px', fontWeight:'bold'}}>
+                          {timeLeft || (detail.product?.endDate ? detail.product.endDate.substring(0, 10) : "")}
+                        </Label>
+                    </div>
+
+                    <div style={{display:'flex', alignItems:'center', marginTop:'5px'}}>
+                        <img src="/person.png" style={{width:'22px', marginRight:'6px'}}/>
+                        <Label style={{fontSize:'12px'}}>
+                          참여 인원 : {(detail.product.participants || 0).toLocaleString()}
+                          /{(detail.product.minParticipants || 0).toLocaleString()}
+                        </Label>
+                    </div>
+
+                    <div style={{marginTop:'8px'}}>
+                        <div style={{width:"100%", height:'10px', border:'1px solid #000'}}>
+                            <div style={{width:`${progress}%`, height:'100%', backgroundColor:'#000'}} />
                         </div>
-                        <div>
-                            <Label style={{fontSize:"20px"}}>{detail.product.name}</Label>
-                        </div>
-                        <div>
-                            <Label style={{fontSize:"24px"}}>{((detail.product.price || 0) + (detail.product.abroadShippingCost || 0)).toLocaleString()}원</Label>
-                        </div>
-                        <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
-                        <div style={{display:'flex'}}>
-                            <img src="/clock.png" style={{width:'25px', marginRight:'10px'}}/>
-                            <Label style={{color:'red', fontSize:'14px'}}> {timeLeft || (detail.product && detail.product.endDate ? detail.product.endDate.substring(0, 10) : "")}
-                            </Label>
-                        </div>
-                        <div style={{display:'flex'}}>
-                            <img src="/person.png" style={{width:'25px', marginRight:'5px'}}/>
-                            <Label style={{fontSize:'12px'}}>참여 인원 : {(detail.product.participants || 0).toLocaleString()}/{(detail.product.minParticipants || 0).toLocaleString()}</Label>
-                        </div>
-                        <div style={{flexGrow:1}}>
-                            <div style={{width:"450px", height:'10px', backgroundColor:'#AFACEE', borderRadius:'5px',
-                                overflow:'hidden', margin:'5px'}}>
-                                <div style={{width: `${progress}%`, height:'100%',backgroundColor: '#007BFF',}}></div>
-                            </div>
-                        </div>
-                        <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
-                        <div>
-                            <Label className="fw-bold" style={{fontSize:'12px', marginTop:'0'}}>옵션선택
-                                 <div style={{fontSize:'10px', color:'#ACA5A5',margin:'10px 0 10px 0'}}>옵션에 따라 가격이 변동될 수 있음</div>
-                            </Label>
-                           {/* 나중에 옵션 map으로 돌려 */}
-                            {Object.entries(optionGroups).map(([groupName, options], idx) => (
-                                <FormGroup key={groupName}>
-                                  <Input
-                                    type="select"
-                                    value={selectedOptions[groupName] || ""}
-                                    onChange={e =>
-                                      setSelectedOptions(prev => ({
-                                        ...prev,
-                                        [groupName]: e.target.value
-                                      }))
-                                    }
-                                  >
-                                    <option value="" disabled>{groupName}</option>
-                                    {options.map(opt => (
-                                      <option key={opt.id} value={opt.id}>
-                                        {opt.name} (+{opt.price.toLocaleString()}원)
-                                      </option>
-                                    ))}
-                                  </Input>
-                                </FormGroup>
+                    </div>
+
+                    <hr style={{border:'1px solid #000', margin:'20px 0'}}/>
+
+                    <Label className="fw-bold" style={{fontSize:'12px'}}>
+                      옵션선택
+                      <div style={{fontSize:'11px', color:'#555', margin:'8px 0'}}>
+                        옵션에 따라 가격이 변동될 수 있음
+                      </div>
+                    </Label>
+
+                    {Object.entries(optionGroups).map(([groupName, options]) => (
+                        <FormGroup key={groupName}>
+                          <Input
+                            type="select"
+                            value={selectedOptions[groupName] || ""}
+                            style={{border:'2px solid #000'}}
+                            onChange={e =>
+                              setSelectedOptions(prev => ({
+                                ...prev,
+                                [groupName]: e.target.value
+                              }))
+                            }
+                          >
+                            <option value="" disabled>{groupName}</option>
+                            {options.map(opt => (
+                              <option key={opt.id} value={opt.id}>
+                                {opt.name} (+{opt.price.toLocaleString()}원)
+                              </option>
                             ))}
-                            <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
-                            <div style={{}}>
-                                <div style={{fontSize:'14px', marginTop:'0'}}>상품 가격 {((detail.product.price || 0) + (detail.product.abroadShippingCost || 0)).toLocaleString()}원</div>
-                                <div style={{fontSize:'14px', marginTop:'0'}}>국내 배송비 {(detail.product.shippingAmount || 0).toLocaleString()}원</div>
-                                <div style={{ fontSize: "14px" }}>옵션 추가 금액: {getOptionTotalPrice().toLocaleString()}원</div>
-                                <div className="fw-bold" style={{fontSize:'18px', marginTop:'0'}}>최종 상품 가격 {finalPrice.toLocaleString()} 원</div>
-                                <br/>
-                                <div style={{fontSize:'14px', marginTop:'0'}}>※ 해외 배송 2주~3주 소용, 국내 배송 2-3일 소요</div>
-                            </div>
-                            <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
-                            <div style={{display:'flex', gap:'10px',alignItems: "center"}}>
-                                <div className="fw-bold" style={{fontSize:'14px'}}>원사이트</div>
-                                <Button style={{backgroundColor:'#739FF2', width:"70px", height:"25px", fontSize:"12px", padding:"0", border:'none'}}
-                                  onClick={() => window.open(detail.product.originalSiteUrl, "_blank")}
-                                >바로가기</Button>
-                            </div>
-                            <hr style={{width:"460px", alignItems:'center', margin:'20px 0 20px 0'}}/>
-                            <div style={{display:"flex",alignItems: "center", marginTop:'20px'}}>
-                                <img src={isHeart ? "/heart.png" : "/wHeart.png"} style={{width:"25px", height:'25px', marginRight:'10px'}}/>
-                                  <div style={{fontSize:'24px', marginRight:'20px'}}>{wishCount}</div>
-                                  <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}
-                                    onClick={handleWishList}
-                                  >
-                                    {isHeart ? "취소하기" : "찜하기"}
-                                  </Button>
+                          </Input>
+                        </FormGroup>
+                    ))}
 
-                                <img src="/share.png" style={{width:"25px", height:'25px', marginRight:'40px'}}/>
-                                <Button style={{backgroundColor:'#739FF2', width:"120px", height:"35px", fontSize:"16px", padding:"0", border:'none', marginRight:'10px'}}
-                                  onClick={() => submit()}
-                                >장바구니</Button>
-                                  <Button  onClick={handleParticipate} style={{backgroundColor:'#F7F7F7', width:"120px", height:"35px", fontSize:"16px", padding:"0", color:'black', border:'1px solid black'}}>참여하기</Button>
-                            </div>
+                    <hr style={{border:'1px solid #000', margin:'20px 0'}}/>
+
+                    <div style={{fontSize:'14px'}}>
+                        <div>상품 가격 {((detail.product.price || 0) + (detail.product.abroadShippingCost || 0)).toLocaleString()}원</div>
+                        <div>국내 배송비 {(detail.product.shippingAmount || 0).toLocaleString()}원</div>
+                        <div>옵션 추가 금액 {getOptionTotalPrice().toLocaleString()}원</div>
+                        <div className="fw-bold" style={{fontSize:'18px', marginTop:'5px'}}>
+                          최종 상품 가격 {finalPrice.toLocaleString()}원
+                        </div>
+                        <div style={{fontSize:'13px', marginTop:'10px'}}>
+                          ※ 해외 배송 2~3주, 국내 배송 2~3일 소요
                         </div>
                     </div>
-                </div>
-              </div>
-            </div>
-            <div style={styles.pageWrapper}>
-                <div style={styles.container}>
-                    <div style={{ display: "flex", gap: "45px", flexWrap: "wrap" }}>
-                        {detail.images.map((img, idx) => (
-                          <img key={idx} src={`${baseUrl}/files/${img.fileName}`} style={{width:"220px", cursor:"pointer"}} 
-                          onClick={() => handleSubImageClick(idx)}
-                          />
-                        ))}
+
+                    <hr style={{border:'1px solid #000', margin:'20px 0'}}/>
+
+                    <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+                        <div className="fw-bold" style={{fontSize:'14px'}}>원사이트</div>
+                        <Button
+                          style={{backgroundColor:PRIMARY_BLUE, color:'#fff', width:"70px", height:"25px", fontSize:"12px", padding:"0", border:'none'}}
+                          onClick={() => window.open(detail.product.originalSiteUrl, "_blank")}
+                        >
+                          바로가기
+                        </Button>
+                    </div>
+
+                    <hr style={{border:'1px solid #000', margin:'20px 0'}}/>
+
+                    <div style={{display:"flex", alignItems:"center", marginTop:'20px'}}>
+                        <img src={isHeart ? "/heart.png" : "/wHeart.png"} style={{width:"22px", marginRight:'8px'}}/>
+                        <div style={{fontSize:'22px', marginRight:'20px'}}>{wishCount}</div>
+
+                        <Button
+                          style={{backgroundColor: isClosed ? PRIMARY_BLUE_DISABLED : PRIMARY_BLUE, color:'#fff', width:"120px", height:"35px", fontSize:"15px", padding:"0", border:'none'}}
+                          onClick={handleWishList}
+                          disabled={isClosed}
+                        >
+                          {isClosed ? "마감" : isHeart ? "취소하기" : "찜하기"}
+                        </Button>
+
+                        <img src="/share.png" style={{width:"22px", margin:'0 30px'}}/>
+
+                        <Button
+                          style={{backgroundColor: isClosed ? PRIMARY_BLUE_DISABLED : PRIMARY_BLUE, color:'#fff', width:"120px", height:"35px", fontSize:"15px", padding:"0", border:'none'}}
+                          onClick={() => submit()}
+                          disabled={isClosed}
+                        >
+                          장바구니
+                        </Button>
+
+                        <Button
+                          onClick={handleWishList}
+                          disabled={isClosed}
+                          style={{
+                            backgroundColor: isClosed ? PRIMARY_BLUE_DISABLED : PRIMARY_BLUE,
+                            color: "#fff",
+                            width: "120px",
+                            height: "35px",
+                            fontSize: "15px",
+                            padding: "0",
+                            border: "none",
+                            cursor: isClosed ? "not-allowed" : "pointer",
+                            marginLeft:'10px'
+                          }}
+                        >
+                          {isClosed ? "마감" : isHeart ? "취소하기" : "찜하기"}
+                        </Button>
+
                     </div>
                 </div>
             </div>
-            <div style={styles.pageWrapper}>
-                <div style={styles.container}>
-                  <div style={{ flex: 1, paddingTop:'10px', width:'1020px'}}>
-                      <Outlet />
-                  </div>
+          </div>
+        </div>
+
+        <div style={styles.pageWrapper}>
+            <div style={styles.container}>
+                <div style={{ display: "flex", gap: "45px", flexWrap: "wrap" }}>
+                    {detail.images.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={`${baseUrl}/files/${img.fileName}`}
+                        style={{width:"220px", border:'1px solid #000', cursor:"pointer"}}
+                        onClick={() => handleSubImageClick(idx)}
+                      />
+                    ))}
                 </div>
             </div>
+        </div>
+
+        <div style={styles.pageWrapper}>
+            <div style={styles.container}>
+              <div style={{ flex: 1, paddingTop:'10px', width:'1020px'}}>
+                  <Outlet />
+              </div>
+            </div>
+        </div>
         </>
     );
 }
+
+const PRIMARY_BLUE = "#7693FC";
+const PRIMARY_BLUE_DISABLED = "#C7D2FE";
 
 
 const styles = {
@@ -356,11 +425,10 @@ const styles = {
     marginTop:'10px'
   },
 
-  // 전체 폭 hr
   fullWidthHr: {
-  width: "100%",
-  margin: "0",
-},
+    width: "100%",
+    margin: "0",
+  },
 
   imageGrid: {
     display: "grid",
@@ -368,18 +436,19 @@ const styles = {
     gap: "10px",
     marginTop: "10px",
   },
+
   imageBox: {
-    border: "1px dashed #bbb",
+    border: "2px dashed #000",
     height: "140px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: "4px",
     position: "relative",
     cursor: "pointer",
     overflow: "hidden",
-    backgroundColor: "#fafafa",
+    backgroundColor: "#fff",
   },
+
   fileInput: {
     position: "absolute",
     width: "100%",
@@ -387,6 +456,7 @@ const styles = {
     opacity: 0,
     cursor: "pointer",
   },
+
   preview: {
     width: "100%",
     height: "100%",
@@ -394,19 +464,17 @@ const styles = {
   },
 
   tag: {
-    backgroundColor: "#E7EBF3",
+    backgroundColor: "#e5e5e5",
     padding: "5px 12px",
-    borderRadius: "20px",
     fontSize: "14px",
     cursor: "pointer",
-    },
+  },
 
-tagWhite: {
-  backgroundColor: "#FFFFFF",
-  border: "1px solid #CED4DA",
-  padding: "5px 12px",
-  borderRadius: "20px",
-  fontSize: "14px",
-  cursor: "pointer",
-}
+  tagWhite: {
+    backgroundColor: "#fff",
+    border: "2px solid #000",
+    padding: "5px 12px",
+    fontSize: "14px",
+    cursor: "pointer",
+  }
 };
