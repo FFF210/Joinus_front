@@ -16,6 +16,9 @@ const username = userInfo?.username;
     const [comment, setComment] = useState(''); // ← 여기 추가
     const [comments, setComments] = useState([]); // 댓글 리스트 (있으면)
     const canVote = !proposal.gbProductId && !proposal.rejectReason;
+
+    const PRIMARY_BLUE = "#7693FC";
+    const PRIMARY_BLUE_DISABLED = "#C7D2FE";
     
 
 
@@ -135,142 +138,197 @@ const username = userInfo?.username;
     return(
         <>
             <div style={styles.pageWrapper}>
-              <div style={styles.container}>
-                <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" ,gap:'10px'}}>
-                  <Link to="/proposalsList" style={{ textDecoration: 'none', color: 'black', display: "flex", alignItems: "center",gap:'10px' }}>
-                    <img src="/left.png" style={{width:'30px'}}/><h3 className="mb-0 fw-bold text-start">목록으로</h3>
-                  </Link>
-                </div>
-              </div>
+          <div style={styles.container}>
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" ,gap:'10px'}}>
+              <Link to="/proposalsList" style={{ textDecoration: 'none', color: 'black', display: "flex", alignItems: "center",gap:'10px' }}>
+                <img src="/left.png" style={{width:'28px'}}/>
+                <h3 className="mb-0 fw-bold text-start">목록으로</h3>
+              </Link>
             </div>
+          </div>
+        </div>
 
-            <div style={styles.pageWrapper}>
-              <div style={styles.container}>
-                <div style={{ display: "flex",alignContent:'space-between' , marginBottom: "20px" ,gap:'20px'}}>
-                    <div>
-                        <img src={`${baseUrl}/imageView?filename=${proposal.imageUrl}`}  style={{width:'500px', height:"500px", marginBottom:'30px', borderRadius:'10px'}}/>
+        <div style={styles.pageWrapper}>
+          <div style={styles.container}>
+            <div style={{ display: "flex", justifyContent:'space-between', marginBottom: "20px" ,gap:'30px'}}>
+                <div>
+                    <img
+                      src={`${baseUrl}/imageView?filename=${proposal.imageUrl}`}
+                      style={{width:'500px', height:"500px", border:'1px solid #000'}}
+                    />
+                </div>
+
+                <div style={{width:"500px", border:'2px solid #000', padding:'20px'}}>
+                    <div style={{ display:'flex', justifyContent: 'space-between', marginBottom:'10px'}}>
+                        <div style={{border:'1px solid #000', padding:'4px 8px', fontSize:'12px', fontWeight:'bold'}}>
+                          {proposal.category}
+                        </div>
+
+                        <div style={{
+                          backgroundColor: (() => {
+                            if (proposal.gbProductId) return '#6FD96F';
+                            if (proposal.rejectReason) return '#E14C4C';
+                            return '#6C8EE6';
+                          })(),
+                          color:'#000',
+                          width:'100px',
+                          height:'28px',
+                          display:'flex',
+                          justifyContent:'center',
+                          alignItems:'center',
+                          fontWeight:'bold',
+                          fontSize:'13px'
+                        }}>
+                          {proposal.gbProductId
+                            ? '승인'
+                            : proposal.rejectReason
+                              ? '반려'
+                              : '검토대기'}
+                        </div>
                     </div>
-                    <div style={{width:"500px",  border:'1px solid black', padding:'20px', borderRadius:'10px'}}>
-                        <div style={{ display:'flex', justifyContent: 'space-between', marginBottom:'10px'}}>
-                            <div style={{border:'1px solid black', borderRadius:'5px', fontSize:'12px', textAlign:'center', alignContent:'center'}}>{proposal.category}</div>
-                            <div style={{backgroundColor: (() => {
-                                if (proposal.gbProductId) return '#79F273';          // 승인 → 초록
-                                if (proposal.rejectReason) return '#F55F5F';         // 반려 → 빨강
-                                return '#739FF2';  })(),
-                              color: 'black',width: '100px',height: '30px',textAlign: 'center',display: 'flex',
-                              justifyContent: 'center',alignItems: 'center',borderRadius: '5px'}}>
-                              {proposal.gbProductId
-                                ? '승인'
-                                : proposal.rejectReason
-                                  ? '반려'
-                                  : '검토대기'}
-                            </div>
-                        </div>
+
+                    <Label style={{fontSize:"20px", fontWeight:'bold'}}>
+                      {proposal.productName}
+                    </Label>
+
+                    <div style={{display:'flex', marginTop:'5px'}}>
+                        <Label style={{fontSize:"12px", marginRight:'10px'}}>
+                          작성자 : {proposal.memberName}
+                        </Label>
+                        <Label style={{fontSize:"12px"}}>
+                          {proposal.createdAt ? proposal.createdAt.substring(0, 10) : ""}
+                        </Label>
+                    </div>
+
+                    <div style={{marginTop:'10px'}}>
+                        <Label style={{fontSize:"22px", fontWeight:'bold'}}>
+                          {(proposal.originalPrice + proposal.abroadShippingCost).toLocaleString()}원
+                        </Label>
+                    </div>
+
+                    <hr style={{border:'1px solid #000', margin:'15px 0'}}/>
+
+                    <div className="fw-bold" style={{fontSize:'14px'}}>상품 상세 설명</div>
+                    <div style={{fontSize:'14px', whiteSpace:'pre-wrap'}}>
+                      {proposal.description}
+                    </div>
+
+                    <hr style={{border:'1px solid #000', margin:'15px 0'}}/>
+
+                    <Label className="fw-bold" style={{fontSize:'12px', display:"flex", gap:'10px', alignItems:'center'}}>
+                      원사이트
+                      <Button
+                        style={{
+                          backgroundColor:PRIMARY_BLUE,
+                          color:'#fff',
+                          width:"70px",
+                          height:"25px",
+                          fontSize:"12px",
+                          padding:"0",
+                          border:'none'
+                        }}
+                        onClick={() => window.open(proposal.originalSiteUrl, "_blank")}
+                      >
+                        바로가기
+                      </Button>
+                    </Label>
+
+                    <hr style={{border:'1px solid #000', margin:'15px 0'}}/>
+
+                    <div style={{fontSize:'12px'}}>
+                        <div>원래 가격 : {proposal.originalPrice.toLocaleString()}</div>
+                        <div>해외 배송비 : {proposal.abroadShippingCost.toLocaleString()}</div>
+                    </div>
+
+                    <hr style={{border:'1px solid #000', margin:'15px 0'}}/>
+
+                    <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+                      {proposal.status === 'APPROVED' && (
+                        <>
+                          <div className="fw-bold" style={{fontSize:'14px'}}>공구 상세 URL</div>
+                          <Button
+                            style={{backgroundColor:PRIMARY_BLUE, color:'#fff', width:"70px", height:"25px", fontSize:"12px", padding:"0", border:'none'}}
+                            onClick={() => window.open(proposal.gbProductUrl, "_blank")}
+                          >
+                            바로가기
+                          </Button>
+                        </>
+                      )}
+
+                      {proposal.status === 'REJECTED' && (
                         <div>
-                            <Label style={{fontSize:"20px"}}>{proposal.productName}</Label>
+                          <div style={{fontWeight:'bold', fontSize:'12px'}}>반려 사유</div>
+                          <div style={{fontSize:'12px', color:'#E14C4C'}}>
+                            {proposal.rejectReason}
+                          </div>
                         </div>
-                        <div style={{display:'flex'}}>
-                            <Label style={{fontSize:"12px", marginRight:'10px'}}>작성자 : {proposal.memberName}</Label>
-                            <Label style={{fontSize:"12px"}}>{proposal.createdAt ? proposal.createdAt.substring(0, 10) : ""}</Label>
+                      )}
+                    </div>
+
+                    <hr style={{border:'1px solid #000', margin:'15px 0'}}/>
+
+                    <div style={{display:"flex", justifyContent:'space-between', alignItems:'center'}}>
+                        <div style={{display:'flex', alignItems:'center'}}>
+                          <img src={isDdabong ? "/colorddabong.png" : "/ddabong.png"} style={{width:"22px", height:'22px', marginRight:'10px'}}/>
+                          <div style={{fontSize:'22px', marginRight:'20px'}}>{voteCount}</div>
+
+                          <Button
+                            style={{
+                              backgroundColor: canVote ? PRIMARY_BLUE : PRIMARY_BLUE_DISABLED,
+                              color:'#fff',
+                              width:"120px",
+                              height:"35px",
+                              fontSize:"15px",
+                              padding:"0",
+                              border:'none',
+                              cursor: canVote ? 'pointer' : 'not-allowed'
+                            }}
+                            disabled={!canVote}
+                            onClick={handleVote}
+                          >
+                            {canVote ? (isDdabong ? "취소하기" : "투표하기") : "투표 불가"}
+                          </Button>
                         </div>
+
                         <div>
-                            <Label style={{fontSize:"24px"}}>{(proposal.originalPrice + proposal.abroadShippingCost).toLocaleString()}원</Label>
-                        </div>
-                        <hr style={{width:"460px", alignItems:'center', margin:'15px 0 15px 0'}}/>
-                        <div className="fw-bold" style={{fontSize:'14px', padding:'0 10px 0 10px'}}>상품 상세 설명</div>
-                        <div style={{fontSize:'14px', padding:'0 10px 0 10px',whiteSpace: 'pre-wrap'}}>{proposal.description}</div>
-                        <hr style={{width:"460px", alignItems:'center', margin:'10px 0 10px 0'}}/>
-                        <div>
-                            <Label className="fw-bold" style={{fontSize:'12px', marginTop:'0', display:"flex",gap:'10px',alignItems:'center' }}>원사이트
-                                 <div style={{fontSize:'10px', color:'#ACA5A5'}}>
-                                    <Button style={{ backgroundColor: '#739FF2', width: "70px", height: "25px",
-                                      fontSize: "12px",padding: "0",border: 'none'}}
-                                      onClick={() => window.open(proposal.originalSiteUrl, "_blank")}>바로가기</Button>
-                                 </div>
-                            </Label>
-                            <hr style={{width:"460px", alignItems:'center', margin:'15px 0 15px 0'}}/>
-                            <div>
-                                <div style={{fontSize:'12px', marginTop:'0'}}>원래 가격 : {(proposal.originalPrice).toLocaleString()}</div>
-                                <div style={{fontSize:'12px', marginTop:'0'}}>해외 배송비 : {(proposal.abroadShippingCost).toLocaleString()}</div>
-                            </div>
-                            <hr style={{width:"460px", alignItems:'center', margin:'15px 0 15px 0'}}/>
-                            <div style={{display:'flex', gap:'10px',alignItems: "center"}}>
-                              {proposal.gbProductId ? (
-                                <>
-                                <div className="fw-bold" style={{fontSize:'14px'}}>공구 상세 URL</div>
-                                <Button style={{backgroundColor:'#739FF2', width:"70px", height:"25px", fontSize:"12px", padding:"0", border:'none'}}>바로가기</Button>
-                                </>
-                              ) : (
-                                <div style={{display:'flex', gap:'10px',alignItems: "center"}}>
-                                  {proposal.status === 'APPROVED' ? (
-                                    <>
-                                      <div className="fw-bold" style={{fontSize:'14px'}}>공구 상세 URL</div>
-                                      <Button
-                                        style={{
-                                          backgroundColor:'#739FF2',
-                                          width:"70px",
-                                          height:"25px",
-                                          fontSize:"12px",
-                                          padding:"0",
-                                          border:'none'
-                                        }}
-                                        onClick={() => window.open(proposal.gbProductUrl, "_blank")} // 공구 URL
-                                      >
-                                        바로가기
-                                      </Button>
-                                    </>
-                                  ) : proposal.status === 'REJECTED' ? (
-                                    <div>
-                                      <div style={{ fontWeight: 'bold', marginBottom: '5px', fontSize:'12px' }}>반려 사유</div>
-                                      <div style={{ fontSize: '12px', color: '#F55F5F' }}>
-                                        {proposal.rejectReason}
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    // PENDING인 경우
-                                    <div>
-                                      {/* 검토대기 상태에서는 아무것도 안 보여줌 */}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                            <hr style={{width:"460px", alignItems:'center', margin:'15px 0 15px 0'}}/>
-                            
-                            <div style={{display:"flex",alignItems: "center", justifyContent:'space-between'}}>
-                                <div style={{display:'flex'}}>
-                                  <img src={isDdabong ? "/colorddabong.png" : "/ddabong.png"} style={{width:"25px", height:'25px', marginRight:'10px', opacity: canVote ? 1 : 0.4}}/>
-                                  <div style={{fontSize:'24px', marginRight:'20px'}}>{voteCount}</div>
-                                  <Button style={{ backgroundColor: canVote ? '#739FF2' : '#d1d9e6', width: "120px",
-                                          height: "35px",fontSize: "16px",padding: "0", border: 'none', cursor: canVote ? 'pointer' : 'not-allowed'}}
-                                    disabled={!canVote} onClick={handleVote}>
-                                    {canVote
-                                      ? (isDdabong ? "취소하기" : "투표하기")
-                                      : "투표 불가"}
-                                  </Button>
-                                </div>
-                                <div>
-                                  {username === proposal.memberUsername ? (
-                                    <Link to={`/proposalsList/proposalModify/${proposal.id}`}>
-                                      <Button 
-                                        style={{ backgroundColor:'#739FF2',  width:"120px",  height:"35px",  fontSize:"16px", padding:"0",  border:'none', marginRight:'10px' }} >
-                                        수정하기
-                                      </Button>
-                                    </Link>
-                                  ) : (
-                                    <Button 
-                                      style={{ backgroundColor:'#d1d9e6', width:"120px", height:"35px", fontSize:"16px",padding:"0", border:'none',  marginRight:'10px', cursor: 'not-allowed'}}
-                                      disabled title="작성자만 수정할 수 있습니다.">
-                                      수정하기
-                                    </Button>
-                                  )}
-                                </div>
-                            </div>
+                          {username === proposal.memberUsername ? (
+                            <Link to={`/proposalsList/proposalModify/${proposal.id}`}>
+                              <Button
+                                style={{
+                                  backgroundColor:PRIMARY_BLUE,
+                                  color:'#fff',
+                                  width:"120px",
+                                  height:"35px",
+                                  fontSize:"15px",
+                                  padding:"0",
+                                  border:'none'
+                                }}
+                              >
+                                수정하기
+                              </Button>
+                            </Link>
+                          ) : (
+                            <Button
+                              style={{
+                                backgroundColor:PRIMARY_BLUE_DISABLED,
+                                color:'#fff',
+                                width:"120px",
+                                height:"35px",
+                                fontSize:"15px",
+                                padding:"0",
+                                border:'none'
+                              }}
+                              disabled
+                            >
+                              수정하기
+                            </Button>
+                          )}
                         </div>
                     </div>
                 </div>
-              </div>
             </div>
+          </div>
+        </div>
             <div style={styles.pageWrapper}>
               <div style={styles.container}>
                 <div style={{ display: "flex", gap: "45px", flexWrap: "wrap" }}>
@@ -291,54 +349,115 @@ const username = userInfo?.username;
               </div>
             </div>
             <div style={styles.pageWrapper}>
-                <div style={styles.container}>
-                    <hr style={{alignItems:'center', margin:'10px 0 10px 0'}}/>
-                    {comments.map((c) => (
-                        <div key={c.id} style={{marginBottom:'15px'}}>
-                          <div style={{padding:'0 10px',display:'flex', alignContent:'center', marginBottom:'10px'}}>
-                            <div style={{marginRight:'10px'}}>{c.memberNickname}</div>
-                            <img src={`/grade/${c.grade.charAt(0) + c.grade.slice(1).toLowerCase()}.png`} style={{width:'25px'}}/>
-                          </div>
-                          <div style={{padding:'0 10px'}}>{c.createdAt}</div>
-                          <div style={{padding:'0 10px'}}>{c.content}</div>
-                    <hr style={{alignItems:'center', margin:'10px 0 10px 0'}}/>
-                    </div>
-                    ))}
-                </div>
-            </div>
-            <div style={styles.pageWrapper}>
               <div style={styles.container}>
-                {/* 댓글 입력 영역 */}
-                <div style={{ display: 'flex', flexDirection: 'column',  backgroundColor: 'white',padding: '0', gap: '12px'}}>
-                  <label style={{ fontWeight: 'bold', fontSize: '14px', color: '#333' }}>댓글 작성</label>              
-                  <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="여기에 댓글을 작성하세요..."
-                    style={{ width: '100%', minHeight: '80px',resize: 'none', borderRadius: '10px', border: '1px solid #d1d9e6', padding: '12px',
-                      fontSize: '14px', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)', backgroundColor: '#fff',transition: '0.2s all',}}
-                    onFocus={(e) => e.target.style.borderColor = '#739FF2'}
-                    onBlur={(e) => e.target.style.borderColor = '#d1d9e6'}
-                  />
+                  <hr style={{border:'1px solid #000', margin:'10px 0'}}/>
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                    <button style={{ backgroundColor: '#d9d9d9', color: '#000000', border: 'none', borderRadius: '8px', padding: '8px 18px', fontWeight: 'bold',
-                      fontSize: '14px',cursor: 'pointer', transition: '0.2s all'}}
-                      onMouseEnter={e => e.target.style.backgroundColor = '#d9d9d9'}
-                      // onMouseLeave={e => e.target.style.backgroundColor = '#d9d9d9'}
-                      onClick={() => setComment('')} // 취소 버튼
-                    >
-                      취소
-                    </button>
+                  {comments.map((c) => (
+                      <div key={c.id} style={{marginBottom:'15px'}}>
+                          <div style={{
+                              padding:'6px 10px',
+                              display:'flex',
+                              alignItems:'center',
+                              marginBottom:'6px'
+                          }}>
+                              <div style={{marginRight:'10px', fontWeight:'bold', fontSize:'13px'}}>
+                                  {c.memberNickname}
+                              </div>
+                              <img
+                                  src={`/grade/${c.grade.charAt(0) + c.grade.slice(1).toLowerCase()}.png`}
+                                  style={{width:'22px'}}
+                              />
+                          </div>
 
-                    <button style={{ backgroundColor: '#739FF2', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 18px',fontWeight: 'bold',
-                      fontSize: '14px', cursor: 'pointer', transition: '0.2s all', boxShadow: '0 4px 8px rgba(115, 159, 242, 0.4)'}}
-                      onMouseEnter={e => e.target.style.backgroundColor = '#5a7cd6'}
-                      onMouseLeave={e => e.target.style.backgroundColor = '#739FF2'}
-                      onClick={submit}>
-                      등록
-                    </button>
-                  </div>
+                          <div style={{padding:'0 10px', fontSize:'12px', color:'#555'}}>
+                              {c.createdAt}
+                          </div>
+
+                          <div style={{
+                              padding:'8px 10px',
+                              fontSize:'14px',
+                              border:'none',
+                              marginTop:'6px'
+                          }}>
+                              {c.content}
+                          </div>
+
+                          <hr style={{border:'1px solid #000', margin:'12px 0'}}/>
+                      </div>
+                  ))}
+              </div>
+          </div>
+
+          <div style={styles.pageWrapper}>
+            <div style={styles.container}>
+              {/* 댓글 입력 영역 */}
+              <div style={{
+                  display:'flex',
+                  flexDirection:'column',
+                  gap:'10px'
+              }}>
+                <label style={{
+                    fontWeight:'bold',
+                    fontSize:'14px'
+                }}>
+                  댓글 작성
+                </label>
+
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="여기에 댓글을 작성하세요..."
+                  style={{
+                    width:'100%',
+                    minHeight:'90px',
+                    resize:'none',
+                    border:'2px solid #000',
+                    padding:'10px',
+                    fontSize:'14px',
+                    outline:'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#000'}
+                  onBlur={(e) => e.target.style.borderColor = '#000'}
+                />
+
+                <div style={{
+                    display:'flex',
+                    justifyContent:'flex-end',
+                    gap:'10px'
+                }}>
+                  <button
+                    style={{
+                      backgroundColor: "#BFDBFE",
+                      color:'white',
+                      border:'none',
+                      padding:'8px 18px',
+                      fontWeight:'bold',
+                      fontSize:'14px',
+                      cursor:'pointer'
+                    }}
+                    onClick={() => setComment('')}
+                  >
+                    취소
+                  </button>
+
+                  <button
+                    style={{
+                      backgroundColor:PRIMARY_BLUE,
+                      color:'#fff',
+                      border:'none',
+                      padding:'8px 18px',
+                      fontWeight:'bold',
+                      fontSize:'14px',
+                      cursor:'pointer'
+                    }}
+                    onClick={submit}
+                  >
+                    등록
+                  </button>
                 </div>
               </div>
             </div>
+          </div>
         </>
     );
 }
@@ -361,11 +480,10 @@ const styles = {
     marginTop:'10px'
   },
 
-  // 전체 폭 hr
   fullWidthHr: {
-  width: "100%",
-  margin: "0",
-},
+    width: "100%",
+    margin: "0",
+  },
 
   imageGrid: {
     display: "grid",
@@ -373,18 +491,19 @@ const styles = {
     gap: "10px",
     marginTop: "10px",
   },
+
   imageBox: {
-    border: "1px dashed #bbb",
+    border: "2px dashed #000",
     height: "140px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: "4px",
     position: "relative",
     cursor: "pointer",
     overflow: "hidden",
-    backgroundColor: "#fafafa",
+    backgroundColor: "#fff",
   },
+
   fileInput: {
     position: "absolute",
     width: "100%",
@@ -392,6 +511,7 @@ const styles = {
     opacity: 0,
     cursor: "pointer",
   },
+
   preview: {
     width: "100%",
     height: "100%",
@@ -399,19 +519,17 @@ const styles = {
   },
 
   tag: {
-    backgroundColor: "#E7EBF3",
+    backgroundColor: "#e5e5e5",
     padding: "5px 12px",
-    borderRadius: "20px",
     fontSize: "14px",
     cursor: "pointer",
-    },
+  },
 
-tagWhite: {
-  backgroundColor: "#FFFFFF",
-  border: "1px solid #CED4DA",
-  padding: "5px 12px",
-  borderRadius: "20px",
-  fontSize: "14px",
-  cursor: "pointer",
-}
+  tagWhite: {
+    backgroundColor: "#fff",
+    border: "2px solid #000",
+    padding: "5px 12px",
+    fontSize: "14px",
+    cursor: "pointer",
+  }
 };
