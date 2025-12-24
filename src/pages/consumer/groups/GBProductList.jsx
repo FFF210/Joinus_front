@@ -10,107 +10,162 @@ export default function GBProductList() {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const sortParam = searchParams.get("sort");
-
   
+  // 페이징 state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  
+  const sortParam = searchParams.get("sort");
   const categoryParam = searchParams.get("category");
 
   const allCategories = ["뷰티", "패션", "전자기기", "홈&리빙", "식품", "스포츠"];
   const sortOptions = ["최신순", "찜순", "마감순"];
-  const allStatus = ["진행중","취소"];
+  const allStatus = ["진행중", "취소"];
 
-  // 카테고리 및 정렬 클릭 적용
-  const [selectCategory, setSelectCategory] = useState([]);
+  // 필터 state (단일 선택)
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSort, setSelectedSort] = useState("최신순");
-  const [selectStatus, setSelectStatus] = useState(["진행중"]);
+  const [selectedStatus, setSelectedStatus] = useState("진행중");
 
   const sortParamMap = {
     deadline: "마감순",
     wish: "찜순",
   };
   
-  const handleCartegopryClick = (category) => {
-    let newCategories = [...selectCategory];
-
-    if (newCategories.includes(category)) {
-      newCategories = newCategories.filter((c) => c !== category);
+  // 정렬 옵션을 서버 파라미터로 변환
+  const getSortType = () => {
+    if (selectedSort === "찜순") return "popular";
+    if (selectedSort === "마감순") return "deadline-soon";
+    return "ongoing"; // 최신순
+  };
+  
+  const handleCategoryClick = (category) => {
+    if (selectedCategory === category) {
+      setSelectedCategory(null); // 토글: 같은 카테고리 클릭 시 해제
     } else {
-      newCategories.push(category);
+      setSelectedCategory(category);
     }
-
-    setSelectCategory(newCategories);
+    setCurrentPage(0); // 필터 변경 시 첫 페이지로
   };
 
-  // 진행상태 (중복 선택 가능)
   const handleStatusClick = (status) => {
-    let newStatus = [...selectStatus];
-
-    if (newStatus.includes(status)) {
-      newStatus = newStatus.filter(s => s !== status);
-    } else {
-      newStatus.push(status);
-    }
-
-    if (newStatus.length === 0) return;
-    setSelectStatus(newStatus);
+    setSelectedStatus(status);
+    setCurrentPage(0); // 필터 변경 시 첫 페이지로
   };
 
   const handleSortClick = (sort) => {
     setSelectedSort(sort);
+    setCurrentPage(0); // 정렬 변경 시 첫 페이지로
+  };
+  
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
-  // 필터링 적용
-  const filteredProducts = products.filter((p) => {
-    const categoryCheck =
-      selectCategory.length === 0 || selectCategory.includes(p.category);
-
-    const statusCheck = selectStatus.includes(p.status);
-
-    return categoryCheck && statusCheck;
-  });
-
-  // ✅ 정렬 적용 (마감순: 숫자 작은 것부터)
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (selectedSort === "최신순") {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
-
-    if (selectedSort === "찜순") {
-      return b.currentParticipants - a.currentParticipants;
-    }
-
-    if (selectedSort === "마감순") {
-      return new Date(a.deadlineAt) - new Date(b.deadlineAt);
-    }
-
-    return 0;
-  });
-
-
   // URL에서 type 파라미터 추출
-  // type 파라미터가 없으면 ongoing로 설정
   const type = searchParams.get("type") || "ongoing";
+  
+  // URL type 파라미터에 따라 selectedSort 동기화
+  useEffect(() => {
+    if (type === "deadline-soon") {
+      setSelectedSort("마감순");
+    } else if (type === "popular") {
+      setSelectedSort("찜순");
+    } else {
+      setSelectedSort("최신순");
+    }
+  }, [type]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await myAxios().get('/api/gb-products', {
-          params: { type },
-        });
-
-        const transformed = response.data.map(transformGbProduct);
+        
+        // selectedSort를 서버 파라미터로 변환
+        const sortType = getSortType();
+        
+        const params = {
+          type: sortType,
+          page: currentPage,
+          size: 12,
+        };
+        
+        // 필터 파라미터 추가
+        if (selectedCategory) {
+          params.category = selectedCategory;
+        }
+        if (selectedStatus) {
+          // 상태는 서버에서 ENUM으로 변환 필요 (한글 -> 영어)
+          const statusMap = {
+            "진행중": "ONGOING",
+            "취소": "CANCELLED"
+          };
+          params.status = statusMap[selectedStatus] || "ONGOING";
+        }
+        
+        console.log('API 요청 파라미터:', params);
+        const response = await myAxios().get('/api/gb-products', { params });
+        
+        console.log('API 응답 전체:', response);
+        console.log('API 응답 data:', response.data);
+        console.log('API 응답 data 타입:', typeof response.data);
+        console.log('API 응답 data가 배열인가?', Array.isArray(response.data));
+        
+        // Page 객체 처리 (서버 사이드 페이징)
+        if (!response.data) {
+          console.error('응답 데이터가 없습니다');
+          setProducts([]);
+          setTotalPages(0);
+          setTotalElements(0);
+          return;
+        }
+        
+        // Spring Boot Page 객체는 {content: [...], totalPages: ..., totalElements: ...} 형태
+        let dataArray = [];
+        let totalPagesValue = 0;
+        let totalElementsValue = 0;
+        
+        if (response.data.content && Array.isArray(response.data.content)) {
+          // Page 객체로 반환된 경우 (정상)
+          dataArray = response.data.content;
+          totalPagesValue = response.data.totalPages || 0;
+          totalElementsValue = response.data.totalElements || 0;
+          console.log('Page 객체로 받음 - content 개수:', dataArray.length, 'totalPages:', totalPagesValue);
+        } else if (Array.isArray(response.data)) {
+          // 배열로 직접 반환된 경우 (비정상 - 페이징 미적용)
+          console.warn('⚠️ 배열로 반환됨 - 서버 사이드 페이징이 적용되지 않았습니다');
+          // 클라이언트 사이드 페이징 처리
+          const startIndex = currentPage * 12;
+          const endIndex = startIndex + 12;
+          dataArray = response.data.slice(startIndex, endIndex);
+          totalPagesValue = Math.ceil(response.data.length / 12);
+          totalElementsValue = response.data.length;
+          console.log('클라이언트 사이드 페이징 적용 - 현재 페이지:', currentPage, '표시 개수:', dataArray.length);
+        } else {
+          console.error('응답 데이터 형식이 올바르지 않습니다:', response.data);
+          setProducts([]);
+          setTotalPages(0);
+          setTotalElements(0);
+          return;
+        }
+        
+        const transformed = dataArray.map(transformGbProduct);
         setProducts(transformed);
+        setTotalPages(totalPagesValue);
+        setTotalElements(totalElementsValue);
       } catch (e) {
         console.error("공구 목록 조회 실패:", e);
         setProducts([]);
+        setTotalPages(0);
+        setTotalElements(0);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [type]);
+  }, [type, currentPage, selectedCategory, selectedStatus, selectedSort]);
 
   const getTitleByType = () => {
     if (type === "deadline-soon") return "마감 임박 공구";
@@ -120,9 +175,9 @@ export default function GBProductList() {
 
   useEffect(() => {
     if (categoryParam) {
-      setSelectCategory([categoryParam]);
+      setSelectedCategory(categoryParam);
     } else {
-      setSelectCategory([]);
+      setSelectedCategory(null);
     }
   }, [categoryParam]);
 
@@ -160,8 +215,8 @@ export default function GBProductList() {
               {allCategories.map((category) => (
                 <span
                   key={category}
-                  style={selectCategory.includes(category) ? styles.tagWhite : styles.tag}
-                  onClick={() => handleCartegopryClick(category)}
+                  style={selectedCategory === category ? styles.tagWhite : styles.tag}
+                  onClick={() => handleCategoryClick(category)}
                 >
                   {category}
                 </span>
@@ -194,7 +249,7 @@ export default function GBProductList() {
               {allStatus.map((status) => (
                 <span
                   key={status}
-                  style={selectStatus.includes(status) ? styles.tagWhite : styles.tag}
+                  style={selectedStatus === status ? styles.tagWhite : styles.tag}
                   onClick={() => handleStatusClick(status)}
                 >
                   {status}
@@ -210,29 +265,49 @@ export default function GBProductList() {
         <div style={styles.container}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '50px' }}>로딩 중...</div>
-            ) : filteredProducts.length === 0 ? (
+            ) : products.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>공구가 없습니다.</div>
             ) : (
-              <div className="card-grid" style={{ gap: "20px" }}>
-              {sortedProducts.map((item) => (
-                <GroupBuyCard
-                  key={item.id}
-                  image={item.image}
-                  title={item.title}
-                  category={item.category}
-                  status={item.status}
-                  price={item.price}
-                  rating={item.rating}
-                  currentParticipants={item.currentParticipants}
-                  maxParticipants={item.maxParticipants}
-                  deadlineTime={item.deadlineTime}
-                  productId={item.id}
-                  isProposal={false}
-                  showParticipants={true}
-                />
-              ))}
-            </div>
-          )}
+              <>
+                <div className="card-grid" style={{ gap: "20px" }}>
+                  {products.map((item) => (
+                    <GroupBuyCard
+                      key={item.id}
+                      image={item.image}
+                      title={item.title}
+                      category={item.category}
+                      status={item.status}
+                      price={item.price}
+                      rating={item.rating}
+                      currentParticipants={item.currentParticipants}
+                      maxParticipants={item.maxParticipants}
+                      deadlineTime={item.deadlineTime}
+                      productId={item.id}
+                      isProposal={false}
+                      showParticipants={true}
+                    />
+                  ))}
+                </div>
+                
+                {/* 페이지네이션 */}
+                {totalPages > 1 && (
+                  <div style={styles.pagination}>
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <button
+                        key={i}
+                        style={{
+                          ...styles.pageBtn,
+                          ...(currentPage === i ? styles.pageBtnActive : {})
+                        }}
+                        onClick={() => handlePageChange(i)}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
         </div>
       </div>
     </>
@@ -310,5 +385,31 @@ tagWhite: {
   fontSize: "14px",
   cursor: "pointer",
   color:"white"
+},
+pagination: {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "8px",
+  marginTop: "40px",
+  padding: "20px 0"
+},
+pageBtn: {
+  minWidth: "36px",
+  height: "36px",
+  padding: "0 12px",
+  backgroundColor: "#FFFFFF",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  fontSize: "14px",
+  color: "#374151",
+  cursor: "pointer",
+  transition: "all 0.2s"
+},
+pageBtnActive: {
+  backgroundColor: "#739FF2",
+  borderColor: "#739FF2",
+  color: "#FFFFFF",
+  fontWeight: "600"
 }
 };

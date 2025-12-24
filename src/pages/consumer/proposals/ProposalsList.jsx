@@ -11,80 +11,135 @@ export default function ProposalsList() {
 
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // 페이징 state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  
   const categoryParam = searchParams.get("category");
-
   const type = searchParams.get("type") || "popular";
 
-  // 카테고리 및 정렬 클릭 적용
-  const [selectCategory, setSelectCategory] = useState([]);
-  const [selectedSort, setSelectedSort] = useState("최신순");
+  // 필터 state (단일 선택)
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSort, setSelectedSort] = useState("투표순");
   const allCategories = ["뷰티", "패션", "전자기기", "홈&리빙", "식품", "스포츠"];
   const sortOptions = ["최신순", "투표순"];
-
-  const handleCartegopryClick = (category) => {
-    let newCategories = [...selectCategory];
-
-    if (newCategories.includes(category)) {
-    newCategories = newCategories.filter((c) => c !== category);
+  
+  // URL type 파라미터에 따라 selectedSort 동기화
+  useEffect(() => {
+    if (type === "latest") {
+      setSelectedSort("최신순");
     } else {
-    newCategories.push(category);
+      setSelectedSort("투표순");
     }
+  }, [type]);
 
-    setSelectCategory(newCategories);
+  const handleCategoryClick = (category) => {
+    if (selectedCategory === category) {
+      setSelectedCategory(null); // 토글: 같은 카테고리 클릭 시 해제
+    } else {
+      setSelectedCategory(category);
+    }
+    setCurrentPage(0); // 필터 변경 시 첫 페이지로
   };
 
   const handleSortClick = (sort) => {
     setSelectedSort(sort);
-    // TODO: 정렬 로직 구현
+    setCurrentPage(0); // 정렬 변경 시 첫 페이지로
   };
-
-  // 필터링 적용
-  const filteredProposals = proposals
-  .filter((p) => {
-    if (selectCategory.length === 0) return true;
-    return selectCategory.includes(p.category);
-  })
-  .sort((a, b) => {
-    if (selectedSort === "최신순") {
-      // 최신순 (createdAt 기준, 없으면 id 기준)
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
-
-    if (selectedSort === "투표순") {
-      return b.voteCount - a.voteCount;
-    }
-
-    return 0;
-  });
   
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+  
+  // 정렬 옵션을 서버 파라미터로 변환
+  const getSortType = () => {
+    return selectedSort === "최신순" ? "latest" : "popular";
+  };
 
   useEffect(() => {
     const fetchProposals = async () => {
       try {
         setLoading(true);
-        const response = await myAxios().get('/proposalList', {
-          params: { type },
-        });
-
-        // transformProposal을 사용하여 데이터 변환
-        const transformed = response.data.map(transformProposal);
+        
+        const sortType = getSortType();
+        
+        const params = {
+          type: sortType,
+          page: currentPage,
+          size: 12,
+        };
+        
+        // 필터 파라미터 추가
+        if (selectedCategory) {
+          params.category = selectedCategory;
+        }
+        
+        const response = await myAxios().get('/proposals', { params });
+        
+        console.log('API 응답:', response.data);
+        
+        // Page 객체 처리 (서버 사이드 페이징)
+        if (!response.data) {
+          console.error('응답 데이터가 없습니다');
+          setProposals([]);
+          setTotalPages(0);
+          setTotalElements(0);
+          return;
+        }
+        
+        // Spring Boot Page 객체는 {content: [...], totalPages: ..., totalElements: ...} 형태
+        let dataArray = [];
+        let totalPagesValue = 0;
+        let totalElementsValue = 0;
+        
+        if (response.data.content && Array.isArray(response.data.content)) {
+          // Page 객체로 반환된 경우 (정상)
+          dataArray = response.data.content;
+          totalPagesValue = response.data.totalPages || 0;
+          totalElementsValue = response.data.totalElements || 0;
+          console.log('Page 객체로 받음 - content 개수:', dataArray.length, 'totalPages:', totalPagesValue);
+        } else if (Array.isArray(response.data)) {
+          // 배열로 직접 반환된 경우 (비정상 - 페이징 미적용)
+          console.warn('⚠️ 배열로 반환됨 - 서버 사이드 페이징이 적용되지 않았습니다');
+          // 클라이언트 사이드 페이징 처리
+          const startIndex = currentPage * 12;
+          const endIndex = startIndex + 12;
+          dataArray = response.data.slice(startIndex, endIndex);
+          totalPagesValue = Math.ceil(response.data.length / 12);
+          totalElementsValue = response.data.length;
+          console.log('클라이언트 사이드 페이징 적용 - 현재 페이지:', currentPage, '표시 개수:', dataArray.length);
+        } else {
+          console.error('응답 데이터 형식이 올바르지 않습니다:', response.data);
+          setProposals([]);
+          setTotalPages(0);
+          setTotalElements(0);
+          return;
+        }
+        
+        const transformed = dataArray.map(transformProposal);
         setProposals(transformed);
+        setTotalPages(totalPagesValue);
+        setTotalElements(totalElementsValue);
       } catch (e) {
         console.error("제안 목록 조회 실패:", e);
         setProposals([]);
+        setTotalPages(0);
+        setTotalElements(0);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProposals();
-  }, [type]);
+  }, [currentPage, selectedCategory, selectedSort]);
 
   useEffect(() => {
     if (categoryParam) {
-      setSelectCategory([categoryParam]);
+      setSelectedCategory(categoryParam);
     } else {
-      setSelectCategory([]);
+      setSelectedCategory(null);
     }
   }, [categoryParam]);
 
@@ -125,26 +180,31 @@ export default function ProposalsList() {
           <div style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
             <div style={{ width: "120px", fontWeight: "bold" }}>카테고리</div>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              {allCategories.slice(0).map((category) => (
+              {allCategories.map((category) => (
                 <span
                   key={category}
-                  style={selectCategory.includes(category) ? styles.tagWhite : styles.tag}
-                  onClick={() => handleCartegopryClick(category)}
+                  style={selectedCategory === category ? styles.tagWhite : styles.tag}
+                  onClick={() => handleCategoryClick(category)}
                 >
                   {category}
                 </span>
               ))}
             </div>
-
           </div>
           <hr style={{ color: "#B5B1B1" }} />
           {/* 정렬 줄 */}
           <div style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
             <div style={{ width: "120px", fontWeight: "bold" }}>정렬</div>
-
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
               {sortOptions.map((s) => ( 
-                <span key={s} style={selectedSort === s ? styles.tagWhite : styles.tag} onClick={() => handleSortClick(s)} > {s} </span> ))}
+                <span 
+                  key={s} 
+                  style={selectedSort === s ? styles.tagWhite : styles.tag} 
+                  onClick={() => handleSortClick(s)}
+                >
+                  {s}
+                </span>
+              ))}
             </div>
           </div>
           <hr style={{ color: "#B5B1B1" }} />
@@ -155,29 +215,49 @@ export default function ProposalsList() {
           <div style={styles.container}>
             {loading ? (
               <div style={{ textAlign: 'center', padding: '50px' }}>로딩 중...</div>
-            ) : filteredProposals.length === 0 ? (
+            ) : proposals.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>데이터가 없습니다.</div>
             ) : (
-              <div className="card-grid" style={{ gap: "20px" }}>
-                {filteredProposals.map((p) => (
-                  <GroupBuyCard
-                    key={p.id}
-                    image={p.image}
-                    title={p.title}
-                    category={p.category}
-                    status={p.status}
-                    price={p.price}
-                    rating={p.rating}
-                    currentParticipants={p.currentParticipants}
-                    maxParticipants={p.maxParticipants}
-                    productId={p.id}
-                    isProposal={true}
-                    voteCount={p.voteCount}
-                    onVote={() => handleVote(p.id)}
-                    showParticipants={false}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="card-grid" style={{ gap: "20px" }}>
+                  {proposals.map((p) => (
+                    <GroupBuyCard
+                      key={p.id}
+                      image={p.image}
+                      title={p.title}
+                      category={p.category}
+                      status={p.status}
+                      price={p.price}
+                      rating={p.rating}
+                      currentParticipants={p.currentParticipants}
+                      maxParticipants={p.maxParticipants}
+                      productId={p.id}
+                      isProposal={true}
+                      voteCount={p.voteCount}
+                      onVote={() => handleVote(p.id)}
+                      showParticipants={false}
+                    />
+                  ))}
+                </div>
+                
+                {/* 페이지네이션 */}
+                {totalPages > 1 && (
+                  <div style={styles.pagination}>
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <button
+                        key={i}
+                        style={{
+                          ...styles.pageBtn,
+                          ...(currentPage === i ? styles.pageBtnActive : {})
+                        }}
+                        onClick={() => handlePageChange(i)}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -256,5 +336,31 @@ tagWhite: {
   fontSize: "14px",
   cursor: "pointer",
   color:"white"
+},
+pagination: {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "8px",
+  marginTop: "40px",
+  padding: "20px 0"
+},
+pageBtn: {
+  minWidth: "36px",
+  height: "36px",
+  padding: "0 12px",
+  backgroundColor: "#FFFFFF",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  fontSize: "14px",
+  color: "#374151",
+  cursor: "pointer",
+  transition: "all 0.2s"
+},
+pageBtnActive: {
+  backgroundColor: "#739FF2",
+  borderColor: "#739FF2",
+  color: "#FFFFFF",
+  fontWeight: "600"
 }
 };
