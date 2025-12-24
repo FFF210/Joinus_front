@@ -92,6 +92,11 @@
   color: #555;
 }
 
+.suggest-card-img > img {
+  width:140px;
+  height:140px;
+}
+
 /* 텍스트 영역 */
 .card-info {
   margin-top: 15px;

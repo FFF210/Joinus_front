@@ -84,6 +84,7 @@ const getOrderStatusLabel = (status) => {
         params: { username },
       })
       .then((res) => {
+        console.log(res)
         setSuggestions(res.data?.slice(0, 5) || []);
       })
       .catch((err) => {
@@ -239,10 +240,12 @@ const getOrderStatusLabel = (status) => {
               style={{ cursor: "pointer" }}
               onClick={() => navigate(`/proposalDetail/${item.id}`)}
             >
-              <div className="main-thumb"></div>
+              <div className="main-thumb">
+                <img src={'http://localhost:8080/imageView?filename='+item.imageUrl || "/default.png"} alt="" />
+              </div>
               <div className="main-product-info">
                 <p>{item.title || item.productName}</p>
-                <p>참여자 {item.participantCount || 0}명</p>
+                <p>참여자 {item.voteCount || 0}명</p>
               </div>
             </div>
           ))
