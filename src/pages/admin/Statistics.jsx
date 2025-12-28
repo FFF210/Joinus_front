@@ -17,7 +17,7 @@ export default function Statistics() {
   const [unit, setUnit] = useState('일'); // 일/주/월
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   // API 데이터 상태
   const [statisticsData, setStatisticsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,8 +80,8 @@ export default function Statistics() {
   const salesDetails = allSalesDetails.slice(startIndex, endIndex);
 
   // 도넛 차트 계산 (매출별)
-  const totalRevenueForChart = monthlyRevenue.length > 0 
-    ? monthlyRevenue.reduce((sum, m) => sum + (m.revenue || 0), 0) 
+  const totalRevenueForChart = monthlyRevenue.length > 0
+    ? monthlyRevenue.reduce((sum, m) => sum + (m.revenue || 0), 0)
     : 1;
   const revenueChartData = monthlyRevenue.map((item, index) => {
     const percentage = totalRevenueForChart > 0 ? (item.revenue / totalRevenueForChart) * 100 : 0;
@@ -116,7 +116,7 @@ export default function Statistics() {
     const circumference = 2 * Math.PI * radius;
     const centerX = 100;
     const centerY = 100;
-    
+
     // 누적 각도 계산
     let currentOffset = 0;
     const segments = data.map((item, index) => {
@@ -124,7 +124,7 @@ export default function Statistics() {
       const segmentLength = (percentage / 100) * circumference;
       const offset = currentOffset;
       currentOffset += segmentLength;
-      
+
       return {
         ...item,
         segmentLength,
@@ -132,7 +132,7 @@ export default function Statistics() {
         color: colorScheme[index % colorScheme.length]
       };
     });
-    
+
     return (
       <div className="donut-chart-container">
         <h3 className="chart-title">{title}</h3>
@@ -214,205 +214,205 @@ export default function Statistics() {
       <div className="main-content">
         <AdminHeader title="매출 통계" />
         <div className="content-area">
-    <div className="statistics-page">
-      {/* 헤더 */}
-      <div className="page-header">
-        <div className="header-content">
-          <h1 className="page-title">매출 통계</h1>
-          <p className="page-description">
-            월별 기간을 기준으로 매출을 확인하고, 수수료 및 정산 금액을 조회합니다.
-          </p>
-        </div>
-        <div className="header-date">
-          기준일: {new Date().toISOString().slice(0, 10)}
-        </div>
-      </div>
-
-      {/* 조회월 필터 */}
-      <div className="filter-section">
-        <div className="filter-row">
-          <label className="filter-label">조회 월</label>
-            <div className="month-range">
-              <input
-                type="month"
-                value={startMonth}
-                onChange={(e) => setStartMonth(e.target.value)}
-              />
-              <span className="month-separator">~</span>
-              <input
-                type="month"
-                value={endMonth}
-                onChange={(e) => setEndMonth(e.target.value)}
-            />
+          <div className="statistics-page">
+            {/* 헤더 */}
+            <div className="page-header">
+              <div className="header-content">
+                <h1 className="page-title">매출 통계</h1>
+                <p className="page-description">
+                  월별 기간을 기준으로 매출을 확인하고, 수수료 및 정산 금액을 조회합니다.
+                </p>
+              </div>
+              <div className="header-date">
+                기준일: {new Date().toISOString().slice(0, 10)}
+              </div>
             </div>
-            <span className="filter-note">(최대 6개월 조회)</span>
-            <button className="search-button" onClick={handleSearch} disabled={isLoading}>
-            {isLoading ? '조회 중...' : '조회'}
-          </button>
-        </div>
-      </div>
 
-      {/* 기간별 매출 그래프 (도넛 차트) */}
-      {monthlyRevenue.length > 0 && (
-        <div className="chart-section">
-          <div className="chart-header">
-            <h2 className="section-title">기간별 매출 그래프</h2>
-            <span className="chart-unit">단위: 월별</span>
-          </div>
-          <div className="donut-charts-container">
-            <DonutChart
-              data={revenueChartData}
-              title="매출별"
-              colorScheme={['#3b82f6', '#8b5cf6', '#ec4899']}
-              valueKey="revenue"
-            />
-            <DonutChart
-              data={profitChartData}
-              title="순익별"
-              colorScheme={['#10b981', '#f59e0b', '#ef4444']}
-              valueKey="profit"
-            />
-          </div>
-          <p className="formula-note">
-            매출액 = (배송비 제외) 구매가 - 포인트 + 수수료 5%
-          </p>
-        </div>
-      )}
-
-      {/* 요약 지표 */}
-      <div className="stats-section">
-        <div className="stat-card">
-          <div className="stat-label">총 매출액</div>
-          <div className="stat-value">{formatCurrency(summary.totalRevenue)}</div>
-          <div className="stat-note">(선택한 기간 전체 (배송비 제외))</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">총 주문 수</div>
-          <div className="stat-value">{summary.totalOrders}건</div>
-          <div className="stat-note">(취소 제외 확정 주문만 집계)</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">순이익</div>
-          <div className="stat-value">{formatCurrency(summary.netProfit)}</div>
-          <div className="stat-note">(매출액의 5% 기준)</div>
-        </div>
-      </div>
-
-      {/* 매출 상세 */}
-      <div className="details-section">
-        <div className="statistics-section-header">
-          <h2 className="section-title">매출 상세</h2>
-        </div>
-        <div className="unit-selector">
-          <p className="unit-note">단위 선택에 따라 일/주/월 데이터를 조회합니다.</p>
-          <div className="unit-buttons">
-            <button
-              className={`unit-btn ${unit === '일' ? 'active' : ''}`}
-              onClick={() => handleUnitChange('일')}
-              disabled={isLoading}
-            >
-              일
-            </button>
-            <button
-              className={`unit-btn ${unit === '주' ? 'active' : ''}`}
-              onClick={() => handleUnitChange('주')}
-              disabled={isLoading}
-            >
-              주
-            </button>
-            <button
-              className={`unit-btn ${unit === '월' ? 'active' : ''}`}
-              onClick={() => handleUnitChange('월')}
-              disabled={isLoading}
-            >
-              월
-            </button>
-          </div>
-        </div>
-        <div className="table-container">
-          <table className="sales-table">
-            <thead>
-              <tr>
-                <th>날짜</th>
-                <th>주문 수</th>
-                <th>구매가 합계</th>
-                <th>포인트 사용</th>
-                <th>수수료 (5%)</th>
-                <th>매출액</th>
-                <th>정산 예정 금액</th>
-              </tr>
-            </thead>
-            <tbody>
-              {salesDetails.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="no-data">데이터가 없습니다.</td>
-                </tr>
-              ) : (
-                salesDetails.map((item, index) => (
-                  <tr key={index}>
-                    <td className="date-cell">{item.date}</td>
-                    <td className="number-cell">{item.orders}</td>
-                    <td className="number-cell">{formatCurrency(item.purchasePrice)}</td>
-                    <td className="number-cell">{formatCurrency(item.pointsUsed)}</td>
-                    <td className="number-cell">{formatCurrency(item.commission)}</td>
-                    <td className="number-cell sales-amount">{formatCurrency(item.salesAmount)}</td>
-                    <td className="number-cell settlement-amount">{formatCurrency(item.settlementAmount)}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-            {allSalesDetails.length > 0 && (
-              <tfoot>
-                <tr className="table-total">
-                  <td className="total-label">합계</td>
-                  <td className="number-cell">{allSalesDetails.reduce((sum, item) => sum + (item.orders || 0), 0)}</td>
-                  <td className="number-cell">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.purchasePrice || 0), 0))}</td>
-                  <td className="number-cell">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.pointsUsed || 0), 0))}</td>
-                  <td className="number-cell">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.commission || 0), 0))}</td>
-                  <td className="number-cell sales-amount">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.salesAmount || 0), 0))}</td>
-                  <td className="number-cell settlement-amount">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.settlementAmount || 0), 0))}</td>
-                </tr>
-              </tfoot>
-            )}
-          </table>
-        </div>
-        <div className="table-notes">
-          <p>정산 완료된 금액은 정산내역 화면에서 별도로 관리됩니다.</p>
-          <p>취소/환불 주문은 매출집계에서 제외하거나, 별도 컬럼으로 분리할 수 있습니다.</p>
-        </div>
-
-        {/* 페이지네이션 */}
-        {totalPages > 0 && (
-          <div className="pagination">
-            <button
-              className="pagination-button"
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-            >
-              이전
-            </button>
-            <div className="pagination-numbers">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  className={`pagination-number ${currentPage === page ? 'active' : ''}`}
-                  onClick={() => setCurrentPage(page)}
-                >
-                  {page}
+            {/* 조회월 필터 */}
+            <div className="stats-filter-section">
+              <div className="stats-filter-row">
+                <label className="stats-filter-label">조회 월</label>
+                <div className="month-range">
+                  <input
+                    type="month"
+                    value={startMonth}
+                    onChange={(e) => setStartMonth(e.target.value)}
+                  />
+                  <span className="month-separator">~</span>
+                  <input
+                    type="month"
+                    value={endMonth}
+                    onChange={(e) => setEndMonth(e.target.value)}
+                  />
+                </div>
+                <span className="filter-note">(최대 6개월 조회)</span>
+                <button className="stats-search-button" onClick={handleSearch} disabled={isLoading}>
+                  {isLoading ? '조회 중...' : '조회'}
                 </button>
-              ))}
+              </div>
             </div>
-            <button
-              className="pagination-button"
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={currentPage === totalPages}
-            >
-              다음
-            </button>
+
+            {/* 기간별 매출 그래프 (도넛 차트) */}
+            {monthlyRevenue.length > 0 && (
+              <div className="chart-section">
+                <div className="chart-header">
+                  <h2 className="section-title">기간별 매출 그래프</h2>
+                  <span className="chart-unit">단위: 월별</span>
+                </div>
+                <div className="donut-charts-container">
+                  <DonutChart
+                    data={revenueChartData}
+                    title="매출별"
+                    colorScheme={['#3b82f6', '#8b5cf6', '#ec4899']}
+                    valueKey="revenue"
+                  />
+                  <DonutChart
+                    data={profitChartData}
+                    title="순익별"
+                    colorScheme={['#10b981', '#f59e0b', '#ef4444']}
+                    valueKey="profit"
+                  />
+                </div>
+                <p className="formula-note">
+                  매출액 = (배송비 제외) 구매가 - 포인트 + 수수료 5%
+                </p>
+              </div>
+            )}
+
+            {/* 요약 지표 */}
+            <div className="stats-section">
+              <div className="stat-card">
+                <div className="stat-label">총 매출액</div>
+                <div className="stat-value">{formatCurrency(summary.totalRevenue)}</div>
+                <div className="stat-note">(선택한 기간 전체 (배송비 제외))</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-label">총 주문 수</div>
+                <div className="stat-value">{summary.totalOrders}건</div>
+                <div className="stat-note">(취소 제외 확정 주문만 집계)</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-label">순이익</div>
+                <div className="stat-value">{formatCurrency(summary.netProfit)}</div>
+                <div className="stat-note">(매출액의 5% 기준)</div>
+              </div>
+            </div>
+
+            {/* 매출 상세 */}
+            <div className="details-section">
+              <div className="statistics-section-header">
+                <h2 className="section-title">매출 상세</h2>
+              </div>
+              <div className="unit-selector">
+                <p className="unit-note">단위 선택에 따라 일/주/월 데이터를 조회합니다.</p>
+                <div className="unit-buttons">
+                  <button
+                    className={`unit-btn ${unit === '일' ? 'active' : ''}`}
+                    onClick={() => handleUnitChange('일')}
+                    disabled={isLoading}
+                  >
+                    일
+                  </button>
+                  <button
+                    className={`unit-btn ${unit === '주' ? 'active' : ''}`}
+                    onClick={() => handleUnitChange('주')}
+                    disabled={isLoading}
+                  >
+                    주
+                  </button>
+                  <button
+                    className={`unit-btn ${unit === '월' ? 'active' : ''}`}
+                    onClick={() => handleUnitChange('월')}
+                    disabled={isLoading}
+                  >
+                    월
+                  </button>
+                </div>
+              </div>
+              <div className="table-container">
+                <table className="sales-table">
+                  <thead>
+                    <tr>
+                      <th>날짜</th>
+                      <th>주문 수</th>
+                      <th>구매가 합계</th>
+                      <th>포인트 사용</th>
+                      <th>수수료 (5%)</th>
+                      <th>매출액</th>
+                      <th>정산 예정 금액</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {salesDetails.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="no-data">데이터가 없습니다.</td>
+                      </tr>
+                    ) : (
+                      salesDetails.map((item, index) => (
+                        <tr key={index}>
+                          <td className="date-cell">{item.date}</td>
+                          <td className="number-cell">{item.orders}</td>
+                          <td className="number-cell">{formatCurrency(item.purchasePrice)}</td>
+                          <td className="number-cell">{formatCurrency(item.pointsUsed)}</td>
+                          <td className="number-cell">{formatCurrency(item.commission)}</td>
+                          <td className="number-cell sales-amount">{formatCurrency(item.salesAmount)}</td>
+                          <td className="number-cell settlement-amount">{formatCurrency(item.settlementAmount)}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                  {allSalesDetails.length > 0 && (
+                    <tfoot>
+                      <tr className="table-total">
+                        <td className="total-label">합계</td>
+                        <td className="number-cell">{allSalesDetails.reduce((sum, item) => sum + (item.orders || 0), 0)}</td>
+                        <td className="number-cell">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.purchasePrice || 0), 0))}</td>
+                        <td className="number-cell">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.pointsUsed || 0), 0))}</td>
+                        <td className="number-cell">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.commission || 0), 0))}</td>
+                        <td className="number-cell sales-amount">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.salesAmount || 0), 0))}</td>
+                        <td className="number-cell settlement-amount">{formatCurrency(allSalesDetails.reduce((sum, item) => sum + (item.settlementAmount || 0), 0))}</td>
+                      </tr>
+                    </tfoot>
+                  )}
+                </table>
+              </div>
+              <div className="table-notes">
+                <p>정산 완료된 금액은 정산내역 화면에서 별도로 관리됩니다.</p>
+                <p>취소/환불 주문은 매출집계에서 제외하거나, 별도 컬럼으로 분리할 수 있습니다.</p>
+              </div>
+
+              {/* 페이지네이션 */}
+              {totalPages > 0 && (
+                <div className="pagination">
+                  <button
+                    className="pagination-button"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    이전
+                  </button>
+                  <div className="pagination-numbers">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    className="pagination-button"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    다음
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
-    </div>
         </div>
       </div>
     </div>

@@ -225,15 +225,19 @@ export default function OrderList({ id }) {
 
       {/* 조회 조건 영역 */}
       <div style={styles.pageWrapper}>
-        <div style={{ width: '860px', padding: '0' }}>
-
-          {/* 조회 조건 박스 */}
-          <div style={{ border: "1px solid #ddd", padding: "20px", display: "flex", justifyContent: "space-between" }}>
-
+        <div style={{ width: '860px', padding: '0', marginBottom: '24px' }}>
+          <div style={styles.searchBox}>
             <div>
-              <div style={{ marginBottom: "10px" }}>구매기간</div>
+              <div style={{
+                marginBottom: "12px",
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#444"
+              }}>
+                구매기간
+              </div>
 
-              <div style={{ marginBottom: "15px" }}>
+              <div style={{ marginBottom: "16px" }}>
                 {[1, 3, 6, 12].map((m) => (
                   <button
                     key={m}
@@ -242,12 +246,25 @@ export default function OrderList({ id }) {
                       setDraftPeriod(m);
                       setPeriodMonths(m);
                     }}
+                    onMouseEnter={(e) => {
+                      if (draftPeriod !== m) {
+                        e.target.style.backgroundColor = '#f8f8f8';
+                        e.target.style.borderColor = '#999';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (draftPeriod !== m) {
+                        e.target.style.backgroundColor = '#fff';
+                        e.target.style.borderColor = '#d0d0d0';
+                      }
+                    }}
                   >
                     {m}개월
                   </button>
                 ))}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <FormGroup style={{ margin: 0 }}>
                   <Input
                     id="startDate"
@@ -255,10 +272,16 @@ export default function OrderList({ id }) {
                     type="date"
                     value={draftParams.startDate}
                     onChange={(e) => setDraftParams({ ...draftParams, startDate: e.target.value })}
+                    style={{
+                      padding: "10px 12px",
+                      border: "1px solid #d0d0d0",
+                      borderRadius: "6px",
+                      fontSize: "14px"
+                    }}
                   />
                 </FormGroup>
 
-                <span style={{ fontSize: '20px' }}>~</span>
+                <span style={{ fontSize: '16px', color: '#666' }}>~</span>
 
                 <FormGroup style={{ margin: 0 }}>
                   <Input
@@ -267,22 +290,44 @@ export default function OrderList({ id }) {
                     type="date"
                     value={draftParams.endDate}
                     onChange={(e) => setDraftParams({ ...draftParams, endDate: e.target.value })}
+                    style={{
+                      padding: "10px 12px",
+                      border: "1px solid #d0d0d0",
+                      borderRadius: "6px",
+                      fontSize: "14px"
+                    }}
                   />
                 </FormGroup>
               </div>
             </div>
 
             {/* 조회 버튼 */}
-            <div style={{ width: "120px", display: "flex", justifyContent: "center", alignItems: "center", padding: '0' }}>
+            <div style={{
+              width: "120px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}>
               <Button
-                style={{ padding: "10px 10px", backgroundColor: "#E7EBF3", border: "1px solid #ccc", borderRadius: "6px", fontSize: '12px', color: 'black' }}
+                style={{
+                  padding: "12px 24px",
+                  backgroundColor: "#739FF2",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
                 onClick={handleSearch}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#5a7cd6'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#739FF2'}
               >
                 조회
               </Button>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -290,15 +335,22 @@ export default function OrderList({ id }) {
         <div style={styles.container}>
 
           {/* 헤더 영역 */}
-          <hr style={{ margin: '0', border: '1px solid black' }} />
-          <div style={{ display: "flex", backgroundColor: "#E7EBF3", padding: "12px 0", fontSize: '12px' }}>
-            <div style={{ ...styles.rowHeader, width: "22%" }}>주문일자(주문번호)</div>
-            <div style={{ ...styles.rowHeader, width: "43%" }}>상품 정보</div>
-            <div style={{ ...styles.rowHeader, width: "10%" }}>수량</div>
-            <div style={{ ...styles.rowHeader, width: "15%" }}>결제 금액</div>
-            <div style={{ ...styles.rowHeader, width: "10%" }}>상태</div>
+          <div style={{
+            borderTop: '2px solid #e0e0e0',
+            borderBottom: '2px solid #e0e0e0'
+          }}>
+            <div style={{
+              display: "flex",
+              backgroundColor: "#f8f8f8",
+              padding: "14px 0"
+            }}>
+              <div style={{ ...styles.rowHeader, width: "22%" }}>주문일자(주문번호)</div>
+              <div style={{ ...styles.rowHeader, width: "43%" }}>상품 정보</div>
+              <div style={{ ...styles.rowHeader, width: "10%" }}>수량</div>
+              <div style={{ ...styles.rowHeader, width: "15%" }}>결제 금액</div>
+              <div style={{ ...styles.rowHeader, width: "10%" }}>상태</div>
+            </div>
           </div>
-          <hr style={{ margin: '0', border: '1px solid black' }} />
 
           {/* 로딩 상태 표시 */}
           {loading && (
@@ -408,65 +460,102 @@ const styles = {
     width: "860px",
     padding: "20px 0",
   },
+
+  // ⭐ 조회 조건 박스
+  searchBox: {
+    border: "1px solid #e0e0e0",
+    borderRadius: "8px",
+    padding: "24px",
+    display: "flex",
+    justifyContent: "space-between",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)"
+  },
+
+  // ⭐ 기간 버튼
   periodBtn: {
-    padding: "6px 14px",
+    padding: "8px 16px",
     marginRight: "8px",
-    border: "1px solid #CCD1D8",
-    borderRadius: "4px",
-    backgroundColor: "#F5F6F8",
+    border: "1px solid #d0d0d0",
+    borderRadius: "6px",
+    backgroundColor: "#fff",
     cursor: "pointer",
-    fontSize: '12px'
+    fontSize: '13px',
+    fontWeight: '500',
+    color: '#555',
+    transition: 'all 0.2s'
   },
   periodBtnActive: {
-    padding: "6px 14px",
+    padding: "8px 16px",
     marginRight: "8px",
-    border: "1px solid #7693FC",
-    borderRadius: "4px",
-    backgroundColor: "#7693FC",
+    border: "1px solid #739FF2",
+    borderRadius: "6px",
+    backgroundColor: "#739FF2",
     color: "#fff",
     cursor: "pointer",
-    fontSize: '12px'
+    fontSize: '13px',
+    fontWeight: '600',
+    transition: 'all 0.2s'
   },
+
+  // ⭐ 테이블 헤더 (border 수정)
   rowHeader: {
-    fontWeight: "bold",
+    fontWeight: "700",
+    fontSize: "13px",
+    color: "#444",
     textAlign: "center"
   },
+
   row: {
     display: "flex",
-    padding: "15px 0",
-    alignItems: "center"
+    padding: "20px 0",
+    alignItems: "center",
+    borderBottom: "1px solid #eaeaea",
+    transition: "background-color 0.2s"
   },
+
   col: {
-    textAlign: "center"
+    textAlign: "center",
+    fontSize: "13px",
+    color: "#333"
   },
+
+  // ⭐ 버튼 스타일 개선
   smallBtn: {
     width: "80px",
-    fontSize: "10px",
-    marginBottom: "5px",
-    padding: "5px 0",
-    border: "1px solid #ccc",
+    fontSize: "12px",
+    fontWeight: "600",
+    marginBottom: "6px",
+    padding: "8px 0",
+    border: "1px solid #d0d0d0",
     backgroundColor: "#fff",
-    borderRadius: "4px",
+    borderRadius: "6px",
     cursor: "pointer",
     display: "block",
     marginLeft: "auto",
-    marginRight: "auto"
+    marginRight: "auto",
+    transition: "all 0.2s"
   },
+
   pageBtn: {
-    padding: "6px 12px",
-    border: "1px solid #ddd",
+    padding: "8px 14px",
+    border: "1px solid #d0d0d0",
     backgroundColor: "#fff",
-    borderRadius: "4px",
+    borderRadius: "6px",
     cursor: "pointer",
-    fontSize: "14px"
+    fontSize: "13px",
+    fontWeight: "500",
+    color: "#555",
+    transition: "all 0.2s"
   },
   pageBtnActive: {
-    padding: "6px 12px",
-    border: "1px solid #7693FC",
-    backgroundColor: "#7693FC",
+    padding: "8px 14px",
+    border: "1px solid #739FF2",
+    backgroundColor: "#739FF2",
     color: "#fff",
-    borderRadius: "4px",
+    borderRadius: "6px",
     cursor: "pointer",
-    fontSize: "14px"
+    fontSize: "13px",
+    fontWeight: "600"
   }
 };

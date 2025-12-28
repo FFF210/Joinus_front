@@ -19,8 +19,8 @@ export default function ShopCartList() {
     const fetchCartList = async () => {
       try {
         const userInfo =
-      JSON.parse(sessionStorage.getItem("userInfo"))
-      const username = userInfo?.username;
+          JSON.parse(sessionStorage.getItem("userInfo"))
+        const username = userInfo?.username;
 
         const response = await myAxios().get(`/cartList`, {
           params: { username }
@@ -58,12 +58,12 @@ export default function ShopCartList() {
       }
     });
   };
- 
+
 
   const deleteCartList = async (cartId) => {
     try {
       const userInfo =
-      JSON.parse(sessionStorage.getItem("userInfo"))
+        JSON.parse(sessionStorage.getItem("userInfo"))
       const username = userInfo?.username;
 
       await myAxios().post("/deleteCart", { id: cartId, memberUsername: username });
@@ -87,36 +87,101 @@ export default function ShopCartList() {
       <div className="fw-bold d-block" style={{ fontSize: "20px", margin: "20px auto" }}>장바구니</div>
 
       {/* 헤더 */}
-      <hr style={{ margin: "5px auto 0 auto" }} />
-      <FormGroup check className="header" style={{backgroundColor:'#F2F9FC', marginBottom:'0px', height:'35px'}}>
-        <Label className="headerLabel" style={{ margin: "0 330px 0 5px " }}>상품정보</Label>
-        <Label className="headerLabel" style={{ margin: "0 40px 0 0" }}>가격</Label>
-        <Label className="headerLabel" style={{ margin: "0 45px 0 0" }}>수량</Label>
-        <Label className="headerLabel" style={{ margin: "0 30px 0 0" }}>구매가</Label>
-        <Label className="headerLabel" style={{ margin: "0 35px 0 0" }}>선택</Label>
-      </FormGroup>
-      <hr style={{ margin: "0 auto 5px auto" }} />
+      <div style={{
+        borderTop: '2px solid #e0e0e0',
+        borderBottom: '2px solid #e0e0e0',
+        margin: '20px 0 5px 0'
+      }}>
+        <FormGroup
+          check
+          className="header"
+          style={{
+            backgroundColor: '#f8f8f8',
+            margin: '0',
+            height: '48px',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 10px'
+          }}
+        >
+          <Label
+            className="headerLabel"
+            style={{
+              margin: "0 330px 0 5px",
+              fontSize: '13px',
+              fontWeight: '700',
+              color: '#444'
+            }}
+          >
+            상품정보
+          </Label>
+          <Label
+            className="headerLabel"
+            style={{
+              margin: "0 40px 0 0",
+              fontSize: '13px',
+              fontWeight: '700',
+              color: '#444'
+            }}
+          >
+            가격
+          </Label>
+          <Label
+            className="headerLabel"
+            style={{
+              margin: "0 45px 0 0",
+              fontSize: '13px',
+              fontWeight: '700',
+              color: '#444'
+            }}
+          >
+            수량
+          </Label>
+          <Label
+            className="headerLabel"
+            style={{
+              margin: "0 30px 0 0",
+              fontSize: '13px',
+              fontWeight: '700',
+              color: '#444'
+            }}
+          >
+            구매가
+          </Label>
+          <Label
+            className="headerLabel"
+            style={{
+              margin: "0 35px 0 0",
+              fontSize: '13px',
+              fontWeight: '700',
+              color: '#444'
+            }}
+          >
+            선택
+          </Label>
+        </FormGroup>
+      </div>
       {/* 상품 리스트 */}
       <div className="productList">
-        {pagedCartList.map(item=>(
-          <FormGroup  check className="productItem" key={item.cartId}>
+        {pagedCartList.map(item => (
+          <FormGroup check className="productItem" key={item.cartId}>
             <img
-                    src={`${baseUrl}/file/gbProduct/${item.thumbnailPath.split('/').pop()}`}
-                    style={{ width: "70px", height: "70px", marginRight: "20px" }}
-                />
+              src={`${baseUrl}/file/gbProduct/${item.thumbnailPath.split('/').pop()}`}
+              style={{ width: "70px", height: "70px", marginRight: "20px" }}
+            />
             <div className="productName">{item.productName}</div>
             <div className="productPrice">{item.price.toLocaleString()}원</div>
             <div className="productQuantity">{item.quantity}</div>
             <div className="productTotal">{(item.price * item.quantity).toLocaleString()}원</div>
             <div className="buttonGroup">
-              <Button size="sm" className="buttonPrimary" style={{width:"70px"}} onClick={() => handlePay(item)}>결제</Button>
-              <Button size="sm" className="buttonSecondary" onClick={()=>deleteCartList(item.cartId)}>삭제</Button>
+              <Button size="sm" className="buttonPrimary" style={{ width: "70px" }} onClick={() => handlePay(item)}>결제</Button>
+              <Button size="sm" className="buttonSecondary" onClick={() => deleteCartList(item.cartId)}>삭제</Button>
             </div>
           </FormGroup>
-          ))}
-          <hr style={{ margin: "5px auto" }} />
+        ))}
+        <hr style={{ margin: "5px auto" }} />
       </div>
-      
+
 
       {/* 페이지네이션 */}
       <Pagination className="paginationContainer">

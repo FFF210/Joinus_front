@@ -471,6 +471,7 @@ export default function ProposalDetailConsumar() {
         </div>
       </div>
 
+
       {/* 댓글 작성 */}
       <div style={styles.pageWrapper}>
         <div style={styles.container}>

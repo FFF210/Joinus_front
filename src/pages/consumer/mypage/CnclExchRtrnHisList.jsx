@@ -6,7 +6,7 @@ import OrderItem from "./OrderItem";
 import { myAxios } from "../../../config";
 
 export default function CnclExchRtrnHisList() {
-  
+
   const navigate = useNavigate();
 
   // 로그인
@@ -14,14 +14,14 @@ export default function CnclExchRtrnHisList() {
 
   // 실제 조회에 적용되는 값(조회 버튼 눌렀을 때만 변경)
   const [historyType, setHistoryType] = useState("all");
-    
+
   // ============= 화면에서 선택 중인 값 =============
   const [draftHistoryType, setDraftHistoryType] = useState("all");
   const [draftPeriod, setDraftPeriod] = useState(null);
   // 1 | 3 | 6 | 12 | null
   const [draftStartDate, setDraftStartDate] = useState("");
   const [draftEndDate, setDraftEndDate] = useState("");
-  
+
   const [historyList, setHistoryList] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -84,7 +84,7 @@ export default function CnclExchRtrnHisList() {
       else if (type === "exchange") url = `/user/mypage/cnclExchRtrnHisList/exchange/${username}`;
       else url = `/user/mypage/cnclExchRtrnHisList/all/${username}`;
 
-     // 백엔드 기간 필터 사용 (쿼리 파라미터)
+      // 백엔드 기간 필터 사용 (쿼리 파라미터)
       const params = {};
       if (draftStartDate) params.startDate = draftStartDate;
       if (draftEndDate) params.endDate = draftEndDate;
@@ -153,42 +153,73 @@ export default function CnclExchRtrnHisList() {
 
   return (
     <>
-      {/* 조회 조건 */}
+      {/* 제목 */}
       <div style={styles.pageWrapper}>
         <div style={styles.container}>
-          <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+          <h1 style={{
+            fontSize: "28px",
+            fontWeight: "700",
+            color: "#222",
+            marginBottom: "24px"
+          }}>
             취소/반품/교환/환불 내역
-          </div>
+          </h1>
         </div>
       </div>
 
       {/* 조회 조건 */}
       <div style={styles.pageWrapper}>
-        <div style={{ width: "860px" }}>
+        <div style={{ width: "860px", marginBottom: "24px" }}>
           <div style={styles.filterBox}>
             <div style={{ flex: 1 }}>
-              <div style={{ marginBottom: "10px" }}>처리내역</div>
-              <div style={{ marginBottom: "15px" }}>
+              <div style={{
+                marginBottom: "12px",
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#444"
+              }}>
+                처리내역
+              </div>
+              <div style={{ marginBottom: "20px" }}>
                 {["all", "cancel", "return", "exchange"].map((t) => (
                   <button
                     key={t}
                     style={isActive(t) ? styles.tabBtnActive : styles.tabBtn}
                     onClick={() => setDraftHistoryType(t)}
                     type="button"
+                    onMouseEnter={(e) => {
+                      if (!isActive(t)) {
+                        e.target.style.backgroundColor = '#f8f8f8';
+                        e.target.style.borderColor = '#999';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive(t)) {
+                        e.target.style.backgroundColor = '#fff';
+                        e.target.style.borderColor = '#d0d0d0';
+                      }
+                    }}
                   >
                     {t === "all"
                       ? "전체"
                       : t === "cancel"
-                      ? "취소"
-                      : t === "return"
-                      ? "반품"
-                      : "교환"}
+                        ? "취소"
+                        : t === "return"
+                          ? "반품"
+                          : "교환"}
                   </button>
                 ))}
               </div>
 
-              <div style={{ marginBottom: "10px" }}>구매기간</div>
-              <div style={{ marginBottom: "15px" }}>
+              <div style={{
+                marginBottom: "12px",
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#444"
+              }}>
+                구매기간
+              </div>
+              <div style={{ marginBottom: "20px" }}>
                 {[1, 3, 6, 12].map((m) => (
                   <button
                     key={m}
@@ -198,38 +229,74 @@ export default function CnclExchRtrnHisList() {
                       setDraftPeriod(m);
                       setPeriodMonths(m);
                     }}
+                    onMouseEnter={(e) => {
+                      if (draftPeriod !== m) {
+                        e.target.style.backgroundColor = '#f8f8f8';
+                        e.target.style.borderColor = '#999';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (draftPeriod !== m) {
+                        e.target.style.backgroundColor = '#fff';
+                        e.target.style.borderColor = '#d0d0d0';
+                      }
+                    }}
                   >
                     {m}개월
                   </button>
-              ))}
+                ))}
               </div>
 
-              <div style={{ display: "flex", gap: "20px" }}>
+              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                 <FormGroup style={{ margin: 0 }}>
-                  <Input type="date" 
-                        value={draftStartDate}
-                        onChange={(e) => {
-                          setDraftStartDate(e.target.value);
-                          setDraftPeriod(null); // ⬅ 기간 버튼 선택 해제
-                        }}
+                  <Input
+                    type="date"
+                    value={draftStartDate}
+                    onChange={(e) => {
+                      setDraftStartDate(e.target.value);
+                      setDraftPeriod(null);
+                    }}
+                    style={{
+                      padding: "10px 12px",
+                      border: "1px solid #d0d0d0",
+                      borderRadius: "6px",
+                      fontSize: "14px"
+                    }}
                   />
                 </FormGroup>
-                <span>~</span>
+                <span style={{ color: "#666", fontSize: "16px" }}>~</span>
                 <FormGroup style={{ margin: 0 }}>
-                  <Input type="date" 
-                          value={draftEndDate}
-                          onChange={(e) => setDraftEndDate(e.target.value)}/>
+                  <Input
+                    type="date"
+                    value={draftEndDate}
+                    onChange={(e) => setDraftEndDate(e.target.value)}
+                    style={{
+                      padding: "10px 12px",
+                      border: "1px solid #d0d0d0",
+                      borderRadius: "6px",
+                      fontSize: "14px"
+                    }}
+                  />
                 </FormGroup>
               </div>
             </div>
 
             {/* 조회 버튼 */}
-                    <div style={{width: "120px", display: "flex",justifyContent: "center",alignItems: "center", padding:'0'}}>
-                        <Button style={{padding: "10px 10px", backgroundColor: "#E7EBF3", border: "1px solid #ccc", borderRadius: "6px", fontSize:'12px', color:'black'}} 
-                        onClick={onSearch}
-                        disabled={loading}
-                        >조회</Button>
-                    </div>
+            <div style={styles.searchBtnWrap}>
+              <Button
+                style={styles.searchBtn}
+                onClick={onSearch}
+                disabled={loading}
+                onMouseEnter={(e) => {
+                  if (!loading) e.target.style.backgroundColor = '#5a7cd6';
+                }}
+                onMouseLeave={(e) => {
+                  if (!loading) e.target.style.backgroundColor = '#739FF2';
+                }}
+              >
+                조회
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -250,14 +317,28 @@ export default function CnclExchRtrnHisList() {
           </div>
 
           {loading && (
-            <div style={{ padding: "20px", textAlign: "center" }}>불러오는 중...</div>
+            <div style={{
+              padding: "60px",
+              textAlign: "center",
+              color: "#666",
+              fontSize: "14px"
+            }}>
+              불러오는 중...
+            </div>
           )}
 
           {!loading && historyList.length === 0 && (
-            <div style={{ padding: "20px", textAlign: "center" }}>
+            <div style={{
+              padding: "60px",
+              textAlign: "center",
+              color: "#999",
+              fontSize: "14px"
+            }}>
               취소/반품/교환 내역이 없습니다.
             </div>
           )}
+
+
 
           {!loading &&
             historyList.map((item, idx) => {
@@ -265,7 +346,7 @@ export default function CnclExchRtrnHisList() {
               const requestedAt = item.requestedAt ?? item.createdAt;
               const orderAt = item.orderAt ?? item.orderDate ?? item.createdAt;
               const quantity = item.quantity ?? 1;
-              
+
               // ========== 금액 관련 ==========
               // const priceText = Number(item.price ?? 0).toLocaleString();
               const getPriceText = (item) => {
@@ -298,39 +379,39 @@ export default function CnclExchRtrnHisList() {
                   orderNum={orderNum}
                   product={item.productName ?? "상품명 없음"}
                   options={
-                  item.optionName
-                    ? item.optionName.replace(/,\s*/g, " | ")
-                    : "옵션 없음"
+                    item.optionName
+                      ? item.optionName.replace(/,\s*/g, " | ")
+                      : "옵션 없음"
                   }
                   quantity={quantity}
                   price={getPriceText(item)}
                   status={statusText}
                   onDetailClick={() => {
-                  // 1) 현재 row의 타입 결정 (all이면 item.type, 개별탭이면 draftHistoryType 기반)
-                  const type =
-                    draftHistoryType === "all"
-                      ? item.type // "취소" | "반품" | "교환"
-                      : draftHistoryType === "cancel"
-                      ? "취소"
-                      : draftHistoryType === "return"
-                      ? "반품"
-                      : "교환";
+                    // 1) 현재 row의 타입 결정 (all이면 item.type, 개별탭이면 draftHistoryType 기반)
+                    const type =
+                      draftHistoryType === "all"
+                        ? item.type // "취소" | "반품" | "교환"
+                        : draftHistoryType === "cancel"
+                          ? "취소"
+                          : draftHistoryType === "return"
+                            ? "반품"
+                            : "교환";
 
-                  // 2) 상세 조회에 사용할 ID 결정
-                  // - all: HistoryItemDto.requestId
-                  // - 개별탭: Cancel/Return/ExchangeListDto.id
-                  const detailId =
-                    draftHistoryType === "all"
-                      ? (item.requestId ?? item.id)
-                      : (item.id ?? item.requestId);
+                    // 2) 상세 조회에 사용할 ID 결정
+                    // - all: HistoryItemDto.requestId
+                    // - 개별탭: Cancel/Return/ExchangeListDto.id
+                    const detailId =
+                      draftHistoryType === "all"
+                        ? (item.requestId ?? item.id)
+                        : (item.id ?? item.requestId);
 
-                  if (!detailId) return;
+                    if (!detailId) return;
 
-                  // 3) 타입별 상세 페이지로 이동 (App.jsx)
-                  if (type === "교환") navigate(`/mypage/exchangeDetail/${detailId}`);
-                  else if (type === "반품") navigate(`/mypage/returnDetail/${detailId}`);
-                  else if (type === "취소") navigate(`/mypage/cancelDetail/${detailId}`);
-                }}
+                    // 3) 타입별 상세 페이지로 이동 (App.jsx)
+                    if (type === "교환") navigate(`/mypage/exchangeDetail/${detailId}`);
+                    else if (type === "반품") navigate(`/mypage/returnDetail/${detailId}`);
+                    else if (type === "취소") navigate(`/mypage/cancelDetail/${detailId}`);
+                  }}
                 />
               );
             })}
@@ -351,32 +432,45 @@ const styles = {
     width: "860px",
     padding: "20px 0",
   },
+
+  // ⭐ 필터박스 개선
   filterBox: {
-    border: "1px solid #ddd",
-    padding: "20px",
+    border: "1px solid #e0e0e0",
+    borderRadius: "8px",
+    padding: "24px",
     display: "flex",
     justifyContent: "space-between",
     gap: "20px",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)"
   },
+
+  // ⭐ 탭 버튼
   tabBtn: {
-    padding: "6px 14px",
+    padding: "8px 16px",
     marginRight: "8px",
-    border: "1px solid #CCD1D8",
-    borderRadius: "4px",
+    border: "1px solid #d0d0d0",
+    borderRadius: "6px",
     backgroundColor: "#fff",
     cursor: "pointer",
-    fontSize: "12px",
+    fontSize: "13px",
+    fontWeight: "500",
+    color: "#555",
+    transition: "all 0.2s"
   },
   tabBtnActive: {
-    padding: "6px 14px",
+    padding: "8px 16px",
     marginRight: "8px",
-    border: "1px solid #7693FC",
-    borderRadius: "4px",
-    backgroundColor: "#F2F9FC",
+    border: "1px solid #739FF2",
+    borderRadius: "6px",
+    backgroundColor: "#739FF2",
     cursor: "pointer",
-    fontSize: "12px",
-    color: "#7693FC",
+    fontSize: "13px",
+    fontWeight: "600",
+    color: "#fff",
+    transition: "all 0.2s"
   },
+
   searchBtnWrap: {
     width: "120px",
     display: "flex",
@@ -384,20 +478,27 @@ const styles = {
     alignItems: "center",
   },
   searchBtn: {
-    padding: "10px",
-    backgroundColor: "#E7EBF3",
-    border: "1px solid #ccc",
+    padding: "12px 24px",
+    backgroundColor: "#739FF2",
+    border: "none",
     borderRadius: "6px",
-    fontSize: "12px",
+    fontSize: "14px",
+    fontWeight: "600",
+    color: "#fff",
+    cursor: "pointer",
+    transition: "all 0.2s"
   },
+
+  // ⭐ 테이블 헤더 (다른 페이지와 통일)
   tableHeader: {
     display: "flex",
-    backgroundColor: "#E7EBF3",
-    padding: "12px 0",
-    fontSize: "12px",
-    fontWeight: "bold",
+    backgroundColor: "#f8f8f8",
+    padding: "14px 0",
+    fontSize: "13px",
+    fontWeight: "700",
+    color: "#444",
     textAlign: "center",
-    borderTop: "1px solid #000",
-    borderBottom: "1px solid #000",
+    borderTop: "2px solid #e0e0e0",
+    borderBottom: "2px solid #e0e0e0",
   },
 };

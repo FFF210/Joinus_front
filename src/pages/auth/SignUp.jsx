@@ -104,7 +104,12 @@ export default function SignUp() {
 
       const data = response.data;
       console.log('회원가입 성공:', data);
-      alert('회원가입이 완료되었습니다.');
+      //  추천인 여부에 따라 다른 메시지
+    if (formData.referrer && formData.referrer.trim()) {
+      alert('회원가입이 완료되었습니다.\n회원가입 기념(1000P) + 추천인 기입 보너스(500P)로 1500포인트 지급되었습니다! 🎉');
+    } else {
+      alert('회원가입이 완료되었습니다.\n회원가입 기념 1000포인트 지급되었습니다! 🎉');
+    }
       navigate('/login');
     } catch (error) {
       console.error('회원가입 실패:', error);
@@ -217,7 +222,7 @@ export default function SignUp() {
               id="phone"
               name="phone"
               className="form-input"
-              placeholder="010-0000-0000"
+              placeholder="01012345678"
               value={formData.phone}
               onChange={handleChange}
               required

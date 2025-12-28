@@ -137,7 +137,7 @@ export default function Dashboard() {
                     navigate('/admin/adminOrderList');
                   }}
                 >
-                  더보기 &gt;
+                  더보기
                 </a>
               </div>
             </div>
