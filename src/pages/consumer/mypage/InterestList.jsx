@@ -182,22 +182,71 @@ export default function InterestList() {
       <div style={{ width: '860px', }}>
 
         {/* 헤더 */}
-        <hr style={{ margin: "5px auto 0 auto" }} />
-        <FormGroup check className="header" style={{ backgroundColor: '#F2F9FC', marginBottom: '0px', height: '35px' }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: '5px' }}>
-            <Input type="checkbox" checked={allChecked} onChange={handleAllCheck} />
-            <Label check style={{ margin: 0, fontSize: "12px" }}>전체 선택</Label>
-          </div>
-          <Label className="headerLabel" style={{ margin: "0 280px 0 20px" }}>상품정보</Label>
-          <Label className="headerLabel" style={{ margin: "0 60px 0 0" }}>마감날짜</Label>
-          <Label className="headerLabel" style={{ margin: "0 35px 0 0" }}>선택</Label>
-        </FormGroup>
-        <hr style={{ margin: "0 auto 5px auto" }} />
+        <div style={{
+          borderTop: "2px solid #e0e0e0",
+          borderBottom: "2px solid #e0e0e0"
+        }}>
+          <FormGroup check className="header" style={{
+            backgroundColor: '#f8f8f8',
+            margin: '0',
+            height: '48px',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              marginLeft: '5px',
+              width: '120px'
+            }}>
+              <Input
+                type="checkbox"
+                checked={allChecked}
+                onChange={handleAllCheck}
+                style={{ cursor: 'pointer' }}
+              />
+              <Label check style={{
+                margin: 0,
+                fontSize: "13px",
+                fontWeight: "600",
+                color: "#444",
+                cursor: 'pointer'
+              }}>
+               
+              </Label>
+            </div>
+            <Label className="headerLabel" style={{
+              margin: "0 280px 0 20px",
+              fontSize: "13px",
+              fontWeight: "700",
+              color: "#444"
+            }}>
+              상품정보
+            </Label>
+            <Label className="headerLabel" style={{
+              margin: "0 60px 0 0",
+              fontSize: "13px",
+              fontWeight: "700",
+              color: "#444"
+            }}>
+              마감날짜
+            </Label>
+            <Label className="headerLabel" style={{
+              margin: "0 35px 0 0",
+              fontSize: "13px",
+              fontWeight: "700",
+              color: "#444"
+            }}>
+              선택
+            </Label>
+          </FormGroup>
+        </div>
         {/* 상품 리스트 */}
         {interestList.map(item => (
           <div key={item.id}>
             <FormGroup check style={{ display: "flex", height: "120px", alignItems: "center" }}>
-              <Input type="checkbox" style={{ marginRight: "30px" }}
+              <Input type="checkbox" style={{ marginRight: "50px" }}
                 checked={checkedItems[item.id] || false}
                 onChange={() => handleItemCheck(item.id)}
               />
@@ -209,17 +258,17 @@ export default function InterestList() {
                 />
 
                 {/* 상품명 */}
-                <div style={{ fontSize: "12px", width: "400px", marginRight: "20px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <div style={{ fontSize: "12px", width: "450px", marginRight: "20px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {item.product?.name}
                 </div>
               </div>
-              <div style={{ fontSize: "12px", color: "red", minWidth: "100px", marginRight: "20px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <div style={{ fontSize: "12px", color: "red", minWidth: "80px", marginRight: "20px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {timeLeftMap[item.id] ?? "계산 중"}
               </div>
 
 
               {/* 삭제 버튼 */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginLeft: "auto", padding: '10px' }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginLeft: "52px", padding: '10px' }}>
                 <Button size="sm" style={{ backgroundColor: '#f7f7f7', color: 'black', border: 'none' }}
                   onClick={() => deleteInterest(item.id)}>
                   삭제

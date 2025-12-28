@@ -185,25 +185,27 @@ export default function AdminOrderDetail() {
                     <div style={{ marginBottom: '32px' }}>
                         <h6
                             style={{
-                                background: '#eaf1ff',
-                                padding: '10px 16px',
-                                borderRadius: '6px',
-                                fontWeight: 600,
+                                background: '#f0f5ff',
+                                padding: '12px 16px',
+                                borderRadius: '8px',
+                                fontWeight: 700,
                                 fontSize: '16px',
+                                color: '#222',
                                 marginBottom: '16px'
                             }}
                         >
-                            공구 상품
+                            📦 공구 상품
                         </h6>
                         <div
                             style={{
                                 background: 'white',
                                 border: '1px solid #e0e0e0',
                                 borderRadius: '8px',
-                                padding: '24px',
+                                padding: '28px',
                                 display: 'flex',
-                                gap: '24px',
-                                alignItems: 'flex-start'
+                                gap: '28px',
+                                alignItems: 'flex-start',
+                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
                             }}
                         >
                             {/* 이미지 */}
@@ -217,7 +219,8 @@ export default function AdminOrderDetail() {
                                         width: '200px',
                                         height: '200px',
                                         objectFit: 'cover',
-                                        borderRadius: '8px'
+                                        borderRadius: '8px',
+                                        border: '1px solid #eaeaea'
                                     }}
                                     onError={(e) => {
                                         console.log('이미지 로드 실패');
@@ -226,10 +229,24 @@ export default function AdminOrderDetail() {
                                 />
                             </div>
 
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                 {/* 주문번호 입력 */}
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <strong style={{ minWidth: '100px' }}>주문번호:</strong>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px',
+                                    padding: '16px',
+                                    background: '#f8f9fa',
+                                    borderRadius: '8px'
+                                }}>
+                                    <strong style={{
+                                        minWidth: '100px',
+                                        fontSize: '14px',
+                                        fontWeight: 700,
+                                        color: '#444'
+                                    }}>
+                                        관리자 주문번호
+                                    </strong>
                                     <input
                                         type="text"
                                         placeholder="주문번호 입력"
@@ -239,58 +256,156 @@ export default function AdminOrderDetail() {
                                         style={{
                                             flex: 1,
                                             maxWidth: '400px',
-                                            padding: '8px 12px',
-                                            border: '1px solid #d1d5db',
-                                            borderRadius: '6px'
+                                            padding: '10px 14px',
+                                            border: '1px solid #d0d0d0',
+                                            borderRadius: '6px',
+                                            fontSize: '14px',
+                                            background: orderDetail.adminOrderId ? '#f5f5f5' : '#fff',
+                                            cursor: orderDetail.adminOrderId ? 'not-allowed' : 'text'
                                         }}
                                     />
                                     <button
                                         className="admin-button primary small"
                                         onClick={handleSaveAdminOrder}
                                         disabled={!!orderDetail.adminOrderId}
+                                        style={{
+                                            padding: '10px 20px',
+                                            background: orderDetail.adminOrderId ? '#d0d0d0' : '#739FF2',
+                                            color: '#fff',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            fontSize: '14px',
+                                            fontWeight: 600,
+                                            cursor: orderDetail.adminOrderId ? 'not-allowed' : 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!orderDetail.adminOrderId) {
+                                                e.target.style.background = '#5a7cd6';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!orderDetail.adminOrderId) {
+                                                e.target.style.background = '#739FF2';
+                                            }
+                                        }}
                                     >
                                         저장
                                     </button>
                                 </div>
 
                                 {/* 상품 상세정보 */}
-                                <div style={{ fontSize: '14px', lineHeight: 1.6 }}>
-                                    <strong>상품명:</strong>{' '}
+                                <div style={{
+                                    fontSize: '15px',
+                                    lineHeight: 1.8,
+                                    padding: '12px 0',
+                                    borderBottom: '1px solid #eaeaea'
+                                }}>
+                                    <strong style={{ color: '#444', fontWeight: 600 }}>상품명:</strong>{' '}
                                     <span
                                         onClick={() => navigate(`/gbProductDetail/${gbProductId}`)}
                                         style={{
                                             cursor: 'pointer',
-                                            color: '#1f2430',
+                                            color: '#222',
                                             fontWeight: '500',
-                                            textDecoration: 'none'
+                                            textDecoration: 'none',
+                                            transition: 'color 0.2s'
                                         }}
-                                        onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'} // 호버 시 밑줄
-                                        onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.textDecoration = 'underline';
+                                            e.currentTarget.style.color = '#739FF2';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.textDecoration = 'none';
+                                            e.currentTarget.style.color = '#222';
+                                        }}
                                     >
                                         {orderDetail.gbProductName}
                                     </span>
                                 </div>
 
                                 {/* 옵션별 수량 */}
-                                {orderDetail.optionSummaries?.map((option) => (
-                                    <div key={option.optionId} style={{ fontSize: '14px', lineHeight: 1.6 }}>
-                                        <strong>옵션:</strong> {option.optionName} / <strong>수량:</strong> {option.totalQuantity}
-                                    </div>
-                                ))}
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '8px',
+                                    padding: '12px 0',
+                                    borderBottom: '1px solid #eaeaea'
+                                }}>
+                                    {(() => {
+                                        // 참여자 목록에서 총 수량 계산
+                                        const totalQuantity = participantPage.content.reduce((total, participant) => {
+                                            const participantTotal = participant.options?.reduce((sum, opt) => sum + (opt.quantity || 0), 0) || 0;
+                                            return total + participantTotal;
+                                        }, 0);
 
+                                        // optionSummaries가 있으면 옵션별로, 없으면 총합만 표시
+                                        if (orderDetail.optionSummaries && orderDetail.optionSummaries.length > 0) {
+                                            return orderDetail.optionSummaries.map((option) => (
+                                                <div key={option.optionId} style={{
+                                                    fontSize: '14px',
+                                                    lineHeight: 1.6,
+                                                    display: 'flex',
+                                                    gap: '16px'
+                                                }}>
+                                                    <span>
+                                                        <strong style={{ color: '#444' }}>옵션:</strong>{' '}
+                                                        <span style={{ color: '#333' }}>{option.optionName}</span>
+                                                    </span>
+                                                    <span>
+                                                        <strong style={{ color: '#444' }}>수량:</strong>{' '}
+                                                        <span style={{ color: '#333', fontWeight: 600 }}>{option.totalQuantity}</span>
+                                                    </span>
+                                                </div>
+                                            ));
+                                        } else {
+                                            return (
+                                                <div style={{
+                                                    fontSize: '14px',
+                                                    lineHeight: 1.6,
+                                                    display: 'flex',
+                                                    gap: '16px'
+                                                }}>
+                                                    <span>
+                                                        <strong style={{ color: '#444' }}>총 주문 수량:</strong>{' '}
+                                                        <span style={{ color: '#333', fontWeight: 600 }}>{totalQuantity}개</span>
+                                                    </span>
+                                                </div>
+                                            );
+                                        }
+                                    })()}
+                                </div>
+
+                                {/* ⭐ 원사이트 버튼 */}
                                 {orderDetail.originalSiteUrl && (
-                                    <div style={{ marginTop: '12px', fontSize: '14px' }}>
-                                        <a
-                                            href={orderDetail.originalSiteUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                    <div style={{ marginTop: '8px' }}>
+                                        <button
+                                            onClick={() => window.open(orderDetail.originalSiteUrl, '_blank')}
                                             style={{
-                                                color: '#0066cc',
-                                                textDecoration: 'none'
+                                                padding: '10px 20px',
+                                                background: '#739FF2',
+                                                color: '#fff',
+                                                border: 'none',
+                                                borderRadius: '6px',
+                                                fontSize: '14px',
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                transition: 'all 0.2s'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.background = '#5a7cd6';
+                                                e.target.style.transform = 'translateY(-1px)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.background = '#739FF2';
+                                                e.target.style.transform = 'translateY(0)';
                                             }}
                                         >
-                                            🔗 원 사이트 주소: {orderDetail.originalSiteUrl}
-                                        </a>
+                                            🔗 원사이트 바로가기
+                                        </button>
                                     </div>
                                 )}
                             </div>
@@ -301,15 +416,16 @@ export default function AdminOrderDetail() {
                     <div style={{ marginTop: '32px' }}>
                         <h6
                             style={{
-                                background: '#eaf1ff',
-                                padding: '10px 16px',
-                                borderRadius: '6px',
-                                fontWeight: 600,
-                                fontSize: '13px',
+                                background: '#f0f5ff',
+                                padding: '12px 16px',
+                                borderRadius: '8px',
+                                fontWeight: 700,
+                                fontSize: '16px',
+                                color: '#222',
                                 marginBottom: '16px'
                             }}
                         >
-                            참여자 목록
+                            👥 참여자 목록 ({participantPage.totalElements}명)
                         </h6>
                         <div className="table-container">
                             <table className="admin-table">
@@ -321,7 +437,7 @@ export default function AdminOrderDetail() {
                                         <th style={{ width: '50px' }}>옵션명</th>
                                         <th style={{ width: '50px' }}>수량</th>
                                         <th style={{ width: '70px' }}>결제수단</th>
-                                        <th style={{ width: '90px' }}>결제금액</th>
+                                        <th style={{ width: '80px' }}>결제금액</th>
                                         <th style={{ width: '100px' }}>택배사</th>
                                         <th style={{ width: '130px' }}>송장번호</th>
                                         <th style={{ width: '50px' }}></th>
@@ -368,10 +484,11 @@ export default function AdminOrderDetail() {
                                                             value={carrierInputs[participant.orderId] || "CJ대한통운"}
                                                             onChange={(e) => handleCarrierChange(participant.orderId, e.target.value)}
                                                             style={{
-                                                                minWidth: '120px',
-                                                                padding: '6px',
-                                                                border: '1px solid #d1d5db',
-                                                                borderRadius: '4px'
+                                                                minWidth: '100px',
+                                                                padding: '8px 10px',
+                                                                border: '1px solid #d0d0d0',
+                                                                borderRadius: '6px',
+                                                                fontSize: '13px'
                                                             }}
                                                         >
                                                             <option>CJ대한통운</option>
@@ -393,9 +510,11 @@ export default function AdminOrderDetail() {
                                                             value={trackingInputs[participant.orderId] || ""}
                                                             onChange={(e) => handleTrackingChange(participant.orderId, e.target.value)}
                                                             style={{
-                                                                padding: '6px',
-                                                                border: '1px solid #d1d5db',
-                                                                borderRadius: '4px'
+                                                                padding: '8px 10px',
+                                                                border: '1px solid #d0d0d0',
+                                                                borderRadius: '6px',
+                                                                fontSize: '13px',
+                                                                width: '100%'
                                                             }}
                                                         />
                                                     )}
@@ -406,6 +525,16 @@ export default function AdminOrderDetail() {
                                                         className="admin-button primary small"
                                                         onClick={() => handleSaveTracking(participant.orderId)}
                                                         disabled={!!participant.trackingNo}
+                                                        style={{
+                                                            padding: '8px 16px',
+                                                            background: participant.trackingNo ? '#d0d0d0' : '#739FF2',
+                                                            color: '#fff',
+                                                            border: 'none',
+                                                            borderRadius: '6px',
+                                                            fontSize: '13px',
+                                                            fontWeight: 600,
+                                                            cursor: participant.trackingNo ? 'not-allowed' : 'pointer'
+                                                        }}
                                                     >
                                                         저장
                                                     </button>

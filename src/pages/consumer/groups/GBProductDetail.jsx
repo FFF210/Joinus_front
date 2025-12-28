@@ -411,7 +411,7 @@ export default function GBProductDetail() {
                   ))}
 
                   {/* 수량 선택 추가함 */}
-                  {/* <FormGroup style={{ marginTop: '16px' }}>
+                  <FormGroup style={{ marginTop: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                       <Label className="fw-bold" style={{ fontSize: '14px', margin: 0 }}>
                         수량
@@ -483,7 +483,7 @@ export default function GBProductDetail() {
                         </button>
                       </div>
                     </div>
-                  </FormGroup> */}
+                  </FormGroup>
                 </>
               )}
 

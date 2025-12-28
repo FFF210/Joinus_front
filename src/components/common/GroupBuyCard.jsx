@@ -264,10 +264,22 @@ export default function GroupBuyCard({
 
           <CardSubtitle>
             <div style={{ justifyContent: 'space-between', display: 'flex', alignItems: 'center' }}>
-              {showParticipants && (current !== undefined && max !== undefined) && (
+              {/* 참여인원 표시 조건 개선 */}
+              {showParticipants && (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Users size={15} style={{ marginRight: '5px' }} />
-                  <span style={{ fontSize: '12px' }}>참여 인원 : {current}/{max}</span>
+                  {!isProposal && (current !== undefined && max !== undefined) ? (
+                    // 공구 상품: 참여인원/목표인원
+                    <>
+                      <Users size={15} style={{ marginRight: '5px' }} />
+                      <span style={{ fontSize: '12px' }}>참여 인원 : {current}/{max}</span>
+                    </>
+                  ) : isProposal && voteCount !== undefined ? (
+                    // 제안 상품: 투표수
+                    <>
+                      <ThumbsUp size={15} style={{ marginRight: '5px' }} />
+                      <span style={{ fontSize: '12px' }}>투표수 : {voteCount}명</span>
+                    </>
+                  ) : null}
                 </div>
               )}
 

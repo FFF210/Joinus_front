@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import { myAxios } from "../../../config";
 
-export default function ReviewManage({children}) {
+export default function ReviewManage({ children }) {
 
     const [reviewCount, setReviewCount] = useState(0);
     const [pointBalance, setPointBalance] = useState(0);
@@ -22,20 +22,79 @@ export default function ReviewManage({children}) {
 
     return (
         <>
-            <div className="containe" style={{width:'860px'}}>
-                <div className="mb-0 fw-bold text-start" style={{fontSize:'20px', padding:'20px 0'}}>리뷰 관리</div>
+            <div className="container" style={{ width: '860px' }}>
+                <div style={{
+                    marginBottom: '24px',
+                    paddingTop: '20px'
+                }}>
+                    <h1 style={{
+                        fontSize: '28px',
+                        fontWeight: '700',
+                        color: '#222',
+                        margin: 0
+                    }}>
+                        리뷰 관리
+                    </h1>
+                </div>
 
-                <div className="box-container" style={{display:'flex'}}>
-                    <div className="review-box" style={{textAlign:'center', fontSize:"16px", flexDirection: "column", width:'500px', marginRight:'20px' }}>전체 리뷰
-                        <div>{reviewCount}건</div>
+                <div style={{
+                    display: 'flex',
+                    gap: '20px',
+                    marginBottom: '32px'
+                }}>
+                    <div style={{
+                        flex: 1,
+                        textAlign: 'center',
+                        padding: '28px 24px',
+                        backgroundColor: '#f8f8f8',
+                        borderRadius: '8px',
+                        border: '1px solid #e0e0e0'
+                    }}>
+                        <div style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#666',
+                            marginBottom: '12px'
+                        }}>
+                            전체 리뷰
+                        </div>
+                        <div style={{
+                            fontSize: '28px',
+                            fontWeight: '700',
+                            color: '#222'
+                        }}>
+                            {reviewCount}건
+                        </div>
                     </div>
-                    <div className="review-box" style={{textAlign:'center', fontSize:"16px", flexDirection: "column", width:'500px'}}>적립 포인트
-                        <div>{pointBalance}p</div>
+
+                    <div style={{
+                        flex: 1,
+                        textAlign: 'center',
+                        padding: '28px 24px',
+                        backgroundColor: '#f8f8f8',
+                        borderRadius: '8px',
+                        border: '1px solid #e0e0e0'
+                    }}>
+                        <div style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#666',
+                            marginBottom: '12px'
+                        }}>
+                            적립 포인트
+                        </div>
+                        <div style={{
+                            fontSize: '28px',
+                            fontWeight: '700',
+                            color: '#739FF2'
+                        }}>
+                            {pointBalance.toLocaleString()}P
+                        </div>
                     </div>
                 </div>
             </div>
             {/* <div style={{ flex: 1, paddingTop:'10px', width:'860px'}}><ReviewWrite/>{children}</div> */}
-            <div style={{ flex: 1, paddingTop:'10px', width:'860px'}}>
+            <div style={{ flex: 1, paddingTop: '10px', width: '860px' }}>
                 <Outlet context={{ setReviewCount, setPointBalance }} /> {/* 여기서 ReviewWrite / ReviewWrited 렌더링 */}
             </div>
         </>
