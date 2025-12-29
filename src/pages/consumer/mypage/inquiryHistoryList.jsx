@@ -190,7 +190,9 @@ export default function InquiryHistoryList() {
               </div>
 
               <div className="inquiry-footer-section"
-              style={{marginTop:"20px"}}>
+              style={{marginTop:"20px",
+                marginRight: "20px"
+              }}>
                 <button
                   className="btn btn-primary"
                   onClick={() => navigate('/cs/inquiryWrite')}
