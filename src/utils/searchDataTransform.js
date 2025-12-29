@@ -6,21 +6,27 @@ import { baseUrl } from '../config';
 export const transformProposal = (proposal) => {
   return {
     id: proposal.id,
-    title: proposal.productName,  // productName → title
+    title: proposal.productName,
     category: proposal.category,
-    status: '진행중',  // 제안은 항상 진행중
+
+    status: proposal.status,     
+    displayStatus: '진행중',     
+
     description: proposal.description,
-    price: formatPrice(proposal.originalPrice),  // originalPrice → price (포맷팅)
-    rating: null,  // 제안은 평점 없음
-    currentParticipants: proposal.voteCount || 0,  // voteCount → currentParticipants
-    voteCount: proposal.voteCount || 0, // 명시적으로 투표수 전달
-    maxParticipants: proposal.minPart || 0,  // minPart → maxParticipants
-    deadlineTime: null,  // 제안은 마감일 없음
-    badge: (proposal.voteCount >= 50) ? 'HOT' : null,  // HOT 배지 계산
-    image: proposal.imageUrl ? `${baseUrl}/imageView?filename=${proposal.imageUrl}` : null,  // 이미지 URL
+    price: formatPrice(proposal.originalPrice),
+    rating: null,
+    currentParticipants: proposal.voteCount || 0,
+    voteCount: proposal.voteCount || 0,
+    maxParticipants: proposal.minPart || 0,
+    deadlineTime: null,
+    badge: (proposal.voteCount >= 50) ? 'HOT' : null,
+    image: proposal.imageUrl
+      ? `${baseUrl}/imageView?filename=${proposal.imageUrl}`
+      : null,
     isProposal: true
   };
 };
+
 
 /**
  * 백엔드 GbProductDto를 프론트엔드 형식으로 변환

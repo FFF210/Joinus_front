@@ -23,6 +23,19 @@ export default function MypageSuggestions() {
   const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
   const username = userInfo?.username;
 
+const getStatusText = (item) => {
+  if (item.status === "APPROVED") return "승인";
+  if (item.status === "REJECTED") return "반려";
+  return "검토대기";
+};
+
+const getStatusClass = (item) => {
+  if (item.status === "APPROVED") return "suggest-status-approved";
+  if (item.status === "REJECTED") return "suggest-status-rejected";
+  return "suggest-status-pending";
+};
+
+
   // ===============================
   // 데이터 조회
   // ===============================
@@ -110,32 +123,40 @@ useEffect(() => {
           </div>
         ) : (
           currentItems.map((item) => (
-            <div className="suggestions-card" key={item.id}>
-              <div className="suggest-card-img">
-                <img src={item.image || "/default.png"} alt="" />
+<div className="suggestions-card" key={item.id}>
 
-              </div>
+  <div className="suggest-card-img">
+    <img src={item.image || "/default.png"} alt="" />
+  </div>
 
-              <div className="card-info">
-                <div>
-                  <div className="category">{item.category}</div>
-                  <div className="title">{item.productName}</div>
-                  <div className="desc">{item.description}</div>
-                  <div className="votes">
-                    참여 투표 인원수: {item.voteCount}명
-                  </div>
-                </div>
+  <div className="card-info">
+    <div>
+      <div className="category">{item.category}</div>
+      <div className="title">{item.productName}</div>
+      <div className="desc">{item.description}</div>
+      <div className="votes">
+        참여 투표 인원수: {item.voteCount}명
+      </div>
+    </div>
 
-                <div className="card-actions">
-                  <button
-                    className="btn-detail"
-                    onClick={() => navigate(`/proposalDetail/${item.id}`)}
-                  >
-                    상세보기
-                  </button>
-                </div>
-              </div>
-            </div>
+    {/* 🔥 여기 중요 */}
+    <div className="card-actions">
+
+      {/* 상태 뱃지는 반드시 여기 */}
+      <div className={`suggest-status-badge ${getStatusClass(item)}`}>
+        {getStatusText(item)}
+      </div>
+
+      <button
+        className="btn-detail"
+        onClick={() => navigate(`/proposalDetail/${item.id}`)}
+      >
+        상세보기
+      </button>
+    </div>
+  </div>
+</div>
+
           ))
         )}
       </div>
