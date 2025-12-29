@@ -147,7 +147,26 @@ export default function ReviewWrite() {
                             <div className="reviewData" style={{fontSize:'12px'}}>결제 날짜 {item.createdAt?.substring(0,10)}</div>
                         </div>
                         <div className="buttonGroup">
-                            <Button size="sm" className="buttonPrimary" style={{width:'80px'}} onClick={() => openModal(item)} >리뷰 작성</Button>
+                            <Button
+  size="sm"
+  onClick={() => openModal(item)}
+  style={{
+    width: "80px",
+    backgroundColor: "#739FF2",
+    color: "#fff",
+    border: "none",
+    transition: "background-color 0.15s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = "#5F88E6"; // 살짝 진해짐
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = "#739FF2"; // 원래 색
+  }}
+>
+  리뷰 작성
+</Button>
+
                         </div>
                     </FormGroup>
                 </div>

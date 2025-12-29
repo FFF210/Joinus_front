@@ -174,8 +174,48 @@ export default function ShopCartList() {
             <div className="productQuantity">{item.quantity}</div>
             <div className="productTotal">{(item.price * item.quantity).toLocaleString()}원</div>
             <div className="buttonGroup">
-              <Button size="sm" className="buttonPrimary" style={{ width: "70px" }} onClick={() => handlePay(item)}>결제</Button>
-              <Button size="sm" className="buttonSecondary" onClick={() => deleteCartList(item.cartId)}>삭제</Button>
+              <Button
+  size="sm"
+  onClick={() => handlePay(item)}
+  style={{
+    width: "70px",
+    backgroundColor: "#739FF2",
+    color: "#fff",
+    border: "none",
+    transition: "background-color 0.15s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = "#8FB2F6";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = "#739FF2";
+  }}
+>
+  결제
+</Button>
+
+
+ <Button
+  size="sm"
+  onClick={() => deleteCartList(item.cartId)}
+  style={{
+    backgroundColor: "#eaeaea",
+    color: "#000",
+    border: "none",
+    transition: "background-color 0.15s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = "#f3f3f3";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = "#eaeaea";
+  }}
+>
+  삭제
+</Button>
+
+
+
             </div>
           </FormGroup>
         ))}

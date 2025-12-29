@@ -224,28 +224,47 @@ export default function InterestList() {
             }}>
               상품정보
             </Label>
-            <Label className="headerLabel" style={{
-              margin: "0 60px 0 0",
-              fontSize: "13px",
-              fontWeight: "700",
-              color: "#444"
-            }}>
-              마감날짜
-            </Label>
-            <Label className="headerLabel" style={{
-              margin: "0 35px 0 0",
-              fontSize: "13px",
-              fontWeight: "700",
-              color: "#444"
-            }}>
-              선택
-            </Label>
+           <Label
+  className="headerLabel"
+  style={{
+    width: "140px",
+    textAlign: "center",
+    fontSize: "13px",
+    fontWeight: "700",
+    color: "#444"
+  }}
+>
+  마감날짜
+</Label>
+
+<Label
+  className="headerLabel"
+  style={{
+    width: "80px",
+    textAlign: "center",
+    fontSize: "13px",
+    fontWeight: "700",
+    color: "#444"
+  }}
+>
+  선택
+</Label>
+
           </FormGroup>
         </div>
         {/* 상품 리스트 */}
         {interestList.map(item => (
           <div key={item.id}>
-            <FormGroup check style={{ display: "flex", height: "120px", alignItems: "center" }}>
+            <FormGroup
+  check
+  style={{
+    display: "grid",
+    gridTemplateColumns: "40px 520px 180px 80px",
+    alignItems: "center",
+    height: "120px"
+  }}
+>
+
               <Input type="checkbox" style={{ marginRight: "50px" }}
                 checked={checkedItems[item.id] || false}
                 onChange={() => handleItemCheck(item.id)}
@@ -262,25 +281,76 @@ export default function InterestList() {
                   {item.product?.name}
                 </div>
               </div>
-              <div style={{ fontSize: "12px", color: "red", minWidth: "80px", marginRight: "20px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {timeLeftMap[item.id] ?? "계산 중"}
-              </div>
+
+              {/* 시간 컬럼 */}
+<div
+  style={{
+    width: "140px",
+    fontSize: "12px",
+    color: "red",
+    whiteSpace: "nowrap",
+    textAlign: "center",          // ⭐ 가로 중앙
+    display: "flex",
+    justifyContent: "center",     // ⭐ flex 중앙
+    alignItems: "center",  
+    marginLeft: "10px"       // ⭐ 세로 중앙
+  }}
+>
+  {timeLeftMap[item.id] ?? "계산 중"}
+</div>
 
 
-              {/* 삭제 버튼 */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginLeft: "52px", padding: '10px' }}>
-                <Button size="sm" style={{ backgroundColor: '#f7f7f7', color: 'black', border: 'none' }}
-                  onClick={() => deleteInterest(item.id)}>
-                  삭제
-                </Button>
-              </div>
+{/* 선택(삭제) 컬럼 */}
+<div
+  style={{
+    width: "80px",           // ⭐ 선택 컬럼 폭 고정
+    display: "flex",
+    justifyContent: "center",
+    marginLeft:"14px"
+  }}
+>
+  <Button
+    size="sm"
+    style={{
+      backgroundColor: "#f7f7f7",
+      color: "black",
+      border: "none"
+    }}
+    onClick={() => deleteInterest(item.id)}
+  >
+    삭제
+  </Button>
+</div>
+
+          
             </FormGroup>
             <hr style={{ margin: "0 auto 5px auto" }} />
           </div>
         ))}
       </div>
       {interestList.length > 0 && (
-        <Button className="buttonPrimary" onClick={deleteSelected} style={{ fontSize: '12px', width: '80px', height: '30px' }}>전체 삭제</Button>
+        <Button
+  onClick={deleteSelected}
+  style={{
+    fontSize: "12px",
+    width: "80px",
+    height: "30px",
+    marginTop:"10px",
+    backgroundColor: "#739FF2",
+    color: "#fff",
+    border: "none",
+    transition: "background-color 0.15s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = "#5f88e6"; // ⭐ 살짝 진하게
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = "#739FF2"; // ⭐ 원래 색
+  }}
+>
+  전체 삭제
+</Button>
+
       )}
       <Pagination className="paginationContainer">
         {/* 이전 */}

@@ -91,7 +91,29 @@ export default function ReviewWrited() {
                         <div className="reviewData" style={{fontSize:'12px'}}>{review.content}</div>
                     </div>
                     <div className="buttonGroup">
-                        <Button size="sm" className="buttonPrimary" style={{width:'80px'}} onClick={() => deleteReview(review.id)}>삭제</Button>
+                        <Button
+  size="sm"
+  onClick={(e) => {
+    e.stopPropagation();   // 행 클릭 방지
+    deleteReview(review.id);
+  }}
+  style={{
+    width: "80px",
+    backgroundColor: "#739FF2",   // ✅ 우리 파란색
+    color: "#fff",
+    border: "none",
+    transition: "background-color 0.15s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = "#5F8FEA"; // ⭐ 살짝 진한 파랑
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = "#739FF2";
+  }}
+>
+  삭제
+</Button>
+
                     </div>
                 </FormGroup>
             </div>

@@ -194,11 +194,26 @@ export default function InquiryHistoryList() {
                 marginRight: "20px"
               }}>
                 <button
-                  className="btn btn-primary"
-                  onClick={() => navigate('/cs/inquiryWrite')}
-                >
-                  문의 작성
-                </button>
+  onClick={() => navigate('/cs/inquiryWrite')}
+  style={{
+    backgroundColor: "#739FF2",   // ⭐ 우리 계열 파랑
+    color: "#fff",
+    border: "none",
+    padding: "8px 16px",
+    fontSize: "14px",
+    borderRadius: "6px",
+    transition: "background-color 0.15s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = "#5f88e6"; // hover 살짝 진하게
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = "#739FF2";
+  }}
+>
+  문의 작성
+</button>
+
               </div>
 
               <Pagination
