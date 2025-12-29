@@ -55,6 +55,7 @@ export default function Pay(){
     // const totalAmount = Math.max(finalPrice + shippingAmount - safeUsingPoint, 0);
     const totalAmount = Math.max(productTotal + shippingAmount - safeUsingPoint,0);
     const remainingPoint = Math.max(memberPoint - safeUsingPoint, 0);
+    
 
     const getMemberPoint = () => {
         myAxios().get("/member/detail", { 
@@ -258,7 +259,7 @@ export default function Pay(){
                             </div>
                             <div style={{ width: '80px', textAlign: 'center', fontSize: '14px' }}>{quantity}개</div>
                             <div style={{ width: '120px', textAlign: 'right', fontSize: '16px', fontWeight: '700' }}>
-                                {finalPrice?.toLocaleString()}원
+                                {productTotal?.toLocaleString()}원
                             </div>
                         </div>
                     </div>

@@ -391,7 +391,7 @@ export default function OrderList({ id }) {
               </div>
 
               {/* 수량 : 기본값 1 */}
-              <div style={{ ...styles.col, width: "10%" }}>{1}</div>
+              <div style={{ ...styles.col, width: "10%" }}>{order.quantity || 0}</div>
 
               {/* 가격 */}
               <div style={{ ...styles.col, width: "15%" }}>
