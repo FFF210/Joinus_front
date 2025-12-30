@@ -181,22 +181,6 @@
   margin-bottom: 10px;
 }
 
-/* 상태 뱃지 */
-.card-actions .suggest-status-badge {
-  position: absolute;
-  bottom: 100%;              /* 상세보기 버튼 바로 위 */
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 66px;
-  margin-left:268px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  z-index: 10;
-}
-
 /* 상태 색상 */
 .suggest-status-approved {
   background-color: #E8F5E9;
@@ -212,4 +196,40 @@
   background-color: #E3F2FD;
   color: #1565C0;
 }
+
+/* =========================
+   카드 상단 헤더 (카테고리 + 상태)
+   ========================= */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* ⭐ 좌 / 우 분리 */
+  margin-bottom: 6px;
+}
+
+/* 상태 뱃지 (헤더용) */
+.card-header .suggest-status-badge {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* 상태 색상 (기존 그대로 사용) */
+.suggest-status-approved {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+
+.suggest-status-rejected {
+  background-color: #FFEBEE;
+  color: #C62828;
+}
+
+.suggest-status-pending {
+  background-color: #E3F2FD;
+  color: #1565C0;
+}
+
 

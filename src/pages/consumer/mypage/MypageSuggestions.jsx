@@ -131,7 +131,15 @@ useEffect(() => {
 
   <div className="card-info">
     <div>
+        {/* ⭐ 카드 상단 헤더 */}
+  <div className="card-header">
       <div className="category">{item.category}</div>
+
+      <div className={`suggest-status-badge ${getStatusClass(item)}`}>
+      {getStatusText(item)}
+    </div>
+  </div>
+
       <div className="title">{item.productName}</div>
       <div className="desc">{item.description}</div>
       <div className="votes">
@@ -142,10 +150,6 @@ useEffect(() => {
     {/* 🔥 여기 중요 */}
     <div className="card-actions">
 
-      {/* 상태 뱃지는 반드시 여기 */}
-      <div className={`suggest-status-badge ${getStatusClass(item)}`}>
-        {getStatusText(item)}
-      </div>
 
       <button
         className="btn-detail"
