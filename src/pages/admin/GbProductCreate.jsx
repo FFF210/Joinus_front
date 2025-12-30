@@ -64,6 +64,24 @@ const GBProductCreatePage = () => {
     updateField('participants', Math.max(1, formData.participants + delta));
   };
 
+  // ⭐ 권장 가격 계산 함수
+  const calculateRecommendedPrice = () => {
+    const price = parseFloat(formData.originalPrice) || 0;
+    const shipping = parseFloat(formData.shippingCost) || 0;
+    const rate = parseFloat(formData.exchangeRate) || 0;
+    const people = parseInt(formData.participants) || 1;
+    const fee = parseFloat(formData.feeRate) || 0;
+    const domestic = parseFloat(formData.domesticShipping) || 0;
+
+    const priceInWon = price * rate;
+    const shippingPerPerson = (shipping * rate) / people;
+    const subtotal = priceInWon + shippingPerPerson;
+    const withFee = subtotal * (1 + fee / 100);
+    const final = withFee + domestic;
+
+    return Math.round(final);
+  };
+
 
   // ========================================
   // Option Group Handlers
@@ -128,13 +146,16 @@ const GBProductCreatePage = () => {
       const response = await myAxios().get(`/admin/gbProduct/${id}`);
       const data = response.data;
 
+      console.log('📦 불러온 데이터:', data);
+      console.log('💵 저장된 판매가:', data.price);
+
       setFormData({
         status: data.status || 'DRAFT',
-        startDate: data.startDate || '',  // String 그대로
-        endDate: data.endDate || '',      // String 그대로
+        startDate: data.startDate || '',
+        endDate: data.endDate || '',
         category: data.categoryId?.toString() || '',
         productName: data.name || '',
-        proposalId: data.proposalId?.toString() || '',  // proposalId로 통일!
+        proposalId: data.proposalId?.toString() || '',
         siteUrl: data.originalSiteUrl || '',
         description: data.description || '',
         originalPrice: data.originalPrice || '',
@@ -242,8 +263,8 @@ const GBProductCreatePage = () => {
 
       productFormData.append('name', formData.productName);
       productFormData.append('categoryId', formData.category);
-      productFormData.append('startDate', formData.startDate);  // String 그대로
-      productFormData.append('endDate', formData.endDate);      // String 그대로
+      productFormData.append('startDate', formData.startDate);
+      productFormData.append('endDate', formData.endDate);
       productFormData.append('originalSiteUrl', formData.siteUrl);
       productFormData.append('description', formData.description);
       productFormData.append('originalPrice', formData.originalPrice);
@@ -256,12 +277,10 @@ const GBProductCreatePage = () => {
       productFormData.append('note', formData.productMemo);
       productFormData.append('status', isEditMode ? formData.status : 'DRAFT');
 
-      // proposalId 추가
       if (formData.proposalId) {
         productFormData.append('proposalId', extractProposalId(formData.proposalId));
       }
 
-      // 이미지 추가
       if (mainImage) productFormData.append('thumbnail', mainImage);
       if (additionalImages.length > 0) {
         additionalImages.forEach(img => productFormData.append('images', img));
@@ -286,7 +305,6 @@ const GBProductCreatePage = () => {
         alert('미게시 상태로 저장되었습니다!');
       }
 
-      // 옵션 처리
       if (optionGroups.length > 0) {
         for (const group of optionGroups) {
           for (const option of group.options) {
@@ -316,7 +334,6 @@ const GBProductCreatePage = () => {
   // ========================================
 
   const handleSubmit = async () => {
-    // 유효성 검사
     if (!mainImage && !isEditMode) {
       alert('대표 이미지를 업로드해주세요.');
       return;
@@ -376,7 +393,6 @@ const GBProductCreatePage = () => {
         resultProductId = response.data;
       }
 
-      // 옵션 처리
       if (optionGroups.length > 0) {
         for (const group of optionGroups) {
           for (const option of group.options) {
@@ -391,12 +407,10 @@ const GBProductCreatePage = () => {
 
       alert(`공구가 ${isEditMode ? '수정' : '등록'}되었습니다!`);
 
-      // 제안 기반 등록이면 알림 안내
       if (formData.proposalId) {
         alert('제안자와 투표자들에게 알림이 발송되었습니다.');
       }
 
-      // 취소 상태로 변경 시 알림
       if (formData.status === 'CANCELLED') {
         alert(
           '공구가 취소되었습니다.\n' +
@@ -429,30 +443,18 @@ const GBProductCreatePage = () => {
     const id = searchParams.get('id');
     const proposalId = searchParams.get('proposalId');
 
-    console.log('========== URL Parameters ==========');
-    console.log('전체 URL:', window.location.href);
-    console.log('id:', id);
-    console.log('proposalId:', proposalId);
-    console.log('====================================');
-
     if (id) {
-      // 수정 모드
       setIsEditMode(true);
       setProductId(id);
       loadProductData(id);
     } else {
-      // 생성 모드
       setIsEditMode(false);
 
-      // proposalId가 있으면 자동 입력
       if (proposalId) {
-        console.log('제안 기반 공구 등록:', proposalId);
         setFormData(prev => ({
           ...prev,
           proposalId: proposalId
         }));
-      } else {
-        console.log('❌ proposalId 없음!');
       }
     }
   }, [searchParams]);
@@ -466,37 +468,6 @@ const GBProductCreatePage = () => {
     fetchCategories();
   }, []);
 
-
-  // ========================================
-  // useEffect - Calculate Price
-  // ========================================
-
-  // ========================================
-  // useEffect - Calculate Price
-  // ========================================
-  useEffect(() => {
-    const price = parseFloat(formData.originalPrice) || 0;      // 원가 ($)
-    const shipping = parseFloat(formData.shippingCost) || 0;    // 해외배송비 ($)
-    const rate = parseFloat(formData.exchangeRate) || 0;        // 환율 (₩/$)
-    const people = parseInt(formData.participants) || 1;        // 인원
-    const fee = parseFloat(formData.feeRate) || 0;              // 수수료 (%)
-    const domestic = parseFloat(formData.domesticShipping) || 0; // 국내배송비 (₩)
-
-    // 올바른 계산 공식!
-    const priceInWon = price * rate;                  // 원가를 원화로
-    const shippingPerPerson = (shipping * rate) / people;  // 해외배송비를 인원수로 나눔
-    const subtotal = priceInWon + shippingPerPerson;       // 소계
-    const withFee = subtotal * (1 + fee / 100);            // 수수료 포함
-    const final = withFee + domestic;                      // 국내배송비 추가
-
-    updateField('groupBuyPrice', Math.round(final));
-  }, [
-    formData.originalPrice,
-    formData.shippingCost,
-    formData.exchangeRate,
-    formData.participants,
-    formData.domesticShipping
-  ]);
 
   // ========================================
   // useEffect - Fetch Exchange Rate
@@ -530,7 +501,6 @@ const GBProductCreatePage = () => {
     <div className="gb-product-create-page">
       <div className="create-container">
 
-        {/* 수정 배너 */}
         {isEditMode && productId && (
           <div className="edit-banner">
             <div className="edit-banner-icon">📝</div>
@@ -544,7 +514,6 @@ const GBProductCreatePage = () => {
           </div>
         )}
 
-        {/* 제안 기반 등록 배너 */}
         {formData.proposalId && (
           <div style={{
             padding: '16px',
@@ -565,15 +534,12 @@ const GBProductCreatePage = () => {
           </div>
         )}
 
-        {/* 헤더 */}
         <div className="modal-header-large">
           <h2>{isEditMode ? '공구 수정' : '공구 등록'}</h2>
         </div>
 
-        {/* 내용 */}
         <div className="modal-body-large">
 
-          {/* 표시 설정 */}
           <section className="form-section">
             <h3 className="section-title">표시 설정</h3>
             <div className="form-field">
@@ -588,7 +554,6 @@ const GBProductCreatePage = () => {
             </div>
           </section>
 
-          {/* 진행기간 */}
           <section className="form-section">
             <h3 className="section-title">진행기간</h3>
             <div className="form-row">
@@ -605,13 +570,12 @@ const GBProductCreatePage = () => {
                 <input
                   type="date"
                   value={formData.endDate}
-                  onChange={(e) => updateField('endDate', e.target.value)}
+                  onChange={(e) => updateField('startDate', e.target.value)}
                 />
               </div>
             </div>
           </section>
 
-          {/* 카테고리 선택 */}
           <section className="form-section">
             <h3 className="section-title">카테고리 선택</h3>
             <div className="form-field">
@@ -629,7 +593,6 @@ const GBProductCreatePage = () => {
             </div>
           </section>
 
-          {/* 기본 정보 */}
           <section className="form-section">
             <h3 className="section-title">기본 정보</h3>
 
@@ -653,7 +616,6 @@ const GBProductCreatePage = () => {
               />
             </div>
 
-            {/* 대표이미지 */}
             <div className="form-field">
               <label>대표이미지 (필수)</label>
               {mainImage && (
@@ -687,7 +649,6 @@ const GBProductCreatePage = () => {
               )}
             </div>
 
-            {/* 추가 이미지 */}
             <div className="form-field">
               <label>추가 이미지 (최대 4개)</label>
               <div className="image-grid">
@@ -731,7 +692,6 @@ const GBProductCreatePage = () => {
             </div>
           </section>
 
-          {/* 상품 설명 */}
           <section className="form-section">
             <h3 className="section-title">상품 설명</h3>
             <div className="form-field description-view"
@@ -739,14 +699,12 @@ const GBProductCreatePage = () => {
               <textarea
                 rows={6}
                 placeholder="상품에 대한 상세 설명을 입력하세요"
-
                 value={formData.description}
                 onChange={(e) => updateField('description', e.target.value)}
               />
             </div>
           </section>
 
-          {/* 상세설명 이미지 */}
           <section className="form-section">
             <h3 className="section-title">상품 상세설명 이미지</h3>
             <div className="form-field">
@@ -792,7 +750,6 @@ const GBProductCreatePage = () => {
             </div>
           </section>
 
-          {/* 옵션 정보 */}
           <section className="form-section">
             <h3 className="section-title">옵션 정보</h3>
             {optionGroups.length > 0 && (
@@ -849,9 +806,10 @@ const GBProductCreatePage = () => {
             </button>
           </section>
 
-          {/* 판매 정보 */}
+          {/* ⭐ 판매 정보 섹션 - 완전 수정 */}
           <section className="form-section">
             <h3 className="section-title">판매 정보 및 가격 계산</h3>
+            
             <div className="price-calc-grid">
               <div className="form-field">
                 <label>원가 ($) *</label>
@@ -943,58 +901,135 @@ const GBProductCreatePage = () => {
               </div>
             </div>
 
-            {/* 계산 결과 */}
-            <div className="calc-result-inline">
-              <div className="calc-result-row">
-                <span>원가 (원화):</span>
-                <strong>
-                  {Math.round(
-                    (parseFloat(formData.originalPrice) || 0) *
-                    (parseFloat(formData.exchangeRate) || 0)
-                  ).toLocaleString()}원
-                </strong>
-              </div>
+            {/* ⭐ 계산 결과 박스 */}
+            <div style={{ marginTop: '24px' }}>
+              <div style={{
+                backgroundColor: '#f0f9ff',
+                padding: '20px',
+                borderRadius: '8px',
+                border: '1px solid #bfdbfe'
+              }}>
+                <div style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#1e40af',
+                  marginBottom: '16px'
+                }}>
+                  💡 가격 계산 참고
+                </div>
+                
+                <div className="calc-result-row">
+                  <span>원가 (원화):</span>
+                  <strong>
+                    {Math.round(
+                      (parseFloat(formData.originalPrice) || 0) *
+                      (parseFloat(formData.exchangeRate) || 0)
+                    ).toLocaleString()}원
+                  </strong>
+                </div>
 
-              <div className="calc-result-row">
-                <span>해외 배송비 (원화):</span>
-                <strong>
-                  {Math.round(
-                    (parseFloat(formData.shippingCost) || 0) *
-                    (parseFloat(formData.exchangeRate) || 0)
-                  ).toLocaleString()}원
-                </strong>
-              </div>
+                <div className="calc-result-row">
+                  <span>해외 배송비 (원화):</span>
+                  <strong>
+                    {Math.round(
+                      (parseFloat(formData.shippingCost) || 0) *
+                      (parseFloat(formData.exchangeRate) || 0)
+                    ).toLocaleString()}원
+                  </strong>
+                </div>
 
-              {/* ✅ 1인당 해외배송비 */}
-              <div className="calc-result-row">
-                <span>1인당 해외배송비:</span>
-                <strong>
-                  {Math.round(
-                    ((parseFloat(formData.shippingCost) || 0) *
-                      (parseFloat(formData.exchangeRate) || 0)) /
-                    (parseInt(formData.participants) || 1)
-                  ).toLocaleString()}원
-                </strong>
-              </div>
+                <div className="calc-result-row">
+                  <span>1인당 해외배송비:</span>
+                  <strong>
+                    {Math.round(
+                      ((parseFloat(formData.shippingCost) || 0) *
+                        (parseFloat(formData.exchangeRate) || 0)) /
+                      (parseInt(formData.participants) || 1)
+                    ).toLocaleString()}원
+                  </strong>
+                </div>
 
-              {/* 국내배송비 (그대로 표시) */}
-              <div className="calc-result-row">
-                <span>국내 배송비:</span>
-                <strong>
-                  {(parseInt(formData.domesticShipping) || 0).toLocaleString()}원
-                </strong>
-              </div>
+                <div className="calc-result-row">
+                  <span>국내 배송비:</span>
+                  <strong>
+                    {(parseInt(formData.domesticShipping) || 0).toLocaleString()}원
+                  </strong>
+                </div>
 
-              {/* 최종 판매가 */}
-              <div className="calc-result-row highlight">
-                <span>최종 판매가 (1인):</span>
-                <strong className="final-price">
-                  {formData.groupBuyPrice.toLocaleString()}원
-                </strong>
-              </div>
+                <div className="calc-result-row" style={{
+                  marginTop: '16px',
+                  paddingTop: '16px',
+                  borderTop: '2px solid #3b82f6'
+                }}>
+                  <span style={{ fontSize: '15px', fontWeight: '700' }}>
+                    권장 판매가:
+                  </span>
+                  <strong style={{ fontSize: '20px', color: '#3b82f6' }}>
+                    {calculateRecommendedPrice().toLocaleString()}원
+                  </strong>
+                </div>
 
-              <small className="calc-formula">
-                = (원가 × 환율) + (해외배송비 × 환율 ÷ 인원) × (1 + 수수료) + 국내배송비
+                <small className="calc-formula" style={{ marginTop: '12px', display: 'block' }}>
+                  = (원가 × 환율) + (해외배송비 × 환율 ÷ 인원) × (1 + 수수료) + 국내배송비
+                </small>
+
+                <button
+                  type="button"
+                  onClick={() => updateField('groupBuyPrice', calculateRecommendedPrice())}
+                  style={{
+                    marginTop: '16px',
+                    padding: '10px 16px',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    width: '100%',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#2563eb'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = '#3b82f6'}
+                >
+                  ↓ 권장가를 판매가에 적용
+                </button>
+              </div>
+            </div>
+
+            {/* ⭐ 최종 판매가 입력 */}
+            <div className="form-field" style={{ marginTop: '24px' }}>
+              <label style={{
+                fontWeight: '600',
+                fontSize: '16px',
+                color: '#000',
+                marginBottom: '8px',
+                display: 'block'
+              }}>
+                최종 판매가
+              </label>
+              <input
+                type="number"
+                placeholder="판매가를 입력하세요"
+                value={formData.groupBuyPrice}
+                onChange={(e) => updateField('groupBuyPrice', e.target.value)}
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  backgroundColor: 'white',
+                  border: '1px solid #b9babdff',
+                  padding: '14px',
+                  borderRadius: '8px',
+                  width: '100%'
+                }}
+              />
+              <small style={{
+                color: '#6b7280',
+                fontSize: '13px',
+                display: 'block',
+                marginTop: '8px'
+              }}>
+                위 권장가를 참고하거나, 원하는 판매가를 직접 입력하세요
               </small>
             </div>
 
@@ -1009,11 +1044,9 @@ const GBProductCreatePage = () => {
             </div>
           </section>
 
-          {/* 공구 정보 */}
           <section className="form-section">
             <h3 className="section-title">공구 정보</h3>
 
-            {/* 제안 번호 필드 */}
             <div className="form-field">
               <label>제안 번호 / URL</label>
               <input
@@ -1021,7 +1054,7 @@ const GBProductCreatePage = () => {
                 placeholder="제안 번호 또는 URL을 입력하세요 (예: 123 또는 /proposal/123)"
                 value={formData.proposalId}
                 onChange={(e) => updateField('proposalId', e.target.value)}
-                disabled={!!searchParams.get('proposalId')}  // URL로 받은 경우 수정 불가
+                disabled={!!searchParams.get('proposalId')}
                 style={{
                   backgroundColor: searchParams.get('proposalId') ? '#f3f4f6' : 'white'
                 }}
@@ -1052,7 +1085,6 @@ const GBProductCreatePage = () => {
             </div>
           </section>
 
-          {/* 배송 정보 */}
           <section className="form-section">
             <h3 className="section-title">배송 정보</h3>
             <div className="form-field">
@@ -1069,7 +1101,6 @@ const GBProductCreatePage = () => {
 
         </div>
 
-        {/* 푸터 */}
         <div className="gb-product-footer">
           <button className="gb-product-btn gb-product-btn-cancel" onClick={() => window.close()}>
             취소
@@ -1077,14 +1108,12 @@ const GBProductCreatePage = () => {
           <button className="gb-product-btn gb-product-btn-save" onClick={handleSave}>
             {isEditMode ? '수정 저장' : '저장'}
           </button>
-          {/* <button className="gb-product-btn gb-product-btn-preview">미리보기</button> */}
           <button className="gb-product-btn gb-product-btn-submit" onClick={handleSubmit}>
             {isEditMode ? '수정 완료' : '게시'}
           </button>
         </div>
       </div>
 
-      {/* 옵션 모달 */}
       {showOptionModal && (
         <OptionAddModal
           onClose={() => setShowOptionModal(false)}
