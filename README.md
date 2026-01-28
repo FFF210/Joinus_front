@@ -7,7 +7,6 @@ JOINus는 해외 공동구매 서비스의 정체성을 직관적으로 담은 �
 
 ### 소비자 페이지
 <img width="300" height="400" alt="스크린샷 2026-01-08 141803" src="https://github.com/user-attachments/assets/dff6e7bf-45da-4fe2-a5c6-11c950d96e2f" />
-<img width="255" height="400" alt="스크린샷 2026-01-08 141912" src="https://github.com/user-attachments/assets/5d999f60-2552-4739-a5eb-3548972b0b2d" />
 <img width="260" height="400" alt="스크린샷 2026-01-08 141850" src="https://github.com/user-attachments/assets/5a25378a-ca30-4c2f-a6ff-65a4b2fb9c56" />
 
 
@@ -31,8 +30,12 @@ JOINus는 해외 공동구매 서비스의 정체성을 직관적으로 담은 �
 소비자와 관리자가 사용하는 모든 화면과 사용자 인터랙션을 담당합니다.
 
 - **개발 인원**: 4명  
-- **개발 기간**: 2025.11 ~ 2025.12  
+- **개발 기간**: 2025.11 ~ 2025.12
 
+---
+
+## 👥 팀 구성 및 역할
+<img width="1360" height="765" alt="image" src="https://github.com/user-attachments/assets/58ec43dd-46bb-4ac1-be0f-d0e3d0908224" />
 
 ---
 
@@ -75,30 +78,12 @@ JOINus는 해외 공동구매 서비스의 정체성을 직관적으로 담은 �
 - 알림 목록 조회 및 읽음 처리 UI 구현
 
 ---
-## 👥 팀 구성 및 역할
-<img width="1360" height="765" alt="image" src="https://github.com/user-attachments/assets/58ec43dd-46bb-4ac1-be0f-d0e3d0908224" />
-
----
-
-## 👤 담당 구현 영역
-
-본 프로젝트에서 다음 영역을 담당했습니다.
-- 관리자 공통 레이아웃 및 사이드바 UI
-- 제안 관리 및 공구 관리 화면 구현 (검색, 정렬, 페이지네이션)
-- 공구 상품 등록/수정 UI 및 옵션 관리 기능
-- 제안 상세 페이지에서 공구 등록으로 이어지는 화면 흐름 연동
-- 회원 관리 UI
-  - 회원 탐색
-  - 회원 상세 페이지에서 공구 참여, 제안, 리뷰, 포인트 내역 조회
-- 관리자 고객센터 UI (공지사항, FAQ, 문의 관리)
-
----
 
 ## 백엔드 연동
 - Spring Boot 기반 REST API와 Axios로 통신
 - API 응답 구조에 맞춰 화면 상태 분기 처리
 
-🔗 Backend Repository: [https://github.com/FFF210/Joinus_back]
+🔗 [Backend Repository](https://github.com/FFF210/Joinus_back)
 
 
 ---
