@@ -39,7 +39,6 @@ const GBProductCreatePage = () => {
     handleSave
   } = useGbProductForm(id, proposalId);
 
-
   return (
     <div className="gb-product-create-page">
       <div className="create-container">
